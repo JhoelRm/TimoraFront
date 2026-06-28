@@ -1,0 +1,86 @@
+:root {
+  --font-size: 15px;
+  --font-family: 'Outfit', system-ui, sans-serif;
+
+  --background: #f5f6fa;
+  --foreground: #0d0f1a;
+
+  --card: #ffffff;
+  --card-foreground: #0d0f1a;
+
+  --popover: #ffffff;
+  --popover-foreground: #0d0f1a;
+
+  --primary: #6355e8;
+  --primary-foreground: #ffffff;
+
+  --secondary: #eef0f7;
+  --secondary-foreground: #4a4c60;
+
+  --muted: #eef0f7;
+  --muted-foreground: #6b6d84;
+
+  --accent: #059669;
+  --accent-foreground: #ffffff;
+
+  --destructive: #e03050;
+  --destructive-foreground: #ffffff;
+
+  --border: rgba(0, 0, 0, 0.08);
+  --input: rgba(0, 0, 0, 0.04);
+
+  --input-background: #eef0f7;
+  --switch-background: #d1d4e8;
+
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+
+  --ring: rgba(99, 85, 232, 0.35);
+
+  --radius: 0.625rem;
+
+  --sidebar: #f0f1f8;
+  --sidebar-foreground: #6b6d84;
+  --sidebar-primary: #6355e8;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e4e6f2;
+  --sidebar-accent-foreground: #0d0f1a;
+  --sidebar-border: rgba(0, 0, 0, 0.06);
+  --sidebar-ring: rgba(99, 85, 232, 0.35);
+}
+
+/* DARK MODE */
+.dark {
+  --background: #0b0d14;
+  --foreground: #e2e4f0;
+
+  --card: #111520;
+  --card-foreground: #e2e4f0;
+
+  --popover: #111520;
+  --popover-foreground: #e2e4f0;
+
+  --primary: #7c6ef5;
+  --primary-foreground: #ffffff;
+
+  --secondary: #1a1e2e;
+  --secondary-foreground: #9ea0b4;
+
+  --muted: #1a1e2e;
+  --muted-foreground: #666880;
+
+  --accent: #34d399;
+  --accent-foreground: #001a0e;
+
+  --destructive: #f43f5e;
+  --destructive-foreground: #ffffff;
+
+  --border: rgba(255, 255, 255, 0.06);
+  --input: rgba(255, 255, 255, 0.04);
+
+  --input-background: #1a1e2e;
+
+  --switch-background: #2d3148;
+
+  --ring: rgba(124, 110, 245, 0.4);
+}

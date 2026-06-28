@@ -1,0 +1,20 @@
+<div class="h-full w-64 bg-card border-r border-border p-4">
+
+  <div class="mb-6 font-bold text-lg">
+    Timora
+  </div>
+
+  <nav class="flex flex-col gap-2">
+
+    <a
+      *ngFor="let item of filteredMenu"
+      [routerLink]="item.route"
+      routerLinkActive="bg-primary text-white"
+      class="p-2 rounded hover:bg-secondary transition"
+    >
+      {{ item.label }}
+    </a>
+
+  </nav>
+
+</div>

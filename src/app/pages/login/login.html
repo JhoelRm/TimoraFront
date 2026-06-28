@@ -1,0 +1,63 @@
+<div class="min-h-screen bg-background flex items-center justify-center p-6">
+
+  <div class="w-full max-w-lg">
+
+    <!-- HEADER -->
+    <div class="text-center mb-10">
+
+      <div class="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary/30">
+        🧳
+      </div>
+
+      <h1 class="text-3xl font-bold text-foreground tracking-tight">
+        Timora
+      </h1>
+
+      <p class="text-muted-foreground mt-1.5">
+        Booking & scheduling platform
+      </p>
+
+    </div>
+
+    <!-- CARD -->
+    <app-card class="p-6 bg-card border border-border rounded-2xl">
+
+      <app-card-content>
+
+        <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
+
+          <!-- EMAIL -->
+          <input
+            type="email"
+            formControlName="email"
+            placeholder="Email"
+            class="w-full p-3 rounded-md border border-border bg-background mt-4"
+          />
+
+          <!-- PASSWORD -->
+          <input
+            type="password"
+            formControlName="password"
+            placeholder="Password"
+            class="w-full p-3 rounded-md border border-border bg-background"
+          />
+
+          <!-- BUTTON -->
+          <app-button type="submit" class="w-full mt-4 text-white hover:bg-purple-700">
+            Sign in
+          </app-button>
+
+        </form>
+
+      </app-card-content>
+
+    </app-card>
+
+    <!-- FOOTER -->
+    <p class="text-center text-xs text-muted-foreground mt-5">
+      WGdev Studio · Trujillo, Perú · Demo
+    </p>
+
+  </div>
+
+</div>
