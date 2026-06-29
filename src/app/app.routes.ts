@@ -35,33 +35,18 @@ export const routes: Routes = [
   canActivate: [authGuard],
   canActivateChild: [permissionGuard],
   children: [
-
-      // CORE
       { path: 'dashboard', component: DashboardComponent },
-
-      // COMPANY
       { path: 'companies', component: CompaniesComponent },
       { path: 'company', component: CompanyComponent },
-
-      // OPERATIONS
       { path: 'bookings', component: BookingsComponent },
       { path: 'availabilities', component: AvailabilitiesComponent },
       { path: 'services', component: ServicesComponent },
-
-      // USERS
       { path: 'users', component: UsersComponent },
       { path: 'customers', component: CustomersComponent },
-
-      // FINANCE
       { path: 'payments', component: PaymentsComponent },
-
-      // PERSONAL
       { path: 'my-schedule', component: MyScheduleComponent },
-
-      // SETTINGS
       { path: 'profile', component: ProfileComponent },
       { path: 'settings', component: SettingsComponent },
-
     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   ]
 },
