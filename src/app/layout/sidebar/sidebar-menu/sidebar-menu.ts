@@ -18,14 +18,8 @@ export class SidebarMenuComponent {
 
   private session = inject(SessionService);
 
-  /**
-   * Estado reactivo del usuario (source of truth)
-   */
   user = toSignal(this.session.user$);
 
-  /**
-   * Menú base estático
-   */
   menu: MenuItem[] = MENU;
 
   get filteredMenu(): MenuItem[] {
@@ -34,6 +28,9 @@ export class SidebarMenuComponent {
     if (!user) return [];
 
     return this.menu.filter((item) => {
+
+      if (item.type === 'divider') return true;
+
       const modeOk =
         !item.modes ||
         item.modes.includes(user.mode);

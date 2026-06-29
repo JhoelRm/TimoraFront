@@ -11,12 +11,19 @@ export type UiMode =
 
 import { LucideIconData } from 'lucide-angular';
 
-export interface MenuItem {
-  label: string;
-  route: string;
-  icon?: LucideIconData;
-  modes?: UiMode[];
-}
+export type MenuItem =
+  | {
+      type: 'item';
+      label: string;
+      route: string;
+      icon?: LucideIconData;
+      modes?: UiMode[];
+    }
+  | {
+      type: 'divider';
+      label?: string;
+      modes?: UiMode[];
+    };
 
 import { Briefcase,
 LayoutDashboard,
@@ -29,11 +36,11 @@ UserCheck,
 CreditCard,
 User,
 Settings,
-LogOut,
 Shield, } from 'lucide-angular';
 
 export const MENU: MenuItem[] = [
   {
+    type: 'item',
     label: 'Dashboard',
     route: '/app/dashboard',
     icon: LayoutDashboard,
@@ -49,6 +56,7 @@ export const MENU: MenuItem[] = [
   },
 
   {
+    type: 'item',
     label: 'Companies',
     route: '/app/companies',
     icon: Building2,
@@ -56,6 +64,7 @@ export const MENU: MenuItem[] = [
   },
 
   {
+    type: 'item',
     label: 'Company',
     route: '/app/company',
     icon: Building2,
@@ -63,6 +72,7 @@ export const MENU: MenuItem[] = [
   },
 
   {
+    type: 'item',
     label: 'My Schedule',
     route: '/app/my-schedule',
     icon: Shield,
@@ -70,6 +80,7 @@ export const MENU: MenuItem[] = [
   },
 
   {
+    type: 'item',
     label: 'Bookings',
     route: '/app/bookings',
     icon: CalendarDays,
@@ -83,6 +94,7 @@ export const MENU: MenuItem[] = [
   },
 
   {
+    type: 'item',
     label: 'Availabilities',
     route: '/app/availabilities',
     icon: Clock,
@@ -96,6 +108,7 @@ export const MENU: MenuItem[] = [
   },
 
   {
+    type: 'item',
     label: 'Services',
     route: '/app/services',
     icon: Package,
@@ -109,6 +122,7 @@ export const MENU: MenuItem[] = [
   },
 
   {
+    type: 'item',
     label: 'Users',
     route: '/app/users',
     icon: Users,
@@ -116,6 +130,7 @@ export const MENU: MenuItem[] = [
   },
 
   {
+    type: 'item',
     label: 'Customers',
     route: '/app/customers',
     icon: UserCheck,
@@ -131,6 +146,7 @@ export const MENU: MenuItem[] = [
   },
 
   {
+    type: 'item',
     label: 'Payments',
     route: '/app/payments',
     icon: CreditCard,
@@ -146,6 +162,13 @@ export const MENU: MenuItem[] = [
   },
 
   {
+    
+    type: 'divider',
+    label: '',
+  },
+
+  {
+    type: 'item',
     label: 'Profile',
     route: '/app/profile',
     icon: User,
@@ -161,6 +184,7 @@ export const MENU: MenuItem[] = [
   },
 
   {
+    type: 'item',
     label: 'Settings',
     route: '/app/settings',
     icon: Settings,

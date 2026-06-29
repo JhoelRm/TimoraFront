@@ -1,6 +1,20 @@
 <nav class="flex-1 overflow-y-auto px-3 py-3 flex flex-col gap-2.5">
-  <app-sidebar-item
-    *ngFor="let item of filteredMenu"
-    [item]="item"
-  />
+
+  <ng-container *ngFor="let item of filteredMenu">
+
+    <!-- DIVIDER -->
+    <div *ngIf="item.type === 'divider'" class="pt-3 mt-3 border-t border-sidebar-border">
+      <div class="px-3 text-[10px] font-semibold text-muted-foreground tracking-widest">
+        {{ item.label }}
+      </div>
+    </div>
+
+    <!-- ITEM -->
+    <app-sidebar-item
+      *ngIf="item.type === 'item'"
+      [item]="item"
+    />
+
+  </ng-container>
+
 </nav>

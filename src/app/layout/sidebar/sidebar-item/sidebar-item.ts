@@ -17,10 +17,14 @@ export class SidebarItemComponent {
   private router = inject(Router);
 
   navigate() {
+    if (this.item.type !== 'item') return;
+
     this.router.navigate([this.item.route]);
   }
 
   isActive(): boolean {
+    if (this.item.type !== 'item') return false;
+
     return this.router.url === this.item.route;
   }
 }
