@@ -3,14 +3,14 @@ import { inject } from '@angular/core';
 import { AuthService } from '../services/auth/auth';
 
 export const authGuard: CanActivateFn = () => {
-
   const auth = inject(AuthService);
   const router = inject(Router);
 
-  if (auth.isLoggedIn()) {
+  const token = auth.getToken(); 
+
+  if (token) {
     return true;
   }
 
-  router.navigate(['/login']);
-  return false;
+  return router.createUrlTree(['/login']);
 };

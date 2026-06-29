@@ -21,7 +21,7 @@ import { guestGuard } from './guards/guest';
 import { permissionGuard } from './guards/permission-guard';
 export const routes: Routes = [
 
-  { path: '', redirectTo: 'app', pathMatch: 'full' },
+{ path: '', redirectTo: 'login', pathMatch: 'full' },
 
   {
     path: 'login',

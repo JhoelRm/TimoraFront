@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs/operators';
+import { tap, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { CurrentUser } from '../../models/currentUser';
+import { SessionService } from '../user-session/user-session';
 
 export interface LoginResponse {
   accessToken: string;
@@ -14,43 +16,56 @@ export class AuthService {
 
   private api = '/auth/login';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private session: SessionService
+  ) {}
 
-  login(email: string, password: string) {
-    return this.http.post<LoginResponse>(this.api, { email, password })
-      .pipe(
-        tap(res => {
-          this.saveSession(res);
-        })
-      );
+  // 🔐 LOGIN
+  login(email: string, password: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(this.api, { email, password }).pipe(
+      tap(res => this.saveSession(res))
+    );
   }
 
-  private saveSession(res: LoginResponse) {
+  // 🧠 GUARDAR SESIÓN (SYNC TOTAL)
+  private saveSession(res: LoginResponse): void {
+    if (!res?.accessToken || !res?.user) return;
+
     localStorage.setItem('token', res.accessToken);
     localStorage.setItem('user', JSON.stringify(res.user));
+
+    this.session.setFromAuth(res.user);
   }
 
+  // 🔑 TOKEN
   getToken(): string | null {
     return localStorage.getItem('token');
   }
 
+  // 👤 USER
   getUser(): CurrentUser | null {
-    const user = localStorage.getItem('user');
-    if (!user) return null;
+    const raw = localStorage.getItem('user');
+    if (!raw) return null;
 
     try {
-      return JSON.parse(user);
+      return JSON.parse(raw);
     } catch {
       this.logout();
       return null;
     }
   }
 
-  logout() {
+  // 🚪 LOGOUT LIMPIO
+  logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('session');
+
+    this.session.clear();
   }
 
+  // ✔ CHECK LOGIN
   isLoggedIn(): boolean {
     return !!this.getToken();
   }

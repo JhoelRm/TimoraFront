@@ -6,10 +6,9 @@ export const guestGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
 
-  if (auth.isLoggedIn()) {
-    router.navigate(['/app']);
-    return false;
-  }
+  const token = auth.getToken();
 
-  return true;
+  return token
+    ? router.createUrlTree(['/app'])
+    : true;
 };
