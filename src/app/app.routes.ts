@@ -18,7 +18,7 @@ import { CompanyComponent } from './pages/company/company';
 import { LoginComponent } from './pages/login/login';
 import { authGuard } from './guards/auth';
 import { guestGuard } from './guards/guest';
-
+import { permissionGuard } from './guards/permission-guard';
 export const routes: Routes = [
 
   { path: '', redirectTo: 'app', pathMatch: 'full' },
@@ -33,13 +33,34 @@ export const routes: Routes = [
   path: 'app',
   component: AppComponent,
   canActivate: [authGuard],
+  canActivateChild: [permissionGuard],
   children: [
 
-    { path: 'dashboard', component: DashboardComponent },
+      // CORE
+      { path: 'dashboard', component: DashboardComponent },
 
-    { path: 'companies', component: CompaniesComponent },
+      // COMPANY
+      { path: 'companies', component: CompaniesComponent },
+      { path: 'company', component: CompanyComponent },
 
-    { path: 'company', component: CompanyComponent },
+      // OPERATIONS
+      { path: 'bookings', component: BookingsComponent },
+      { path: 'availabilities', component: AvailabilitiesComponent },
+      { path: 'services', component: ServicesComponent },
+
+      // USERS
+      { path: 'users', component: UsersComponent },
+      { path: 'customers', component: CustomersComponent },
+
+      // FINANCE
+      { path: 'payments', component: PaymentsComponent },
+
+      // PERSONAL
+      { path: 'my-schedule', component: MyScheduleComponent },
+
+      // SETTINGS
+      { path: 'profile', component: ProfileComponent },
+      { path: 'settings', component: SettingsComponent },
 
     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   ]
