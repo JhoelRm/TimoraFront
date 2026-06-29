@@ -2,10 +2,10 @@ import { Component} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-companies',
+  selector: 'app-services',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './companies.html',
-  styleUrl: './companies.scss',
+  templateUrl: './services.html',
+  styleUrl: './services.scss',
 })
 export class ServicesComponent {}

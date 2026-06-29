@@ -2,10 +2,10 @@ import { Component} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-companies',
+  selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './companies.html',
-  styleUrl: './companies.scss',
+  templateUrl: './dashboard.html',
+  styleUrl: './dashboard.scss',
 })
 export class DashboardComponent {}

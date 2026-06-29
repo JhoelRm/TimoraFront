@@ -1,10 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { AuthService } from '../../../services/auth/auth';
+import { SessionService } from '../../../services/user-session/user-session';
 import { MENU, MenuItem } from '../../../config/menu';
 
 import { SidebarItemComponent } from '../sidebar-item/sidebar-item';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { UserSession } from '../../../models/userSession';
 
 @Component({
   selector: 'app-sidebar-menu',
@@ -14,15 +16,29 @@ import { SidebarItemComponent } from '../sidebar-item/sidebar-item';
 })
 export class SidebarMenuComponent {
 
-  private auth = inject(AuthService);
+  private session = inject(SessionService);
 
+  /**
+   * Estado reactivo del usuario (source of truth)
+   */
+  user = toSignal(this.session.user$);
+
+  /**
+   * Menú base estático
+   */
   menu: MenuItem[] = MENU;
 
-  user = this.auth.getUser();
-
   get filteredMenu(): MenuItem[] {
-    const role = this.user?.role;
-    if (!role) return [];
-    return this.menu.filter(item => item.roles.includes(role));
+    const user: UserSession | null | undefined = this.user();
+
+    if (!user) return [];
+
+    return this.menu.filter((item) => {
+      const modeOk =
+        !item.modes ||
+        item.modes.includes(user.mode);
+
+      return modeOk;
+    });
   }
 }

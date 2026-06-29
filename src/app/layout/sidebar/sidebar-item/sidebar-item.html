@@ -6,15 +6,22 @@
     'text-sidebar-foreground hover:text-foreground hover:bg-sidebar-accent': !isActive()
   }"
 >
-  <span
+
+  <!-- ICON -->
+  <lucide-icon
+    *ngIf="item.icon"
+    [img]="item.icon"
+    size="18"
     class="transition-colors"
     [ngClass]="{
       'text-primary': isActive(),
       'text-muted-foreground': !isActive()
     }"
-  >
-    <!-- icon aquí si tienes -->
+  ></lucide-icon>
+
+  <!-- LABEL -->
+  <span>
+    {{ item.label }}
   </span>
 
-  {{ item.label }}
 </button>

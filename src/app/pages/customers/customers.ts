@@ -2,10 +2,10 @@ import { Component} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-companies',
+  selector: 'app-customers',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './companies.html',
-  styleUrl: './companies.scss',
+  templateUrl: './customers.html',
+  styleUrl: './customers.scss',
 })
 export class CustomersComponent {}

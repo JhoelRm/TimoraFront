@@ -2,11 +2,12 @@ import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MenuItem } from '../../../config/menu';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-sidebar-item',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LucideAngularModule],
   templateUrl: './sidebar-item.html',
 })
 export class SidebarItemComponent {

@@ -1,11 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, tap, Observable } from 'rxjs';
-
-export interface UserSession {
-  fullName: string;
-  role: 'OWNER' | 'ADMIN' | 'USER';
-}
+import {UserSession} from '../../models/userSession';
 
 @Injectable({ providedIn: 'root' })
 export class SessionService {

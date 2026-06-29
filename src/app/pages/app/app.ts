@@ -9,8 +9,8 @@ import { NotificationsDrawerComponent } from '../../layout/notifications-drawer/
 import { NotificationService } from '../../services/notification/notification';
 import { PAGE_TITLES } from '../../config/page-titles';
 
-import { SessionService, UserSession } from '../../services/user-session/user-session';
-
+import { SessionService } from '../../services/user-session/user-session';
+import { UserSession } from '../../models/userSession';
 @Component({
   selector: 'app-app',
   standalone: true,

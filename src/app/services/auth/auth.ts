@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
-import { User } from '../../models/user';
+import { CurrentUser } from '../../models/currentUser';
 
 export interface LoginResponse {
   accessToken: string;
   tokenType: string;
-  user: User;
+  user: CurrentUser;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -34,7 +34,7 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
-  getUser(): User | null {
+  getUser(): CurrentUser | null {
     const user = localStorage.getItem('user');
     if (!user) return null;
 

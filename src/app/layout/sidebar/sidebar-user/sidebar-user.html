@@ -3,14 +3,14 @@
   <div class="flex items-center gap-2.5">
 
     <img
-      [src]="'https://api.dicebear.com/7.x/initials/svg?seed=' + (user?.fullName || 'User')"
+      [src]="'https://api.dicebear.com/7.x/initials/svg?seed=' + ((user?.firstName ?? '') + ' ' + (user?.lastName ?? '') || 'User')"
       class="w-7 h-7 rounded-full"
     />
 
     <div class="flex-1 min-w-0">
 
       <div class="text-xs font-semibold text-foreground truncate">
-        {{ user?.fullName }}
+        {{ user?.firstName }} {{ user?.lastName }}
       </div>
 
       <span

@@ -1,7 +1,8 @@
 import { ChangeDetectorRef,Component, inject, OnInit } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
-import { SessionService, UserSession } from '../../../services/user-session/user-session';
+import { SessionService} from '../../../services/user-session/user-session';
+import { UserSession } from '../../../models/userSession';
 
 @Component({
   selector: 'app-sidebar-user',
@@ -23,8 +24,14 @@ export class SidebarUserComponent implements OnInit {
     });
   }
 
+  get fullName(): string {
+    return [this.user?.firstName, this.user?.lastName]
+      .filter(Boolean)
+      .join(' ');
+  }
+
   get initial(): string {
-    return this.user?.fullName?.charAt(0).toUpperCase() ?? 'U';
+    return this.user?.firstName?.charAt(0).toUpperCase() ?? 'U';
   }
 
 }
