@@ -1,9 +1,6 @@
-import { Component, forwardRef, Input } from '@angular/core';
+import { Component, forwardRef, Input, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  ControlValueAccessor,
-  NG_VALUE_ACCESSOR,
-} from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-input',
@@ -22,6 +19,7 @@ import {
   ],
 })
 export class InputComponent implements ControlValueAccessor {
+
   @Input() type: 'text' | 'email' | 'password' = 'text';
   @Input() placeholder = '';
   @Input() disabled = false;
@@ -29,12 +27,17 @@ export class InputComponent implements ControlValueAccessor {
   value = '';
   showPassword = false;
 
-  private onChange = (value: string) => {};
-  private onTouched = () => {};
+  private cdr = inject(ChangeDetectorRef);
 
-  // 🔥 Angular → componente
+  private onChange: (value: string) => void = () => {};
+  private onTouched: () => void = () => {};
+
+  // =========================
+  // Angular → componente
+  // =========================
   writeValue(value: string): void {
     this.value = value ?? '';
+    this.cdr.markForCheck(); // 🔥 FIX CLAVE
   }
 
   registerOnChange(fn: any): void {
@@ -47,11 +50,15 @@ export class InputComponent implements ControlValueAccessor {
 
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
+    this.cdr.markForCheck(); // 🔥 evita glitches visuales
   }
 
-  // 🔥 componente → Angular
+  // =========================
+  // componente → Angular
+  // =========================
   handleInput(event: Event) {
     const value = (event.target as HTMLInputElement).value;
+
     this.value = value;
     this.onChange(value);
   }
@@ -66,9 +73,7 @@ export class InputComponent implements ControlValueAccessor {
 
   get inputType() {
     return this.type === 'password'
-      ? this.showPassword
-        ? 'text'
-        : 'password'
+      ? this.showPassword ? 'text' : 'password'
       : this.type;
   }
 }

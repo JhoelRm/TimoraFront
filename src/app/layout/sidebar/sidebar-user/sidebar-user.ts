@@ -1,8 +1,8 @@
-import { ChangeDetectorRef,Component, inject, OnInit } from '@angular/core';
-
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SessionService} from '../../../services/user-session/user-session';
+import { SessionService } from '../../../services/user-session/user-session';
 import { UserSession } from '../../../models/userSession';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-sidebar-user',
@@ -10,28 +10,24 @@ import { UserSession } from '../../../models/userSession';
   imports: [CommonModule],
   templateUrl: './sidebar-user.html',
 })
-export class SidebarUserComponent implements OnInit {
+export class SidebarUserComponent {
 
   private session = inject(SessionService);
-  private cdr = inject(ChangeDetectorRef);
-  user: UserSession | null = null;
-  ngOnInit() {
-    this.session.getMe().subscribe({
-      next: (data) => {
-        this.user = data;
-        this.cdr.markForCheck();
-      }
-    });
+
+  user$: Observable<UserSession | null> = this.session.user$;
+
+  // helper opcional para evitar lógica en HTML
+  avatarSeed(user: UserSession | null): string {
+    return `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() || 'User';
   }
 
-  get fullName(): string {
-    return [this.user?.firstName, this.user?.lastName]
+  fullName(user: UserSession | null): string {
+    return [user?.firstName, user?.lastName]
       .filter(Boolean)
       .join(' ');
   }
 
-  get initial(): string {
-    return this.user?.firstName?.charAt(0).toUpperCase() ?? 'U';
+  initial(user: UserSession | null): string {
+    return user?.firstName?.charAt(0).toUpperCase() ?? 'U';
   }
-
 }

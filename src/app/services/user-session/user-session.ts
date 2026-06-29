@@ -17,7 +17,7 @@ export class SessionService {
   user$ = this.userSubject.asObservable();
 
   // ==============================
-  // 🔥 LOGIN → sincroniza sesión UI
+  // 🔥 LOGIN (NO CAMBIAR)
   // ==============================
   setFromAuth(user: any): void {
 
@@ -29,6 +29,26 @@ export class SessionService {
     };
 
     this.save(session);
+  }
+
+  // ==============================
+  // 🧠 UPDATE PARCIAL (NUEVO)
+  // ==============================
+  updatePartial(data: Partial<UserSession>): void {
+
+    const current = this.userSubject.value;
+
+    if (!current) return;
+
+    const updated: UserSession = {
+      ...current,
+      ...data,
+
+      // 🔥 CRÍTICO: mantener mode intacto
+      mode: current.mode
+    };
+
+    this.save(updated);
   }
 
   // ==============================
@@ -49,7 +69,7 @@ export class SessionService {
   }
 
   // ==============================
-  // ⚡ SNAPSHOT (IMPORTANTE GUARDS)
+  // ⚡ SNAPSHOT
   // ==============================
   getSnapshot(): UserSession | null {
     return this.userSubject.value;
@@ -77,7 +97,7 @@ export class SessionService {
   }
 
   // ==============================
-  // 🎯 MAPEO REAL (NO INVENTADO)
+  // 🎯 MAPEO REAL
   // ==============================
   private mapMode(role: UserSession['role']): UserSession['mode'] {
 

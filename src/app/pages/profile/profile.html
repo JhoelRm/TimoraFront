@@ -1,35 +1,85 @@
-<div class="p-6 space-y-6">
-  <!-- STATS / CARDS PLACEHOLDER -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<main class="flex-1 overflow-auto p-6">
 
-    <div class="p-4 rounded-xl border border-border bg-card">
-      <div class="text-sm text-muted-foreground">Total Companies</div>
-      <div class="text-2xl font-bold text-foreground mt-2">0</div>
+  <div class="space-y-6 max-w-2xl">
+
+    <!-- HEADER -->
+    <div>
+      <h1 class="text-xl font-semibold text-foreground">
+        Profile
+      </h1>
+
+      <p class="text-sm text-muted-foreground font-mono">
+        {{ userEmail }}
+      </p>
     </div>
 
-    <div class="p-4 rounded-xl border border-border bg-card">
-      <div class="text-sm text-muted-foreground">Active</div>
-      <div class="text-2xl font-bold text-foreground mt-2">0</div>
-    </div>
+    <!-- PERSON -->
+    <form [formGroup]="profileForm"
+      class="bg-card border border-border rounded-2xl p-6 space-y-5">
 
-    <div class="p-4 rounded-xl border border-border bg-card">
-      <div class="text-sm text-muted-foreground">Inactive</div>
-      <div class="text-2xl font-bold text-foreground mt-2">0</div>
-    </div>
-
-  </div>
-  <!-- TABLE PLACEHOLDER -->
-  <div class="rounded-xl border border-border bg-card overflow-hidden">
-
-    <div class="p-4 border-b border-border">
       <h2 class="text-sm font-semibold text-foreground">
-        Company list
+        Personal Information
       </h2>
-    </div>
 
-    <div class="p-6 text-sm text-muted-foreground">
-      No companies yet. This will be replaced with a table later.
+      <div class="grid grid-cols-2 gap-4">
+
+        <div class="space-y-1">
+          <label class="text-xs text-muted-foreground">First Name</label>
+          <app-input formControlName="firstName" placeholder="First Name"></app-input>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-xs text-muted-foreground">Last Name</label>
+          <app-input formControlName="lastName" placeholder="Last Name"></app-input>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-xs text-muted-foreground">Phone</label>
+          <app-input formControlName="phone" placeholder="Phone"></app-input>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-xs text-muted-foreground">Contact Email</label>
+          <app-input formControlName="email" placeholder="Email" type="email"></app-input>
+        </div>
+
+      </div>
+
+      <div class="space-y-1">
+        <label class="text-xs text-muted-foreground">Address</label>
+        <app-input formControlName="address" placeholder="Address"></app-input>
+      </div>
+
+    </form>
+
+    <!-- SUPPLIER (ONLY IF EXISTS) -->
+    <form *ngIf="supplierExists"
+      [formGroup]="supplierForm"
+      class="bg-card border border-border rounded-2xl p-6 space-y-5">
+
+      <h2 class="text-sm font-semibold text-foreground">
+        Supplier (optional)
+      </h2>
+
+      <div class="space-y-1">
+        <label class="text-xs text-muted-foreground">Specialty</label>
+        <app-input formControlName="specialty" placeholder="Specialty"></app-input>
+      </div>
+
+      <div class="space-y-1">
+        <label class="text-xs text-muted-foreground">Notes</label>
+        <app-input formControlName="notes" placeholder="Notes"></app-input>
+      </div>
+
+    </form>
+
+    <!-- SAVE BUTTON (GLOBAL) -->
+    <div class="pt-2">
+      <app-button type="button" (click)="save()">
+        Save Changes
+      </app-button>
     </div>
 
   </div>
-</div>
+
+</main>
