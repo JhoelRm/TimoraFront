@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, shareReplay } from 'rxjs';
-
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Configuration } from '../../models/configuration';
 
 @Injectable({
@@ -10,28 +9,60 @@ import { Configuration } from '../../models/configuration';
 export class ConfigurationService {
 
   private http = inject(HttpClient);
-
   private readonly api = '/api/configurations';
 
-  // 🔥 cache en memoria (evita refetch raro al cambiar rutas)
-  private config$?: Observable<Configuration>;
+  // =========================
+  // STATE CENTRAL (SOURCE OF TRUTH)
+  // =========================
+  private configSubject = new BehaviorSubject<Configuration | null>(null);
 
-  getMy(): Observable<Configuration> {
-    if (!this.config$) {
-      this.config$ = this.http.get<Configuration>(this.api).pipe(
-        shareReplay(1)
-      );
-    }
+  readonly config$ = this.configSubject.asObservable();
 
-    return this.config$;
+  // =========================
+  // GET INITIAL / REFRESH
+  // =========================
+  refreshMy(): Observable<Configuration> {
+    return this.http.get<Configuration>(this.api).pipe(
+      tap(config => {
+        this.configSubject.next(config);
+      })
+    );
   }
 
+  // =========================
+  // PATCH (SYNC BACKEND + STATE)
+  // =========================
   patch(partial: Partial<Configuration>): Observable<Configuration> {
-    return this.http.patch<Configuration>(this.api, partial);
+    return this.http.patch<Configuration>(this.api, partial).pipe(
+      tap(updated => {
+        const current = this.configSubject.value;
+
+        this.configSubject.next({
+          ...(current ?? ({} as Configuration)),
+          ...updated
+        });
+      })
+    );
   }
 
-  // 🔥 útil cuando haces cambios o logout/login
+  // =========================
+  // MANUAL UPDATE
+  // =========================
+  setConfig(config: Configuration): void {
+    this.configSubject.next(config);
+  }
+
+  // =========================
+  // GET CURRENT VALUE
+  // =========================
+  getCurrentConfig(): Configuration | null {
+    return this.configSubject.value;
+  }
+
+  // =========================
+  // CLEAR
+  // =========================
   clearCache(): void {
-    this.config$ = undefined;
+    this.configSubject.next(null);
   }
 }

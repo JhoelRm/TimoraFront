@@ -5,12 +5,11 @@
   <div class="flex flex-col flex-1 relative">
 
     <!-- HEADER GLOBAL -->
-    <app-header
-      [title]="title"
-      [role]="(user$ | async)?.role ?? 'USER'"
-      [notificationCount]="1"
-      (notificationsToggle)="toggleNotifications()"
-    ></app-header>
+  <app-header
+    [title]="title"
+    [role]="(user$ | async)?.role ?? 'USER'"
+    (notificationsToggle)="toggleNotifications()"
+  ></app-header>
 
     <!-- PAGE -->
     <main class="flex-1 overflow-auto p-4">

@@ -1,0 +1,15 @@
+.noscroll {
+  overflow: auto !important; /* 👈 IMPORTANTE: mantener scroll */
+
+  /* Firefox */
+  scrollbar-width: none !important;
+
+  /* IE / Edge legacy */
+  -ms-overflow-style: none !important;
+}
+
+/* Chrome, Safari, Opera */
+.noscroll::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}

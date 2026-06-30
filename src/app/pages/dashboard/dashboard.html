@@ -1,35 +1,158 @@
-<div class="p-6 space-y-6">
-  <!-- STATS / CARDS PLACEHOLDER -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-    <div class="p-4 rounded-xl border border-border bg-card">
-      <div class="text-sm text-muted-foreground">Total Companies</div>
-      <div class="text-2xl font-bold text-foreground mt-2">0</div>
+<main class="flex-1 overflow-auto p-6">
+  <div class="space-y-6">
+    <div>
+      <h1 class="text-2xl font-semibold text-foreground">Good morning, Ana 👋</h1>
+      <p class="text-sm text-muted-foreground mt-0.5">Tuesday, June 30, 2026</p>
     </div>
-
-    <div class="p-4 rounded-xl border border-border bg-card">
-      <div class="text-sm text-muted-foreground">Active</div>
-      <div class="text-2xl font-bold text-foreground mt-2">0</div>
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-card border border-border rounded-2xl p-5 hover:border-border/80 transition-colors">
+        <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4"><svg
+            xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-calendar-days text-primary">
+            <path d="M8 2v4"></path>
+            <path d="M16 2v4"></path>
+            <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+            <path d="M3 10h18"></path>
+            <path d="M8 14h.01"></path>
+            <path d="M12 14h.01"></path>
+            <path d="M16 14h.01"></path>
+            <path d="M8 18h.01"></path>
+            <path d="M12 18h.01"></path>
+            <path d="M16 18h.01"></path>
+          </svg></div>
+        <div class="text-2xl font-bold text-foreground">10</div>
+        <div class="text-sm font-medium text-foreground mt-1">Total Bookings</div>
+        <div class="text-xs text-muted-foreground mt-0.5">7 confirmed</div>
+      </div>
+      <div class="bg-card border border-border rounded-2xl p-5 hover:border-border/80 transition-colors">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center mb-4"><svg
+            xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-clock text-amber-400">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg></div>
+        <div class="text-2xl font-bold text-foreground">2</div>
+        <div class="text-sm font-medium text-foreground mt-1">Pending</div>
+        <div class="text-xs text-muted-foreground mt-0.5">awaiting confirmation</div>
+      </div>
+      <div class="bg-card border border-border rounded-2xl p-5 hover:border-border/80 transition-colors">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4"><svg
+            xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-dollar-sign text-emerald-400">
+            <line x1="12" x2="12" y1="2" y2="22"></line>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg></div>
+        <div class="text-2xl font-bold text-foreground">S/. 285.00</div>
+        <div class="text-sm font-medium text-foreground mt-1">Revenue</div>
+        <div class="text-xs text-muted-foreground mt-0.5">paid invoices</div>
+      </div>
+      <div class="bg-card border border-border rounded-2xl p-5 hover:border-border/80 transition-colors">
+        <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center mb-4"><svg
+            xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-users text-blue-400">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg></div>
+        <div class="text-2xl font-bold text-foreground">6</div>
+        <div class="text-sm font-medium text-foreground mt-1">Clients</div>
+        <div class="text-xs text-muted-foreground mt-0.5">active customers</div>
+      </div>
     </div>
-
-    <div class="p-4 rounded-xl border border-border bg-card">
-      <div class="text-sm text-muted-foreground">Inactive</div>
-      <div class="text-2xl font-bold text-foreground mt-2">0</div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="lg:col-span-2 bg-card border border-border rounded-2xl overflow-hidden">
+        <div class="px-5 py-4 border-b border-border flex items-center justify-between">
+          <h2 class="text-sm font-semibold text-foreground">Recent Bookings</h2><span
+            class="text-xs text-muted-foreground">10 total</span>
+        </div>
+        <div class="divide-y divide-border">
+          <div class="px-5 py-3 flex items-center gap-3 hover:bg-secondary/20 transition-colors">
+            <div
+              class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-xs font-bold text-primary">
+              M</div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-medium text-foreground truncate">Mateo – Swedish Massage</div>
+              <div class="text-xs text-muted-foreground">Jul 3, 2026 · 10:00 AM</div>
+            </div><span
+              class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">Confirmed</span>
+          </div>
+          <div class="px-5 py-3 flex items-center gap-3 hover:bg-secondary/20 transition-colors">
+            <div
+              class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-xs font-bold text-primary">
+              C</div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-medium text-foreground truncate">Camila – Haircut &amp; Style</div>
+              <div class="text-xs text-muted-foreground">Jul 2, 2026 · 3:00 PM</div>
+            </div><span
+              class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">Confirmed</span>
+          </div>
+          <div class="px-5 py-3 flex items-center gap-3 hover:bg-secondary/20 transition-colors">
+            <div
+              class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-xs font-bold text-primary">
+              R</div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-medium text-foreground truncate">Rodrigo – Deep Conditioning</div>
+              <div class="text-xs text-muted-foreground">Jul 2, 2026 · 11:00 AM</div>
+            </div><span
+              class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400">Completed</span>
+          </div>
+          <div class="px-5 py-3 flex items-center gap-3 hover:bg-secondary/20 transition-colors">
+            <div
+              class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-xs font-bold text-primary">
+              S</div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-medium text-foreground truncate">Sebastián – Manicure</div>
+              <div class="text-xs text-muted-foreground">Jul 1, 2026 · 1:00 PM</div>
+            </div><span
+              class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400">Pending</span>
+          </div>
+          <div class="px-5 py-3 flex items-center gap-3 hover:bg-secondary/20 transition-colors">
+            <div
+              class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-xs font-bold text-primary">
+              V</div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-medium text-foreground truncate">Valentina – Hot Stone Massage</div>
+              <div class="text-xs text-muted-foreground">Jul 1, 2026 · 10:00 AM</div>
+            </div><span
+              class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">Confirmed</span>
+          </div>
+          <div class="px-5 py-3 flex items-center gap-3 hover:bg-secondary/20 transition-colors">
+            <div
+              class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-xs font-bold text-primary">
+              L</div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-medium text-foreground truncate">Luciana – Brow Design</div>
+              <div class="text-xs text-muted-foreground">Jun 30, 2026 · 2:00 PM</div>
+            </div><span
+              class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">Confirmed</span>
+          </div>
+        </div>
+      </div>
+      <div class="bg-card border border-border rounded-2xl p-5">
+        <h2 class="text-sm font-semibold text-foreground mb-5">Quick Stats</h2>
+        <div class="space-y-4">
+          <div class="flex items-center justify-between"><span class="text-sm text-muted-foreground">Confirmed this
+              week</span><span class="text-sm font-semibold text-foreground">7</span></div>
+          <div class="flex items-center justify-between"><span
+              class="text-sm text-muted-foreground">Completed</span><span
+              class="text-sm font-semibold text-foreground">1</span></div>
+          <div class="flex items-center justify-between"><span class="text-sm text-muted-foreground">Paid
+              invoices</span><span class="text-sm font-semibold text-foreground">5</span></div>
+          <div class="flex items-center justify-between"><span class="text-sm text-muted-foreground">Pending
+              payments</span><span class="text-sm font-semibold text-foreground">1</span></div>
+          <div class="flex items-center justify-between"><span class="text-sm text-muted-foreground">Total
+              revenue</span><span class="text-sm font-semibold text-foreground">S/. 285.00</span></div>
+        </div>
+        <div class="mt-6 pt-5 border-t border-border">
+          <div class="text-xs text-muted-foreground mb-3">Role access</div><span
+            class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400">OWNER</span>
+        </div>
+      </div>
     </div>
-
   </div>
-  <!-- TABLE PLACEHOLDER -->
-  <div class="rounded-xl border border-border bg-card overflow-hidden">
-
-    <div class="p-4 border-b border-border">
-      <h2 class="text-sm font-semibold text-foreground">
-        Company list
-      </h2>
-    </div>
-
-    <div class="p-6 text-sm text-muted-foreground">
-      No companies yet. This will be replaced with a table later.
-    </div>
-
-  </div>
-</div>
+</main>

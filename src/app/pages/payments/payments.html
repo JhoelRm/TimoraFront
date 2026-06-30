@@ -1,35 +1,129 @@
-<div class="p-6 space-y-6">
-  <!-- STATS / CARDS PLACEHOLDER -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-    <div class="p-4 rounded-xl border border-border bg-card">
-      <div class="text-sm text-muted-foreground">Total Companies</div>
-      <div class="text-2xl font-bold text-foreground mt-2">0</div>
+<main class="flex-1 overflow-auto p-6">
+  <div class="space-y-5">
+    <div>
+      <h1 class="text-xl font-semibold text-foreground">Payments</h1>
+      <p class="text-sm text-muted-foreground">7 transactions</p>
     </div>
-
-    <div class="p-4 rounded-xl border border-border bg-card">
-      <div class="text-sm text-muted-foreground">Active</div>
-      <div class="text-2xl font-bold text-foreground mt-2">0</div>
+    <div class="grid grid-cols-3 gap-4">
+      <div class="bg-card border border-border rounded-2xl p-5">
+        <div class="w-9 h-9 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-3"><svg
+            xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-dollar-sign text-emerald-400">
+            <line x1="12" x2="12" y1="2" y2="22"></line>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg></div>
+        <div class="text-2xl font-bold text-emerald-400">S/. 285.00</div>
+        <div class="text-sm text-muted-foreground mt-1">Total Revenue</div>
+      </div>
+      <div class="bg-card border border-border rounded-2xl p-5">
+        <div class="w-9 h-9 rounded-xl bg-amber-500/10 flex items-center justify-center mb-3"><svg
+            xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-clock text-amber-400">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg></div>
+        <div class="text-2xl font-bold text-amber-400">S/. 80.00</div>
+        <div class="text-sm text-muted-foreground mt-1">Pending</div>
+      </div>
+      <div class="bg-card border border-border rounded-2xl p-5">
+        <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center mb-3"><svg
+            xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-credit-card text-primary">
+            <rect width="20" height="14" x="2" y="5" rx="2"></rect>
+            <line x1="2" x2="22" y1="10" y2="10"></line>
+          </svg></div>
+        <div class="text-2xl font-bold text-primary">7</div>
+        <div class="text-sm text-muted-foreground mt-1">Transactions</div>
+      </div>
     </div>
-
-    <div class="p-4 rounded-xl border border-border bg-card">
-      <div class="text-sm text-muted-foreground">Inactive</div>
-      <div class="text-2xl font-bold text-foreground mt-2">0</div>
+    <div class="bg-card border border-border rounded-2xl overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="border-b border-border">
+          <tr>
+            <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">#</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Booking</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Amount</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Method</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Status</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Date</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-border">
+          <tr class="hover:bg-secondary/20 transition-colors">
+            <td class="px-4 py-3 text-muted-foreground font-mono text-xs">#0001</td>
+            <td class="px-4 py-3 text-foreground">Valentina – Haircut &amp; Style</td>
+            <td class="px-4 py-3 font-bold text-foreground">S/. 45.00</td>
+            <td class="px-4 py-3 text-muted-foreground text-xs">CREDIT CARD</td>
+            <td class="px-4 py-3"><span
+                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">Paid</span>
+            </td>
+            <td class="px-4 py-3 text-muted-foreground text-xs">Jun 29, 2026</td>
+          </tr>
+          <tr class="hover:bg-secondary/20 transition-colors">
+            <td class="px-4 py-3 text-muted-foreground font-mono text-xs">#0002</td>
+            <td class="px-4 py-3 text-foreground">Rodrigo – Color Treatment</td>
+            <td class="px-4 py-3 font-bold text-foreground">S/. 120.00</td>
+            <td class="px-4 py-3 text-muted-foreground text-xs">YAPE</td>
+            <td class="px-4 py-3"><span
+                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">Paid</span>
+            </td>
+            <td class="px-4 py-3 text-muted-foreground text-xs">Jun 29, 2026</td>
+          </tr>
+          <tr class="hover:bg-secondary/20 transition-colors">
+            <td class="px-4 py-3 text-muted-foreground font-mono text-xs">#0003</td>
+            <td class="px-4 py-3 text-foreground">Camila – Swedish Massage</td>
+            <td class="px-4 py-3 font-bold text-foreground">S/. 80.00</td>
+            <td class="px-4 py-3 text-muted-foreground text-xs">CASH</td>
+            <td class="px-4 py-3"><span
+                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400">Pending</span>
+            </td>
+            <td class="px-4 py-3 text-muted-foreground text-xs">Jun 29, 2026</td>
+          </tr>
+          <tr class="hover:bg-secondary/20 transition-colors">
+            <td class="px-4 py-3 text-muted-foreground font-mono text-xs">#0004</td>
+            <td class="px-4 py-3 text-foreground">Mateo – Signature Facial</td>
+            <td class="px-4 py-3 font-bold text-foreground">S/. 65.00</td>
+            <td class="px-4 py-3 text-muted-foreground text-xs">DEBIT CARD</td>
+            <td class="px-4 py-3"><span
+                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">Paid</span>
+            </td>
+            <td class="px-4 py-3 text-muted-foreground text-xs">Jun 30, 2026</td>
+          </tr>
+          <tr class="hover:bg-secondary/20 transition-colors">
+            <td class="px-4 py-3 text-muted-foreground font-mono text-xs">#0005</td>
+            <td class="px-4 py-3 text-foreground">Luciana – Brow Design</td>
+            <td class="px-4 py-3 font-bold text-foreground">S/. 20.00</td>
+            <td class="px-4 py-3 text-muted-foreground text-xs">CASH</td>
+            <td class="px-4 py-3"><span
+                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">Paid</span>
+            </td>
+            <td class="px-4 py-3 text-muted-foreground text-xs">Jun 30, 2026</td>
+          </tr>
+          <tr class="hover:bg-secondary/20 transition-colors">
+            <td class="px-4 py-3 text-muted-foreground font-mono text-xs">#0006</td>
+            <td class="px-4 py-3 text-foreground">Valentina – Hot Stone Massage</td>
+            <td class="px-4 py-3 font-bold text-foreground">S/. 110.00</td>
+            <td class="px-4 py-3 text-muted-foreground text-xs">CREDIT CARD</td>
+            <td class="px-4 py-3"><span
+                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400">Partial</span>
+            </td>
+            <td class="px-4 py-3 text-muted-foreground text-xs">Jul 1, 2026</td>
+          </tr>
+          <tr class="hover:bg-secondary/20 transition-colors">
+            <td class="px-4 py-3 text-muted-foreground font-mono text-xs">#0008</td>
+            <td class="px-4 py-3 text-foreground">Rodrigo – Deep Conditioning</td>
+            <td class="px-4 py-3 font-bold text-foreground">S/. 35.00</td>
+            <td class="px-4 py-3 text-muted-foreground text-xs">BANK TRANSFER</td>
+            <td class="px-4 py-3"><span
+                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">Paid</span>
+            </td>
+            <td class="px-4 py-3 text-muted-foreground text-xs">Jul 2, 2026</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-
   </div>
-  <!-- TABLE PLACEHOLDER -->
-  <div class="rounded-xl border border-border bg-card overflow-hidden">
-
-    <div class="p-4 border-b border-border">
-      <h2 class="text-sm font-semibold text-foreground">
-        Company list
-      </h2>
-    </div>
-
-    <div class="p-6 text-sm text-muted-foreground">
-      No companies yet. This will be replaced with a table later.
-    </div>
-
-  </div>
-</div>
+</main>

@@ -1,35 +1,60 @@
-<div class="p-6 space-y-6">
-  <!-- STATS / CARDS PLACEHOLDER -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-    <div class="p-4 rounded-xl border border-border bg-card">
-      <div class="text-sm text-muted-foreground">Total Companies</div>
-      <div class="text-2xl font-bold text-foreground mt-2">0</div>
+<main class="flex-1 overflow-auto p-6">
+  <div class="space-y-4">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-xl font-semibold text-foreground">Availability</h1>
+        <p class="text-sm text-muted-foreground">0 schedules</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="w-36"><select
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+            <option value="1">Luxe Studio</option>
+            <option value="2">Meridian Wellness</option>
+          </select></div>
+        <div class="w-44"><select
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+            <option value="">Select supplier…</option>
+            <option value="1">Isabella Chen</option>
+            <option value="2">Diego Torres</option>
+            <option value="3">Sofía Morales</option>
+          </select></div>
+        <div class="flex bg-secondary rounded-xl p-1 gap-0.5"><button
+            class="p-1.5 rounded-lg transition-all bg-card text-foreground shadow-sm"><svg
+              xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="lucide lucide-calendar-days">
+              <path d="M8 2v4"></path>
+              <path d="M16 2v4"></path>
+              <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+              <path d="M3 10h18"></path>
+              <path d="M8 14h.01"></path>
+              <path d="M12 14h.01"></path>
+              <path d="M16 14h.01"></path>
+              <path d="M8 18h.01"></path>
+              <path d="M12 18h.01"></path>
+              <path d="M16 18h.01"></path>
+            </svg></button><button
+            class="p-1.5 rounded-lg transition-all text-muted-foreground hover:text-foreground"><svg
+              xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="lucide lucide-list">
+              <path d="M3 12h.01"></path>
+              <path d="M3 18h.01"></path>
+              <path d="M3 6h.01"></path>
+              <path d="M8 12h13"></path>
+              <path d="M8 18h13"></path>
+              <path d="M8 6h13"></path>
+            </svg></button></div><button
+          class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95  "><svg
+            xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-plus">
+            <path d="M5 12h14"></path>
+            <path d="M12 5v14"></path>
+          </svg>Add Schedule</button>
+      </div>
     </div>
-
-    <div class="p-4 rounded-xl border border-border bg-card">
-      <div class="text-sm text-muted-foreground">Active</div>
-      <div class="text-2xl font-bold text-foreground mt-2">0</div>
-    </div>
-
-    <div class="p-4 rounded-xl border border-border bg-card">
-      <div class="text-sm text-muted-foreground">Inactive</div>
-      <div class="text-2xl font-bold text-foreground mt-2">0</div>
-    </div>
-
+    <div class="flex items-center justify-center text-muted-foreground text-sm bg-card border border-border rounded-2xl"
+      style="min-height: 300px;">Select a supplier above to view availability</div>
   </div>
-  <!-- TABLE PLACEHOLDER -->
-  <div class="rounded-xl border border-border bg-card overflow-hidden">
-
-    <div class="p-4 border-b border-border">
-      <h2 class="text-sm font-semibold text-foreground">
-        Company list
-      </h2>
-    </div>
-
-    <div class="p-6 text-sm text-muted-foreground">
-      No companies yet. This will be replaced with a table later.
-    </div>
-
-  </div>
-</div>
+</main>

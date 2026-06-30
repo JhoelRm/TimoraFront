@@ -1,14 +1,14 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-import { Subject, debounceTime } from 'rxjs';
 
 import { CardComponent } from '../../components/card/card/card';
 import { CardContentComponent } from '../../components/card/card-content/card-content';
 
 import { Configuration } from '../../models/configuration';
 import { ConfigurationService } from '../../services/configuration/configuration';
+
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-settings',
@@ -22,13 +22,14 @@ import { ConfigurationService } from '../../services/configuration/configuration
   templateUrl: './settings.html',
   styleUrl: './settings.scss',
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent implements OnInit, OnDestroy {
 
   private configurationService = inject(ConfigurationService);
 
-  private configSubject = new Subject<Partial<Configuration>>();
+  private sub = new Subscription();
+  private saveTimeout: any;
+  private lastPatch: Partial<Configuration> = {};
 
-  // 🔥 IMPORTANTE: ya no null → evita UI apagada al render inicial
   config: Configuration = {
     notifyAppointments: false,
     notifyReservations: false,
@@ -43,68 +44,112 @@ export class SettingsComponent implements OnInit {
     reminderMinutesBefore: 30,
   };
 
+  // =========================
+  // INIT
+  // =========================
   ngOnInit(): void {
-    this.initAutoSave();
-    this.loadConfiguration();
+
+    this.sub.add(
+      this.configurationService.config$
+        .subscribe(cfg => {
+          if (!cfg) return;
+
+          this.config = cfg;
+        })
+    );
+
+  }
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
+    this.flushSave();
   }
 
   // =========================
-  // LOAD CONFIG
+  // SAVE QUEUE (DEBOUNCE)
   // =========================
-  private loadConfiguration(): void {
-    this.configurationService.getMy().subscribe({
-      next: (config) => {
-        // 🔥 evita reemplazo de referencia (UI más estable)
-        Object.assign(this.config, config);
-      },
-      error: (err) => {
-        console.error('Error loading configuration', err);
-      }
-    });
-  }
+  private queueSave(patch: Partial<Configuration>): void {
 
-  // =========================
-  // AUTO SAVE (PATCH STREAM)
-  // =========================
-  private initAutoSave(): void {
-    this.configSubject
-      .pipe(debounceTime(400))
-      .subscribe((patch) => {
-        this.configurationService.patch(patch).subscribe({
-          error: (err) => {
-            console.error('Error saving configuration', err);
-          }
+    this.lastPatch = {
+      ...this.lastPatch,
+      ...patch
+    };
+
+    clearTimeout(this.saveTimeout);
+
+    this.saveTimeout = setTimeout(() => {
+
+      this.configurationService.patch(this.lastPatch)
+        .subscribe({
+          error: err => console.error('Error saving configuration', err)
         });
-      });
+
+      this.lastPatch = {};
+
+    }, 400);
+  }
+
+  private flushSave(): void {
+
+    if (this.saveTimeout) {
+
+      clearTimeout(this.saveTimeout);
+
+      if (Object.keys(this.lastPatch).length > 0) {
+
+        this.configurationService.patch(this.lastPatch)
+          .subscribe({
+            error: err => console.error('Flush save error', err)
+          });
+
+      }
+
+      this.lastPatch = {};
+
+    }
+
   }
 
   // =========================
   // TOGGLE
   // =========================
   toggle<K extends keyof Configuration>(key: K): void {
-    if (!this.config) return;
 
     const current = this.config[key];
 
-    if (typeof current === 'boolean') {
-      this.config[key] = (!current) as Configuration[K];
+    if (typeof current !== 'boolean') {
+      return;
     }
 
-    this.configSubject.next({
-      [key]: this.config[key]
+    const updated = !current;
+
+    this.config = {
+      ...this.config,
+      [key]: updated
+    };
+
+    this.queueSave({
+      [key]: updated
     });
+
   }
 
   // =========================
   // SLIDER
   // =========================
   updateReminder(event: Event): void {
+
     const value = Number((event.target as HTMLInputElement).value);
 
-    this.config.reminderMinutesBefore = value;
+    this.config = {
+      ...this.config,
+      reminderMinutesBefore: value
+    };
 
-    this.configSubject.next({
+    this.queueSave({
       reminderMinutesBefore: value
     });
+
   }
+
 }

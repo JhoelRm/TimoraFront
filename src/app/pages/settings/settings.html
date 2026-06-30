@@ -35,8 +35,8 @@
             <button
               (click)="toggle('notifyAppointments')"
               class="relative rounded-full transition-colors shrink-0"
-              [class.bg-primary]="config.notifyAppointments"
-              [class.bg-secondary]="!config.notifyAppointments"
+              [class.bg-switch]="config.notifyAppointments"
+              [class.bg-primary]="!config.notifyAppointments"
               style="width: 40px; height: 22px;"
             >
               <div
@@ -58,8 +58,8 @@
             <button
               (click)="toggle('notifyReservations')"
               class="relative rounded-full transition-colors shrink-0"
-              [class.bg-primary]="config.notifyReservations"
-              [class.bg-secondary]="!config.notifyReservations"
+              [class.bg-switch]="config.notifyReservations"
+              [class.bg-primary]="!config.notifyReservations"
               style="width: 40px; height: 22px;"
             >
               <div
@@ -81,8 +81,8 @@
             <button
               (click)="toggle('notifyCancellations')"
               class="relative rounded-full transition-colors shrink-0"
-              [class.bg-primary]="config.notifyCancellations"
-              [class.bg-secondary]="!config.notifyCancellations"
+              [class.bg-switch]="config.notifyCancellations"
+              [class.bg-primary]="!config.notifyCancellations"
               style="width: 40px; height: 22px;"
             >
               <div
@@ -103,9 +103,9 @@
 
             <button
               (click)="toggle('notifyReminders')"
-              class="relative rounded-full transition-colors shrink-0"
-              [class.bg-primary]="config.notifyReminders"
-              [class.bg-secondary]="!config.notifyReminders"
+              class="relative rounded-full transition-colors shrink-0 "
+              [class.bg-switch]="config.notifyReminders"
+              [class.bg-primary]="!config.notifyReminders"
               style="width: 40px; height: 22px;"
             >
               <div
@@ -148,8 +148,8 @@
             <button
               (click)="toggle('appChannelEnabled')"
               class="relative rounded-full transition-colors shrink-0"
-              [class.bg-primary]="config.appChannelEnabled"
-              [class.bg-secondary]="!config.appChannelEnabled"
+              [class.bg-switch]="config.appChannelEnabled"
+              [class.bg-primary]="!config.appChannelEnabled"
               style="width: 40px; height: 22px;"
             >
               <div
@@ -173,8 +173,8 @@
             <button
               (click)="toggle('emailChannelEnabled')"
               class="relative rounded-full transition-colors shrink-0"
-              [class.bg-primary]="config.emailChannelEnabled"
-              [class.bg-secondary]="!config.emailChannelEnabled"
+              [class.bg-switch]="config.emailChannelEnabled"
+              [class.bg-primary]="!config.emailChannelEnabled"
               style="width: 40px; height: 22px;"
             >
               <div
@@ -209,8 +209,8 @@
           <button
             (click)="toggle('darkMode')"
             class="relative rounded-full transition-colors shrink-0"
-            [class.bg-primary]="config.darkMode"
-            [class.bg-secondary]="!config.darkMode"
+            [class.bg-switch]="config.darkMode"
+            [class.bg-primary]="!config.darkMode"
             style="width: 40px; height: 22px;"
           >
             <div

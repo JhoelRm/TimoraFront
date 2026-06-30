@@ -5,7 +5,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { routes } from './app.routes';
 import { authInterceptor } from './interceptors/auth';
 
-import { LucideAngularModule, Home, Settings, Users, Calendar, DollarSign, Briefcase, Clock } from 'lucide-angular';
+import { LucideAngularModule, Home, Settings, Users, Calendar, DollarSign, Briefcase, Clock, CircleX, X } from 'lucide-angular';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -24,7 +24,9 @@ export const appConfig: ApplicationConfig = {
         Calendar,
         DollarSign,
         Briefcase,
-        Clock
+        Clock,
+        CircleX,
+        X
       })
     )
   ]

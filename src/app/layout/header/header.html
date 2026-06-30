@@ -1,36 +1,40 @@
 <header class="border-b border-border px-6 py-3.5 flex items-center justify-between bg-card shrink-0">
 
-  <!-- LEFT: TITLE -->
+  <!-- LEFT -->
   <span class="text-sm font-semibold text-foreground">
     {{ title }}
   </span>
 
-  <!-- RIGHT: ACTIONS -->
+  <!-- RIGHT -->
   <div class="flex items-center gap-2">
 
-    <!-- ROLE BADGE -->
-    <span
-      *ngIf="role === 'OWNER'"
-      class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary "
-    >
-      OWNER
-    </span>
+<!-- ROLE -->
+<ng-container *ngIf="role as r">
 
-    <span
-      *ngIf="role === 'ADMIN'"
-      class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400"
-    >
-      ADMIN
-    </span>
+  <span
+    *ngIf="r === 'OWNER'"
+    class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary"
+  >
+    OWNER
+  </span>
 
-    <span
-      *ngIf="role === 'USER'"
-      class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400"
-    >
-      USER
-    </span>
+  <span
+    *ngIf="r === 'ADMIN'"
+    class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400"
+  >
+    ADMIN
+  </span>
 
-    <!-- NOTIFICATIONS (con separador ahora aquí) -->
+  <span
+    *ngIf="r === 'USER'"
+    class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400"
+  >
+    USER
+  </span>
+
+</ng-container>
+
+    <!-- NOTIFICATIONS -->
     <div class="flex items-center pl-2 border-l border-border">
 
       <button
@@ -48,10 +52,10 @@
         </svg>
 
         <!-- badge -->
-        <span
-          *ngIf="notificationCount > 0"
-          class="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-primary"
-        ></span>
+<span
+  *ngIf="hasNotifications()"
+  class="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-primary animate-pulse"
+></span>
       </button>
 
     </div>

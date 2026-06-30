@@ -1,35 +1,27 @@
-<div class="p-6 space-y-6">
-  <!-- STATS / CARDS PLACEHOLDER -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-    <div class="p-4 rounded-xl border border-border bg-card">
-      <div class="text-sm text-muted-foreground">Total Companies</div>
-      <div class="text-2xl font-bold text-foreground mt-2">0</div>
+<main class="flex-1 overflow-auto p-6">
+  <div class="space-y-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-xl font-semibold text-foreground">Services</h1>
+        <p class="text-sm text-muted-foreground">0 services</p>
+      </div>
+      <div class="flex gap-2">
+        <div class="w-36"><select
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+            <option value="1">Luxe Studio</option>
+            <option value="2">Meridian Wellness</option>
+          </select></div>
+        <div class="w-44"><select
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+            <option value="">Select supplier…</option>
+            <option value="all_sups">All Suppliers</option>
+            <option value="1">Isabella Chen</option>
+            <option value="2">Diego Torres</option>
+            <option value="3">Sofía Morales</option>
+          </select></div>
+      </div>
     </div>
-
-    <div class="p-4 rounded-xl border border-border bg-card">
-      <div class="text-sm text-muted-foreground">Active</div>
-      <div class="text-2xl font-bold text-foreground mt-2">0</div>
-    </div>
-
-    <div class="p-4 rounded-xl border border-border bg-card">
-      <div class="text-sm text-muted-foreground">Inactive</div>
-      <div class="text-2xl font-bold text-foreground mt-2">0</div>
-    </div>
-
+    <div class="flex items-center justify-center text-muted-foreground text-sm bg-card border border-border rounded-2xl"
+      style="min-height: 200px;">Select a supplier above to view services</div>
   </div>
-  <!-- TABLE PLACEHOLDER -->
-  <div class="rounded-xl border border-border bg-card overflow-hidden">
-
-    <div class="p-4 border-b border-border">
-      <h2 class="text-sm font-semibold text-foreground">
-        Company list
-      </h2>
-    </div>
-
-    <div class="p-6 text-sm text-muted-foreground">
-      No companies yet. This will be replaced with a table later.
-    </div>
-
-  </div>
-</div>
+</main>

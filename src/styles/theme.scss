@@ -2,7 +2,7 @@
   --font-size: 15px;
   --font-family: 'Outfit', system-ui, sans-serif;
 
-  --background: #f5f6fa;
+  --background: #e7e9f0;
   --foreground: #0d0f1a;
 
   --card: #ffffff;
@@ -11,10 +11,11 @@
   --popover: #ffffff;
   --popover-foreground: #0d0f1a;
 
-  --primary: #6355e8;
-  --primary-foreground: #ffffff;
+  --primary: 99 85 232;
 
-  --secondary: #eef0f7;
+  --primary-foreground: #fcfcfc;
+
+  --secondary: #ece9fb;
   --secondary-foreground: #4a4c60;
 
   --muted: #eef0f7;
@@ -47,7 +48,7 @@
 
   /* Sidebar */
   --sidebar: #f0f1f8;
-  --sidebar-foreground: #6b6d84;
+  --sidebar-foreground: #4c4e5f;
   --sidebar-primary: #6355e8;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #e4e6f2;
