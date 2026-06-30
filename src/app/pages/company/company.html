@@ -1,35 +1,35 @@
-<div class="p-6 space-y-6">
-  <!-- STATS / CARDS PLACEHOLDER -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-    <div class="p-4 rounded-xl border border-border bg-card">
-      <div class="text-sm text-muted-foreground">Total company</div>
-      <div class="text-2xl font-bold text-foreground mt-2">0</div>
+<main class="flex-1 overflow-auto p-6">
+  <div class="space-y-5 max-w-2xl">
+    <div>
+      <h1 class="text-xl font-semibold text-foreground">Company</h1>
+      <p class="text-sm text-muted-foreground font-mono">20100234567</p>
     </div>
-
-    <div class="p-4 rounded-xl border border-border bg-card">
-      <div class="text-sm text-muted-foreground">Active</div>
-      <div class="text-2xl font-bold text-foreground mt-2">0</div>
+    <div class="bg-card border border-border rounded-2xl p-6 space-y-4">
+      <h2 class="text-sm font-semibold text-foreground">Company Information</h2>
+      <div class=""><label class="block text-xs font-medium text-muted-foreground mb-1.5">Company Name<span
+            class="text-destructive ml-0.5">*</span></label><input type="text"
+          class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
+          value="Luxe Studio"></div>
+      <div class="grid grid-cols-2 gap-4">
+        <div class=""><label class="block text-xs font-medium text-muted-foreground mb-1.5">RUC</label><input
+            type="text"
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
+            value="20100234567"></div>
+        <div class=""><label class="block text-xs font-medium text-muted-foreground mb-1.5">Phone</label><input
+            type="text"
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
+            value="+51 1 445-8900"></div>
+      </div>
+      <div class=""><label class="block text-xs font-medium text-muted-foreground mb-1.5">Email</label><input
+          type="email"
+          class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
+          value="contact@luxestudio.pe"></div>
+      <div class=""><label class="block text-xs font-medium text-muted-foreground mb-1.5">Address</label><input
+          type="text"
+          class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
+          value="Av. Larco 821, Miraflores, Lima"></div><button
+        class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95  ">Save
+        Changes</button>
     </div>
-
-    <div class="p-4 rounded-xl border border-border bg-card">
-      <div class="text-sm text-muted-foreground">Inactive</div>
-      <div class="text-2xl font-bold text-foreground mt-2">0</div>
-    </div>
-
   </div>
-  <!-- TABLE PLACEHOLDER -->
-  <div class="rounded-xl border border-border bg-card overflow-hidden">
-
-    <div class="p-4 border-b border-border">
-      <h2 class="text-sm font-semibold text-foreground">
-        Company list
-      </h2>
-    </div>
-
-    <div class="p-6 text-sm text-muted-foreground">
-      No companies yet. This will be replaced with a table later.
-    </div>
-
-  </div>
-</div>
+</main>

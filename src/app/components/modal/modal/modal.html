@@ -1,0 +1,18 @@
+<div *ngIf="open" class="fixed inset-0 z-50 flex items-center justify-center">
+
+  <!-- overlay -->
+<div
+  class="absolute inset-0 bg-black/50 backdrop-blur-sm"
+  (click)="close()">
+</div>
+
+  <!-- modal -->
+<div
+  class="relative w-full max-w-lg bg-card border border-border rounded-2xl shadow-2xl flex flex-col max-h-[88vh]"
+  (click)="$event.stopPropagation()"
+>
+    <ng-content></ng-content>
+
+  </div>
+
+</div>

@@ -1,0 +1,15 @@
+<div class="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
+
+  <h3 class="font-semibold text-foreground">
+    {{ title }}
+  </h3>
+
+  <button
+    (click)="close.emit()"
+    class="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors">
+
+    <lucide-angular [img]="icons.X" class="w-4 h-4"></lucide-angular>
+
+  </button>
+
+</div>
