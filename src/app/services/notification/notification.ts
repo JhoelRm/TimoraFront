@@ -1,123 +1,61 @@
-import { Injectable, inject, signal, computed } from '@angular/core';
+import { Injectable, inject, signal, computed, NgZone } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs';
+import { tap, switchMap, Subscription, interval } from 'rxjs';
 import { Notification } from '../../models/notification';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
-
   private http = inject(HttpClient);
+  private zone = inject(NgZone);
 
-  // =========================
-  // UI STATE
-  // =========================
   private _open = signal(false);
   isOpen = this._open.asReadonly();
 
-  open() {
-    this._open.set(true);
-    this.markAsSeen();
-  }
-
-  close() {
-    this._open.set(false);
-  }
-
-  toggle() {
-    const next = !this._open();
-    this._open.set(next);
-
-    if (next) this.markAsSeen();
-  }
-
-  // =========================
-  // DATA STATE
-  // =========================
   private _notifications = signal<Notification[]>([]);
   notifications = this._notifications.asReadonly();
 
   private _loaded = signal(false);
   loaded = this._loaded.asReadonly();
 
-  // =========================
-  // DERIVED STATE (SOLO ESTO)
-  // =========================
+  unreadCount = computed(() => this._notifications().filter(n => !n.isRead).length);
+  hasNewNotifications = computed(() => this.unreadCount() > 0);
 
-  unreadCount = computed(() =>
-    this._notifications().filter(n => !n.isRead).length
-  );
+  private pollingSub?: Subscription;
 
-  hasNewNotifications = computed(() =>
-    this.unreadCount() > 0
-  );
-
-  // =========================
-  // POLLING
-  // =========================
-  private pollingInterval: any;
+  open() { this._open.set(true); this.markAsSeen(); }
+  close() { this._open.set(false); }
+  toggle() { const next = !this._open(); this._open.set(next); if (next) this.markAsSeen(); }
 
   startPolling(intervalMs: number = 5000) {
-    if (this.pollingInterval) return;
-
-    this.pollingInterval = setInterval(() => {
-      this.refresh();
-    }, intervalMs);
+    if (this.pollingSub) return;
+    this.pollingSub = interval(intervalMs).pipe(
+      switchMap(() => this.http.get<Notification[]>('/api/notifications/me')),
+      tap(data => this.zone.run(() => { this._notifications.set(data); this._loaded.set(true); }))
+    ).subscribe();
   }
 
   stopPolling() {
-    if (this.pollingInterval) {
-      clearInterval(this.pollingInterval);
-      this.pollingInterval = null;
-    }
+    this.pollingSub?.unsubscribe();
+    this.pollingSub = undefined;
   }
 
-  // =========================
-  // LOAD / REFRESH
-  // =========================
   loadNotifications() {
     if (this._loaded()) return;
-
-    this.http.get<Notification[]>('/api/notifications/me')
-      .pipe(
-        tap(data => {
-          this._notifications.set(data);
-          this._loaded.set(true);
-        })
-      )
-      .subscribe();
+    this.http.get<Notification[]>('/api/notifications/me').pipe(
+      tap(data => { this._notifications.set(data); this._loaded.set(true); })
+    ).subscribe();
   }
 
   refresh() {
-    this.http.get<Notification[]>('/api/notifications/me')
-      .pipe(
-        tap(data => {
-          this._notifications.set(data);
-          this._loaded.set(true);
-        })
-      )
-      .subscribe();
+    this.http.get<Notification[]>('/api/notifications/me').pipe(
+      tap(data => { this._notifications.set(data); this._loaded.set(true); })
+    ).subscribe();
   }
 
-  // =========================
-  // MARK AS READ
-  // =========================
   markAsRead(id: number) {
-    this._notifications.update(list =>
-      list.map(n =>
-        n.id === id ? { ...n, isRead: true } : n
-      )
-    );
-
-    return this.http.put(
-      `/api/notifications/${id}/read`,
-      {}
-    );
+    this._notifications.update(list => list.map(n => n.id === id ? { ...n, isRead: true } : n));
+    return this.http.put(`/api/notifications/${id}/read`, {});
   }
 
-  // =========================
-  // MARK AS SEEN
-  // =========================
-  markAsSeen() {
-    // opcional (solo UI tracking si luego quieres badge avanzado)
-  }
+  markAsSeen() {}
 }

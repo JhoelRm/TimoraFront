@@ -1,23 +1,34 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { PersonIdentityPatchDTO } from '../../models/person-identity';
+import {
+  PersonIdentityCreateDTO,
+  PersonIdentityPatchDTO,
+  PersonIdentityDTO
+} from '../../models/person-identity';
 
 @Injectable({ providedIn: 'root' })
 export class PersonService {
   private http = inject(HttpClient);
-
   private baseUrl = '/api/persons';
 
-  getAll(): Observable<any> {
-    return this.http.get(this.baseUrl);
+  getAll(): Observable<PersonIdentityDTO[]> {
+    return this.http.get<PersonIdentityDTO[]>(this.baseUrl);
   }
 
-  patch(id: number, body: PersonIdentityPatchDTO): Observable<any> {
-    return this.http.patch(`${this.baseUrl}/${id}`, body);
+  getById(id: number): Observable<PersonIdentityDTO> {
+    return this.http.get<PersonIdentityDTO>(`${this.baseUrl}/${id}`);
   }
 
-  getById(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/${id}`);
+  create(body: PersonIdentityCreateDTO): Observable<PersonIdentityDTO> {
+    return this.http.post<PersonIdentityDTO>(this.baseUrl, body);
+  }
+
+  patch(id: number, body: PersonIdentityPatchDTO): Observable<PersonIdentityDTO> {
+    return this.http.patch<PersonIdentityDTO>(`${this.baseUrl}/${id}`, body);
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }

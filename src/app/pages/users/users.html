@@ -1,35 +1,52 @@
 <main class="flex-1 overflow-auto p-6">
   <div class="space-y-4">
+
+    <!-- HEADER -->
     <div class="flex items-center justify-between">
       <div>
         <h1 class="text-xl font-semibold text-foreground">Users</h1>
-        <p class="text-sm text-muted-foreground">6 members</p>
+        <p class="text-sm text-muted-foreground">
+          {{ users.length }} members
+        </p>
       </div>
+
       <div class="flex items-center gap-2">
-        <div class="w-40"><select
+
+        <!-- Company select (placeholder) -->
+        <div class="w-40">
+          <select
             class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
             <option value="1">Luxe Studio</option>
             <option value="2">Meridian Wellness</option>
-          </select></div>
-        <div class="relative"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-            class="lucide lucide-search absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.3-4.3"></path>
-          </svg><input placeholder="Search users…"
-            class="pl-8 pr-3 py-1.5 text-sm bg-secondary border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 w-44 text-foreground placeholder:text-muted-foreground"
-            value=""></div><button
-          class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95  "><svg
-            xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-            class="lucide lucide-plus">
-            <path d="M5 12h14"></path>
-            <path d="M12 5v14"></path>
-          </svg>New User</button>
+          </select>
+        </div>
+
+        <!-- SEARCH (UI ready, logic futura) -->
+        <div class="relative">
+          <lucide-angular [img]="icons.Search"
+            class="absolute left-1 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4">
+          </lucide-angular>
+
+          <input placeholder="Search users…"
+            class="pl-8 pr-3 py-1.5 text-sm bg-secondary border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 w-44 text-foreground placeholder:text-muted-foreground" />
+        </div>
+
+        <!-- NEW USER -->
+        <button (click)="onCreate()"
+          class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95">
+          <lucide-angular [img]="icons.Plus" class="w-4 h-4"></lucide-angular>
+          New User
+        </button>
+
       </div>
     </div>
+
+    <!-- TABLE -->
     <div class="bg-card border border-border rounded-2xl overflow-hidden">
+
       <table class="w-full text-sm">
+
+        <!-- HEADER -->
         <thead class="border-b border-border">
           <tr>
             <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">User</th>
@@ -41,318 +58,106 @@
             <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground"></th>
           </tr>
         </thead>
+
+        <!-- BODY -->
         <tbody class="divide-y divide-border">
-          <tr class="hover:bg-secondary/20 transition-colors">
+
+          <tr *ngFor="let u of users" class="hover:bg-secondary/20 transition-colors">
+
+            <!-- USER -->
             <td class="px-4 py-3">
               <div class="flex items-center gap-3">
+
                 <div
                   class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                  A</div>
-                <div>
-                  <div class="font-medium text-foreground">Ana García</div>
-                  <div class="text-xs text-muted-foreground">+51 987 654 321</div>
+                  {{ u.person.firstName.charAt(0) }}
                 </div>
-              </div>
-            </td>
-            <td class="px-4 py-3 text-muted-foreground text-xs font-mono">ana@luxestudio.pe</td>
-            <td class="px-4 py-3"><span
-                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400">OWNER</span>
-            </td>
-            <td class="px-4 py-3">
-              <div class="flex gap-1"><span
-                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">User</span>
-              </div>
-            </td>
-            <td class="px-4 py-3"><span
-                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">Active</span>
-            </td>
-            <td class="px-4 py-3"></td>
-            <td class="px-4 py-3">
-              <div class="flex gap-1"><button
-                  class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1 text-muted-foreground hover:text-foreground hover:bg-secondary  "><svg
-                    xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-pen">
-                    <path
-                      d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z">
-                    </path>
-                  </svg></button><button
-                  class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1 bg-destructive/10 text-destructive hover:bg-destructive/20  "><svg
-                    xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-trash2 lucide-trash-2">
-                    <path d="M3 6h18"></path>
-                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                    <line x1="10" x2="10" y1="11" y2="17"></line>
-                    <line x1="14" x2="14" y1="11" y2="17"></line>
-                  </svg></button></div>
-            </td>
-          </tr>
-          <tr class="hover:bg-secondary/20 transition-colors">
-            <td class="px-4 py-3">
-              <div class="flex items-center gap-3">
-                <div
-                  class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                  C</div>
+
                 <div>
-                  <div class="font-medium text-foreground">Carlos López</div>
-                  <div class="text-xs text-muted-foreground">+51 987 123 456</div>
+                  <div class="font-medium text-foreground">
+                    {{ u.person.firstName }} {{ u.person.lastName }}
+                  </div>
+                  <div class="text-xs text-muted-foreground">
+                    {{ u.person.phone }}
+                  </div>
                 </div>
+
               </div>
             </td>
-            <td class="px-4 py-3 text-muted-foreground text-xs font-mono">carlos@luxestudio.pe</td>
-            <td class="px-4 py-3"><span
-                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400">ADMIN</span>
+
+            <!-- EMAIL -->
+            <td class="px-4 py-3 text-muted-foreground text-xs font-mono">
+              {{ u.user.email }}
             </td>
+
+            <!-- ROLE -->
             <td class="px-4 py-3">
-              <div class="flex gap-1"><span
-                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">User</span>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" [ngClass]="{
+                  'bg-amber-500/10 text-amber-400': u.user.role === 'OWNER',
+                  'bg-blue-500/10 text-blue-400': u.user.role === 'ADMIN',
+                  'bg-primary/10 text-primary': u.user.role === 'USER',
+                  'bg-secondary text-muted-foreground': u.user.role === 'STAFF'
+                }">
+                {{ u.user.role }}
+              </span>
+            </td>
+
+            <!-- TYPE -->
+            <td class="px-4 py-3">
+              <div class="flex gap-1">
+                <span
+                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                  User
+                </span>
+
+                <span *ngIf="u.customer || u.supplier"
+                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">
+                  {{ u.customer ? 'Customer' : 'Supplier' }}
+                </span>
               </div>
             </td>
-            <td class="px-4 py-3"><span
-                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">Active</span>
-            </td>
-            <td class="px-4 py-3"></td>
+
+            <!-- STATUS -->
             <td class="px-4 py-3">
-              <div class="flex gap-1"><button
-                  class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1 text-muted-foreground hover:text-foreground hover:bg-secondary  "><svg
-                    xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-pen">
-                    <path
-                      d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z">
-                    </path>
-                  </svg></button><button
-                  class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1 bg-destructive/10 text-destructive hover:bg-destructive/20  "><svg
-                    xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-trash2 lucide-trash-2">
-                    <path d="M3 6h18"></path>
-                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                    <line x1="10" x2="10" y1="11" y2="17"></line>
-                    <line x1="14" x2="14" y1="11" y2="17"></line>
-                  </svg></button></div>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" [ngClass]="{
+                  'bg-emerald-500/10 text-emerald-400': u.person.status === 'ACTIVE',
+                  'bg-red-500/10 text-red-400': u.person.status === 'INACTIVE'
+                }">
+                {{ u.person.status }}
+              </span>
             </td>
+
+            <!-- PERMISSIONS -->
+            <td class="px-4 py-3">
+              <button
+                class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1 text-muted-foreground hover:text-foreground hover:bg-secondary">
+                <lucide-angular [img]="icons.Shield" class="w-4 h-4"></lucide-angular>
+                Perms
+              </button>
+            </td>
+
+            <!-- ACTIONS -->
+            <td class="px-4 py-3">
+              <div class="flex gap-1">
+
+                <button (click)="onEdit(u.person.id)"
+                  class="inline-flex items-center rounded-xl px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary">
+                  <lucide-angular [img]="icons.Pencil" class="w-4 h-4"></lucide-angular>
+                </button>
+
+                <button (click)="onDelete(u.person.id)"
+                  class="inline-flex items-center rounded-xl px-2.5 py-1 text-xs bg-destructive/10 text-destructive hover:bg-destructive/20">
+                  <lucide-angular [img]="icons.Trash2" class="w-4 h-4"></lucide-angular>
+                </button>
+
+              </div>
+            </td>
+
           </tr>
-          <tr class="hover:bg-secondary/20 transition-colors">
-            <td class="px-4 py-3">
-              <div class="flex items-center gap-3">
-                <div
-                  class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                  M</div>
-                <div>
-                  <div class="font-medium text-foreground">María Rodríguez</div>
-                  <div class="text-xs text-muted-foreground">+51 956 789 012</div>
-                </div>
-              </div>
-            </td>
-            <td class="px-4 py-3 text-muted-foreground text-xs font-mono">maria@luxestudio.pe</td>
-            <td class="px-4 py-3"><span
-                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-secondary text-muted-foreground">USER</span>
-            </td>
-            <td class="px-4 py-3">
-              <div class="flex gap-1"><span
-                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">User</span>
-              </div>
-            </td>
-            <td class="px-4 py-3"><span
-                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">Active</span>
-            </td>
-            <td class="px-4 py-3"><button
-                class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1 text-muted-foreground hover:text-foreground hover:bg-secondary  "><svg
-                  xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                  class="lucide lucide-shield">
-                  <path
-                    d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
-                  </path>
-                </svg>Perms</button></td>
-            <td class="px-4 py-3">
-              <div class="flex gap-1"><button
-                  class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1 text-muted-foreground hover:text-foreground hover:bg-secondary  "><svg
-                    xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-pen">
-                    <path
-                      d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z">
-                    </path>
-                  </svg></button><button
-                  class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1 bg-destructive/10 text-destructive hover:bg-destructive/20  "><svg
-                    xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-trash2 lucide-trash-2">
-                    <path d="M3 6h18"></path>
-                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                    <line x1="10" x2="10" y1="11" y2="17"></line>
-                    <line x1="14" x2="14" y1="11" y2="17"></line>
-                  </svg></button></div>
-            </td>
-          </tr>
-          <tr class="hover:bg-secondary/20 transition-colors">
-            <td class="px-4 py-3">
-              <div class="flex items-center gap-3">
-                <div
-                  class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                  I</div>
-                <div>
-                  <div class="font-medium text-foreground">Isabella Chen</div>
-                  <div class="text-xs text-muted-foreground">+51 945 678 901</div>
-                </div>
-              </div>
-            </td>
-            <td class="px-4 py-3 text-muted-foreground text-xs font-mono">isabella@luxestudio.pe</td>
-            <td class="px-4 py-3"><span
-                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-secondary text-muted-foreground">USER</span>
-            </td>
-            <td class="px-4 py-3">
-              <div class="flex gap-1"><span
-                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">User</span><span
-                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">Staff</span>
-              </div>
-            </td>
-            <td class="px-4 py-3"><span
-                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">Active</span>
-            </td>
-            <td class="px-4 py-3"><button
-                class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1 text-muted-foreground hover:text-foreground hover:bg-secondary  "><svg
-                  xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                  class="lucide lucide-shield">
-                  <path
-                    d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
-                  </path>
-                </svg>Perms</button></td>
-            <td class="px-4 py-3">
-              <div class="flex gap-1"><button
-                  class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1 text-muted-foreground hover:text-foreground hover:bg-secondary  "><svg
-                    xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-pen">
-                    <path
-                      d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z">
-                    </path>
-                  </svg></button><button
-                  class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1 bg-destructive/10 text-destructive hover:bg-destructive/20  "><svg
-                    xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-trash2 lucide-trash-2">
-                    <path d="M3 6h18"></path>
-                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                    <line x1="10" x2="10" y1="11" y2="17"></line>
-                    <line x1="14" x2="14" y1="11" y2="17"></line>
-                  </svg></button></div>
-            </td>
-          </tr>
-          <tr class="hover:bg-secondary/20 transition-colors">
-            <td class="px-4 py-3">
-              <div class="flex items-center gap-3">
-                <div
-                  class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                  D</div>
-                <div>
-                  <div class="font-medium text-foreground">Diego Torres</div>
-                  <div class="text-xs text-muted-foreground">+51 934 567 890</div>
-                </div>
-              </div>
-            </td>
-            <td class="px-4 py-3 text-muted-foreground text-xs font-mono">diego@luxestudio.pe</td>
-            <td class="px-4 py-3"><span
-                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400">ADMIN</span>
-            </td>
-            <td class="px-4 py-3">
-              <div class="flex gap-1"><span
-                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">User</span><span
-                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">Staff</span>
-              </div>
-            </td>
-            <td class="px-4 py-3"><span
-                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">Active</span>
-            </td>
-            <td class="px-4 py-3"></td>
-            <td class="px-4 py-3">
-              <div class="flex gap-1"><button
-                  class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1 text-muted-foreground hover:text-foreground hover:bg-secondary  "><svg
-                    xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-pen">
-                    <path
-                      d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z">
-                    </path>
-                  </svg></button><button
-                  class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1 bg-destructive/10 text-destructive hover:bg-destructive/20  "><svg
-                    xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-trash2 lucide-trash-2">
-                    <path d="M3 6h18"></path>
-                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                    <line x1="10" x2="10" y1="11" y2="17"></line>
-                    <line x1="14" x2="14" y1="11" y2="17"></line>
-                  </svg></button></div>
-            </td>
-          </tr>
-          <tr class="hover:bg-secondary/20 transition-colors">
-            <td class="px-4 py-3">
-              <div class="flex items-center gap-3">
-                <div
-                  class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                  S</div>
-                <div>
-                  <div class="font-medium text-foreground">Sofía Morales</div>
-                  <div class="text-xs text-muted-foreground">+51 923 456 789</div>
-                </div>
-              </div>
-            </td>
-            <td class="px-4 py-3 text-muted-foreground text-xs font-mono">sofia@luxestudio.pe</td>
-            <td class="px-4 py-3"><span
-                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-secondary text-muted-foreground">USER</span>
-            </td>
-            <td class="px-4 py-3">
-              <div class="flex gap-1"><span
-                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">User</span><span
-                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">Staff</span>
-              </div>
-            </td>
-            <td class="px-4 py-3"><span
-                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">Active</span>
-            </td>
-            <td class="px-4 py-3"><button
-                class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1 text-muted-foreground hover:text-foreground hover:bg-secondary  "><svg
-                  xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                  class="lucide lucide-shield">
-                  <path
-                    d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
-                  </path>
-                </svg>Perms</button></td>
-            <td class="px-4 py-3">
-              <div class="flex gap-1"><button
-                  class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1 text-muted-foreground hover:text-foreground hover:bg-secondary  "><svg
-                    xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-pen">
-                    <path
-                      d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z">
-                    </path>
-                  </svg></button><button
-                  class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1 bg-destructive/10 text-destructive hover:bg-destructive/20  "><svg
-                    xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-trash2 lucide-trash-2">
-                    <path d="M3 6h18"></path>
-                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                    <line x1="10" x2="10" y1="11" y2="17"></line>
-                    <line x1="14" x2="14" y1="11" y2="17"></line>
-                  </svg></button></div>
-            </td>
-          </tr>
+
         </tbody>
       </table>
     </div>
+
   </div>
 </main>
