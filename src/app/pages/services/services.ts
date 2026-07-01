@@ -39,9 +39,6 @@ interface EditServiceForm {
 })
 export class ServicesComponent implements OnInit {
   
-  // ==============================
-  // MODALES
-  // ==============================
   isEditMode = false;
   editModalOpen = false;
   editServiceId: number | null = null;
@@ -52,9 +49,6 @@ export class ServicesComponent implements OnInit {
   serviceForm: ServiceForm = this.createEmptyForm();
   editForm: EditServiceForm = this.createEmptyEditForm();
 
-  // ==============================
-  // DATOS
-  // ==============================
   currentUser: CurrentUser | null = null;
   currentUserSupplier: PersonIdentityDTO | null = null;
   allServices: ServiceDTO[] = [];
@@ -64,17 +58,14 @@ export class ServicesComponent implements OnInit {
   filteredSuppliers: PersonIdentityDTO[] = [];
   modalSuppliers: PersonIdentityDTO[] = [];
   
-  // Filtros
   searchTerm = '';
   selectedCompanyId: number | null = null;
   selectedSupplierId: number | null = null;
 
-  // UI
   loading = false;
   ready = false;
   modalOpen = false;
 
-  // Cache para suppliers
   private _cachedSupplierOptions: { id: number, name: string }[] = [];
   private _cachedUniqueSuppliers: { id: number, name: string, specialty?: string }[] = [];
 
@@ -86,9 +77,6 @@ export class ServicesComponent implements OnInit {
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
 
-  // ==============================
-  // GETTERS
-  // ==============================
   get isOwner() { return this.currentUser?.role === 'OWNER' }
   get isAdmin() { return this.currentUser?.role === 'ADMIN' }
   get isUser() { return this.currentUser?.role === 'USER' }
@@ -99,17 +87,11 @@ export class ServicesComponent implements OnInit {
     return this._cachedSupplierOptions;
   }
 
-  // ==============================
-  // LIFECYCLE
-  // ==============================
   ngOnInit(): void {
     this.currentUser = this.authService.getUser();
     this.loadData();
   }
 
-  // ==============================
-  // CARGA DE DATOS
-  // ==============================
   private loadData() {
     if (this.isOwner) this.loadCompanies();
     this.loadSuppliers();
@@ -130,39 +112,14 @@ export class ServicesComponent implements OnInit {
   private loadSuppliers() {
     this.personService.getAll().subscribe({
       next: d => {
-        // ✅ CORREGIDO: Filtrar solo personas que tienen supplier
         let suppliers = (d ?? []).filter(x => x.supplier !== null && x.supplier !== undefined);
-        
-        console.log('📦 All suppliers from API:', d?.length);
-        console.log('📦 Suppliers with supplier defined:', suppliers.length);
-        
-        // ✅ Mostrar estructura para depuración
-        if (suppliers.length > 0) {
-          console.log('📦 First supplier:', suppliers[0]);
-          console.log('📦 First supplier person.companyId:', suppliers[0].person.companyId);
-          console.log('📦 First supplier supplier.companyId:', suppliers[0].supplier?.companyId);
-        }
-        
-        // ✅ FILTROS POR ROL
         if (this.isUser && this.currentUser) {
           suppliers = suppliers.filter(s => s.person.id === this.currentUser?.personId);
-          console.log('📦 Suppliers after USER filter:', suppliers.length);
         }
-        
         if (this.isAdmin && this.currentUser) {
           suppliers = suppliers.filter(s => s.person.companyId === this.currentUser?.companyId);
-          console.log('📦 Suppliers after ADMIN filter:', suppliers.length);
         }
-        
-        // ✅ Guardar todos los suppliers sin filtrar por compañía
         this.allSuppliers = suppliers;
-        console.log('📦 Final allSuppliers:', this.allSuppliers.length);
-        
-        // ✅ Mostrar todos los suppliers con sus companyId
-        this.allSuppliers.forEach(s => {
-          console.log(`📦 Supplier: ${s.person.firstName} ${s.person.lastName} - CompanyId: ${s.person.companyId}`);
-        });
-        
         this.updateModalSuppliers();
         this.filterSuppliersByCompany();
         this.cdr.detectChanges();
@@ -173,7 +130,6 @@ export class ServicesComponent implements OnInit {
 
   private loadCurrentUserSupplier() {
     if (!this.currentUser) return;
-    
     this.personService.getById(this.currentUser.personId).subscribe({
       next: (person) => {
         if (person.supplier) {
@@ -204,37 +160,29 @@ export class ServicesComponent implements OnInit {
     });
   }
 
-  // ==============================
-  // FILTROS
-  // ==============================
   filterSuppliersByCompany() {
     if (this.isOwner && this.selectedCompanyId !== null) {
       this.filteredSuppliers = this.allSuppliers.filter(s => s.person.companyId === this.selectedCompanyId);
     } else {
       this.filteredSuppliers = this.allSuppliers;
     }
-    
     if (this.selectedSupplierId !== null) {
       const stillExists = this.filteredSuppliers.some(s => s.supplier?.id === this.selectedSupplierId);
       if (!stillExists) {
         this.selectedSupplierId = null;
       }
     }
-    
     this.cdr.detectChanges();
   }
 
   applyFilter() {
     let r = [...this.allServices];
-
     if (this.isOwner && this.selectedCompanyId !== null) {
       r = r.filter(x => x.companyId === this.selectedCompanyId);
     }
-
     if ((this.isOwner || this.isAdmin) && this.selectedSupplierId !== null) {
       r = r.filter(x => x.supplierId === this.selectedSupplierId);
     }
-
     const t = this.searchTerm.trim().toLowerCase();
     if (t) {
       r = r.filter(x =>
@@ -243,7 +191,6 @@ export class ServicesComponent implements OnInit {
         x.supplierName.toLowerCase().includes(t)
       );
     }
-
     this.services = r;
     this.updateCache();
   }
@@ -264,30 +211,23 @@ export class ServicesComponent implements OnInit {
     this.applyFilter();
   }
 
-  // ==============================
-  // CACHE
-  // ==============================
   private updateCache() {
     let services = this.allServices;
     if (this.isOwner && this.selectedCompanyId !== null) {
       services = services.filter(s => s.companyId === this.selectedCompanyId);
     }
-    
     const supplierMap = new Map<number, string>();
     for (const service of services) {
       if (!supplierMap.has(service.supplierId)) {
         supplierMap.set(service.supplierId, service.supplierName);
       }
     }
-    
     this._cachedSupplierOptions = [];
     for (const [id, name] of supplierMap) {
       this._cachedSupplierOptions.push({ id, name });
     }
-
     const supplierIds = new Set(this.services.map(s => s.supplierId));
     this._cachedUniqueSuppliers = [];
-    
     for (const id of supplierIds) {
       const service = this.services.find(s => s.supplierId === id);
       if (service) {
@@ -309,9 +249,6 @@ export class ServicesComponent implements OnInit {
     return this._cachedUniqueSuppliers;
   }
 
-  // ==============================
-  // STATUS
-  // ==============================
   getStatusClass(status: string): string {
     const classes: { [key: string]: string } = {
       'ACTIVE': 'bg-emerald-500/10 text-emerald-400',
@@ -334,48 +271,38 @@ export class ServicesComponent implements OnInit {
 
   createService() {
     const f = this.serviceForm;
-
     let companyId: number | null = null;
-    
     if (this.isOwner) {
       companyId = f.companyId;
     } else if (this.isAdmin || this.isUser) {
       companyId = this.currentUser?.companyId ?? null;
     }
-
     if (!companyId) {
       console.error('Company ID is required');
       return;
     }
-
     let supplierId: number | null = null;
-    
     if (this.isUser && this.currentUserSupplier?.supplier) {
       supplierId = this.currentUserSupplier.supplier.id;
     } else {
       supplierId = f.supplierId;
     }
-
     if (!supplierId) {
       console.error('Supplier is required');
       return;
     }
-
     if (!f.name) {
       console.error('Service name is required');
       return;
     }
-
     if (!f.price) {
       console.error('Price is required');
       return;
     }
-
     if (!f.duration) {
       console.error('Duration is required');
       return;
     }
-
     const payload: ServiceCreateDTO = {
       companyId: Number(companyId),
       supplierId: Number(supplierId),
@@ -385,28 +312,20 @@ export class ServicesComponent implements OnInit {
       duration: Number(f.duration),
       status: f.status || 'ACTIVE'
     };
-
-    console.log('📤 Creating service:', payload);
-
     this.servicesService.create(payload).subscribe({
       next: () => {
-        console.log('✅ Service created successfully');
         this.modalOpen = false;
         this.loadServices();
       },
       error: (error) => {
-        console.error('❌ Error creating service:', error);
+        console.error('Error creating service:', error);
       }
     });
   }
 
-  // ==============================
-  // MODALES - EDITAR
-  // ==============================
   onEdit(service: ServiceDTO) {
     this.isEditMode = true;
     this.editServiceId = service.id;
-
     this.editForm = {
       name: service.name,
       description: service.description,
@@ -414,7 +333,6 @@ export class ServicesComponent implements OnInit {
       duration: service.duration,
       status: service.status
     };
-
     this.editModalOpen = true;
   }
 
@@ -428,9 +346,7 @@ export class ServicesComponent implements OnInit {
       console.error('No service ID for update');
       return;
     }
-
     const f = this.editForm;
-
     const payload: ServicePatchDTO = {
       name: f.name,
       description: f.description,
@@ -438,7 +354,6 @@ export class ServicesComponent implements OnInit {
       duration: f.duration || undefined,
       status: f.status
     };
-
     this.servicesService.patch(this.editServiceId, payload).subscribe({
       next: () => {
         this.editModalOpen = false;
@@ -449,9 +364,6 @@ export class ServicesComponent implements OnInit {
     });
   }
 
-  // ==============================
-  // MODALES - ELIMINAR
-  // ==============================
   onDelete(service: ServiceDTO) {
     this.serviceToDelete = service;
     this.deleteModalOpen = true;
@@ -464,7 +376,6 @@ export class ServicesComponent implements OnInit {
 
   confirmDelete() {
     if (!this.serviceToDelete) return;
-
     this.servicesService.delete(this.serviceToDelete.id).subscribe({
       next: () => {
         this.deleteModalOpen = false;
@@ -475,9 +386,6 @@ export class ServicesComponent implements OnInit {
     });
   }
 
-  // ==============================
-  // FORMULARIOS VACÍOS
-  // ==============================
   private createEmptyForm(): ServiceForm {
     return {
       companyId: null,
@@ -500,113 +408,56 @@ export class ServicesComponent implements OnInit {
     };
   }
 
-  // ==============================
-  // MODALES - CREAR (CORREGIDO)
-  // ==============================
   openCreateModal() {
-    console.log('🔵 Opening create modal');
     this.isEditMode = false;
     this.editServiceId = null;
     this.serviceForm = this.createEmptyForm();
-    
     if (this.isAdmin && this.currentUser) {
       this.serviceForm.companyId = this.currentUser.companyId ?? null;
-      console.log('🔵 Admin - Company ID:', this.serviceForm.companyId);
     }
-    
     if (this.isUser && this.currentUserSupplier?.supplier) {
       this.serviceForm.companyId = this.currentUser?.companyId ?? null;
       this.serviceForm.supplierId = this.currentUserSupplier.supplier.id;
-      console.log('🔵 User - Supplier ID:', this.serviceForm.supplierId);
     }
-    
-    // ✅ IMPORTANTE: Inicializar modalSuppliers con el filtro correcto
     this.updateModalSuppliers();
-    console.log('🔵 Modal suppliers after filter:', this.modalSuppliers.length);
-    
     this.modalOpen = true;
-    
     setTimeout(() => {
       this.cdr.detectChanges();
     }, 100);
   }
 
   closeModal() {
-    console.log('🔴 Closing modal');
     this.modalOpen = false;
     this.modalSuppliers = [];
     this.serviceForm = this.createEmptyForm();
   }
 
   onModalCompanyChange() {
-    console.log('🟡 Company changed in modal:', this.serviceForm.companyId);
-    // Actualizar suppliers cuando cambia la compañía en el modal
     this.updateModalSuppliers();
-    
-    // Resetear supplier seleccionado
     this.serviceForm.supplierId = null;
-    
-    console.log('🟡 Modal suppliers after company change:', this.modalSuppliers.length);
     this.cdr.detectChanges();
   }
 
-private updateModalSuppliers() {
-  console.log('🔄 Updating modal suppliers');
-  console.log('All suppliers:', this.allSuppliers.length);
-  
-  const companyId = this.serviceForm.companyId;
-  console.log('Current company ID:', companyId, 'Type:', typeof companyId);
-  
-  // ✅ Filtrar solo suppliers que tienen supplier definido
-  let suppliers = this.allSuppliers.filter(s => s.supplier !== null && s.supplier !== undefined);
-  console.log('Suppliers with supplier defined:', suppliers.length);
-  
-  // ✅ Mostrar la estructura para depuración
-  if (suppliers.length > 0) {
-    console.log('🔴 First supplier structure:', suppliers[0]);
-    console.log('🔴 First supplier person.companyId:', suppliers[0].person.companyId, 'Type:', typeof suppliers[0].person.companyId);
-  }
-  
-  // ✅ Filtrar por compañía si hay una seleccionada
-  if (companyId !== null && companyId !== undefined) {
-    // 🔴 CORREGIDO: Convertir ambos a número para comparación
-    const companyIdNum = Number(companyId);
-    
-    suppliers = suppliers.filter(s => {
-      const supplierCompanyId = s.person.companyId;
-      // 🔴 CORREGIDO: Comparar como números
-      const match = Number(supplierCompanyId) === companyIdNum;
-      console.log(`🔍 Supplier: ${s.person.firstName} ${s.person.lastName} - CompanyId: ${supplierCompanyId} (${typeof supplierCompanyId}) - Buscando: ${companyIdNum} (${typeof companyIdNum}) - Match: ${match}`);
-      return match;
-    });
-    console.log('Suppliers filtered by company:', suppliers.length);
-  }
-  
-  // ✅ Actualizar la lista de suppliers para el modal
-  this.modalSuppliers = suppliers;
-  console.log('Final modal suppliers:', this.modalSuppliers.length);
-  
-  // ✅ Mostrar los suppliers filtrados
-  this.modalSuppliers.forEach(s => {
-    console.log(`✅ Supplier: ${s.person.firstName} ${s.person.lastName} - Company: ${s.person.companyId}`);
-  });
-  
-  // ✅ Si el supplier seleccionado ya no está en la lista, resetearlo
-  if (this.serviceForm.supplierId !== null) {
-    const stillExists = this.modalSuppliers.some(s => s.supplier?.id === this.serviceForm.supplierId);
-    if (!stillExists) {
-      this.serviceForm.supplierId = null;
-      console.log('🔄 Reset supplierId because it no longer exists');
+  private updateModalSuppliers() {
+    const companyId = this.serviceForm.companyId;
+    let suppliers = this.allSuppliers.filter(s => s.supplier !== null && s.supplier !== undefined);
+    if (companyId !== null && companyId !== undefined) {
+      const companyIdNum = Number(companyId);
+      suppliers = suppliers.filter(s => {
+        const supplierCompanyId = s.person.companyId;
+        return Number(supplierCompanyId) === companyIdNum;
+      });
     }
+    this.modalSuppliers = suppliers;
+    if (this.serviceForm.supplierId !== null) {
+      const stillExists = this.modalSuppliers.some(s => s.supplier?.id === this.serviceForm.supplierId);
+      if (!stillExists) {
+        this.serviceForm.supplierId = null;
+      }
+    }
+    this.cdr.detectChanges();
   }
-  
-  // 🔴 FORZAR DETECCIÓN DE CAMBIOS
-  this.cdr.detectChanges();
-}
 
-  // ==============================
-  // TRACK BY
-  // ==============================
   trackBySupplierId(index: number, item: PersonIdentityDTO): number {
     return item.supplier?.id ?? index;
   }

@@ -53,467 +53,594 @@
     </div>
 
     <!-- TABLE -->
-<!-- TABLE -->
-<div class="bg-card border border-border rounded-2xl overflow-hidden">
+    <!-- TABLE -->
+    <div class="bg-card border border-border rounded-2xl overflow-hidden">
 
-  <table class="w-full text-sm">
+      <table class="w-full text-sm">
 
-    <!-- HEADER -->
-    <thead class="border-b border-border">
-      <tr>
-        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">User</th>
-        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Email</th>
-        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Role</th>
-        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Type</th>
-        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Status</th>
-        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Permissions</th>
-        <th class="px-4 py-3"></th>
-      </tr>
-    </thead>
+        <!-- HEADER -->
+        <thead class="border-b border-border">
+          <tr>
+            <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">User</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Email</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Role</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Type</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Status</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Permissions</th>
+            <th class="px-4 py-3"></th>
+          </tr>
+        </thead>
 
-    <!-- BODY -->
-    <tbody class="divide-y divide-border">
+        <!-- BODY -->
+        <tbody class="divide-y divide-border">
 
-      <tr *ngFor="let u of users" class="hover:bg-secondary/20 transition-colors">
+          <tr *ngFor="let u of users" class="hover:bg-secondary/20 transition-colors">
 
-        <!-- USER -->
-        <td class="px-4 py-3">
-          <div class="flex items-center gap-3">
+            <!-- USER -->
+            <td class="px-4 py-3">
+              <div class="flex items-center gap-3">
 
-            <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-              {{ u.person.firstName.charAt(0) }}
-            </div>
+                <div
+                  class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+                  {{ u.person.firstName.charAt(0) }}
+                </div>
 
-            <div>
-              <div class="font-medium text-foreground">
-                {{ u.person.firstName }} {{ u.person.lastName }}
+                <div>
+                  <div class="font-medium text-foreground">
+                    {{ u.person.firstName }} {{ u.person.lastName }}
+                  </div>
+                  <div class="text-xs text-muted-foreground">
+                    {{ u.person.phone }}
+                  </div>
+                </div>
+
               </div>
-              <div class="text-xs text-muted-foreground">
-                {{ u.person.phone }}
-              </div>
-            </div>
+            </td>
 
-          </div>
-        </td>
+            <!-- EMAIL -->
+            <td class="px-4 py-3 text-muted-foreground text-xs font-mono">
+              {{ u.user?.email || '-' }}
+            </td>
 
-        <!-- EMAIL -->
-        <td class="px-4 py-3 text-muted-foreground text-xs font-mono">
-          {{ u.user?.email || '-' }}
-        </td>
-
-        <!-- ROLE -->
-        <td class="px-4 py-3">
-          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" [ngClass]="{
+            <!-- ROLE -->
+            <td class="px-4 py-3">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" [ngClass]="{
             'bg-primary/10 text-primary': getRole(u) === 'OWNER',
             'bg-blue-500/10 text-blue-400': getRole(u) === 'ADMIN',
             'bg-emerald-500/10 text-emerald-400': getRole(u) === 'USER',
             'bg-amber-500/10 text-amber-400': getRole(u) === 'STAFF'
           }">
-            {{ u.user?.role ?? 'STAFF' }}
-          </span>
-        </td>
+                {{ u.user?.role ?? 'STAFF' }}
+              </span>
+            </td>
 
-        <!-- TYPE -->
-        <td class="px-4 py-3">
-          <div class="flex gap-1">
+            <!-- TYPE -->
+            <td class="px-4 py-3">
+              <div class="flex gap-1">
 
-            <!-- USER (solo si existe user) -->
-            <span *ngIf="u.user"
-              class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-              User
-            </span>
+                <!-- USER (solo si existe user) -->
+                <span *ngIf="u.user"
+                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                  User
+                </span>
 
-            <!-- CUSTOMER -->
-            <span *ngIf="u.customer"
-              class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">
-              Customer
-            </span>
+                <!-- CUSTOMER -->
+                <span *ngIf="u.customer"
+                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">
+                  Customer
+                </span>
 
-            <!-- SUPPLIER -->
-            <span *ngIf="u.supplier"
-              class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">
-              Supplier
-            </span>
+                <!-- SUPPLIER -->
+                <span *ngIf="u.supplier"
+                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">
+                  Supplier
+                </span>
 
-          </div>
-        </td>
+              </div>
+            </td>
 
-        <!-- STATUS -->
-        <td class="px-4 py-3">
-          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" [ngClass]="{
+            <!-- STATUS -->
+            <td class="px-4 py-3">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" [ngClass]="{
             'bg-emerald-500/10 text-emerald-400': u.person.status === 'ACTIVE',
             'bg-red-500/10 text-red-400': u.person.status === 'INACTIVE'
           }">
-            {{ u.person.status }}
-          </span>
-        </td>
+                {{ u.person.status }}
+              </span>
+            </td>
+            <!-- PERMISSIONS -->
+            <td class="px-4 py-3">
+              <button *ngIf="u.user?.role === 'USER' || u.user?.role === 'STAFF'" 
+                (click)="openPermissionsModal(u)"
+                class="inline-flex items-center rounded-xl px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary">
+                <lucide-angular [img]="icons.Shield" class="w-4 h-4"></lucide-angular>
+                Perms
+              </button>
+              <span *ngIf="u.user?.role === 'OWNER'" 
+                class="text-xs text-amber-400/70" title="Owner has full access">
+                Full Access
+              </span>
+              <span *ngIf="u.user?.role === 'ADMIN'" 
+                class="text-xs text-blue-400/70" title="Admin has full access">
+                Tenant Access
+              </span>
+            </td>
 
-        <!-- PERMISSIONS -->
-        <td class="px-4 py-3">
-          <button class="inline-flex items-center rounded-xl px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary">
-            <lucide-angular [img]="icons.Shield" class="w-4 h-4"></lucide-angular>
-            Perms
+            <!-- ACTIONS -->
+            <td class="px-4 py-3">
+              <div class="flex gap-1">
+
+                <button (click)="onEdit(u)"
+                  class="inline-flex items-center rounded-xl px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary">
+                  <lucide-angular [img]="icons.Pencil" class="w-4 h-4"></lucide-angular>
+                </button>
+
+                <button (click)="onDelete(u)"
+                  class="inline-flex items-center rounded-xl px-2.5 py-1 text-xs bg-destructive/10 text-destructive hover:bg-destructive/20">
+                  <lucide-angular [img]="icons.Trash2" class="w-4 h-4"></lucide-angular>
+                </button>
+
+              </div>
+            </td>
+
+          </tr>
+
+        </tbody>
+      </table>
+
+
+      <!-- ========================= -->
+      <!-- CREATE USER MODAL -->
+      <!-- ========================= -->
+      <app-modal [open]="modalOpen" (openChange)="modalOpen = $event">
+
+        <!-- HEADER -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
+          <h3 class="font-semibold text-foreground">New User</h3>
+
+          <button (click)="closeModal()"
+            class="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors">
+
+            <lucide-angular [img]="icons.X" class="w-4 h-4"></lucide-angular>
           </button>
-        </td>
+        </div>
 
-        <!-- ACTIONS -->
-        <td class="px-4 py-3">
-          <div class="flex gap-1">
+        <!-- BODY -->
+        <div class="overflow-y-auto flex-1 p-6 space-y-5">
 
-            <button (click)="onEdit(u)"
-              class="inline-flex items-center rounded-xl px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary">
-              <lucide-angular [img]="icons.Pencil" class="w-4 h-4"></lucide-angular>
-            </button>
+          <!-- ========================= -->
+          <!-- ACCOUNT TYPE -->
+          <!-- ========================= -->
+          <div>
+            <label class="block text-xs font-medium text-muted-foreground mb-2">
+              Account type
+            </label>
 
-            <button (click)="onDelete(u)"
-              class="inline-flex items-center rounded-xl px-2.5 py-1 text-xs bg-destructive/10 text-destructive hover:bg-destructive/20">
-              <lucide-angular [img]="icons.Trash2" class="w-4 h-4"></lucide-angular>
-            </button>
+            <div class="grid grid-cols-3 gap-2">
 
-          </div>
-        </td>
-
-      </tr>
-
-    </tbody>
-  </table>
-
-
-<!-- ========================= -->
-<!-- CREATE USER MODAL -->
-<!-- ========================= -->
-<app-modal [open]="modalOpen" (openChange)="modalOpen = $event">
-
-  <!-- HEADER -->
-  <div class="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
-    <h3 class="font-semibold text-foreground">New User</h3>
-
-    <button (click)="closeModal()"
-      class="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors">
-
-      <lucide-angular [img]="icons.X" class="w-4 h-4"></lucide-angular>
-    </button>
-  </div>
-
-  <!-- BODY -->
-  <div class="overflow-y-auto flex-1 p-6 space-y-5">
-
-    <!-- ========================= -->
-    <!-- ACCOUNT TYPE -->
-    <!-- ========================= -->
-    <div>
-      <label class="block text-xs font-medium text-muted-foreground mb-2">
-        Account type
-      </label>
-
-      <div class="grid grid-cols-3 gap-2">
-
-        <button type="button" (click)="userForm.accountType = 'STAFF'"
-          class="text-left p-3 rounded-xl border transition-all" [ngClass]="userForm.accountType === 'STAFF'
+              <button type="button" (click)="userForm.accountType = 'STAFF'"
+                class="text-left p-3 rounded-xl border transition-all" [ngClass]="userForm.accountType === 'STAFF'
             ? 'border-primary bg-primary/5'
             : 'border-border hover:border-primary/30'">
 
-          <div class="text-sm font-medium">Staff Only</div>
-          <div class="text-xs text-muted-foreground mt-0.5">
-            No system login
-          </div>
-        </button>
+                <div class="text-sm font-medium">Staff Only</div>
+                <div class="text-xs text-muted-foreground mt-0.5">
+                  No system login
+                </div>
+              </button>
 
-        <button type="button" (click)="userForm.accountType = 'USER'"
-          class="text-left p-3 rounded-xl border transition-all" [ngClass]="userForm.accountType === 'USER'
+              <button type="button" (click)="userForm.accountType = 'USER'"
+                class="text-left p-3 rounded-xl border transition-all" [ngClass]="userForm.accountType === 'USER'
             ? 'border-primary bg-primary/5'
             : 'border-border hover:border-primary/30'">
 
-          <div class="text-sm font-medium">User Account</div>
-          <div class="text-xs text-muted-foreground mt-0.5">
-            Login enabled
-          </div>
-        </button>
+                <div class="text-sm font-medium">User Account</div>
+                <div class="text-xs text-muted-foreground mt-0.5">
+                  Login enabled
+                </div>
+              </button>
 
-        <button type="button" (click)="userForm.accountType = 'USER_STAFF'"
-          class="text-left p-3 rounded-xl border transition-all" [ngClass]="userForm.accountType === 'USER_STAFF'
+              <button type="button" (click)="userForm.accountType = 'USER_STAFF'"
+                class="text-left p-3 rounded-xl border transition-all" [ngClass]="userForm.accountType === 'USER_STAFF'
             ? 'border-primary bg-primary/5'
             : 'border-border hover:border-primary/30'">
 
-          <div class="text-sm font-medium">User + Staff</div>
-          <div class="text-xs text-muted-foreground mt-0.5">
-            Full access
+                <div class="text-sm font-medium">User + Staff</div>
+                <div class="text-xs text-muted-foreground mt-0.5">
+                  Full access
+                </div>
+              </button>
+
+            </div>
           </div>
-        </button>
 
-      </div>
-    </div>
+          <!-- ========================= -->
+          <!-- COMMON FIELDS -->
+          <!-- ========================= -->
+          <div class="grid grid-cols-2 gap-3">
 
-    <!-- ========================= -->
-    <!-- COMMON FIELDS -->
-    <!-- ========================= -->
-    <div class="grid grid-cols-2 gap-3">
+            <div *ngIf="currentUser?.role === 'OWNER'">
+              <label class="text-xs text-muted-foreground">Company *</label>
 
-      <div *ngIf="currentUser?.role === 'OWNER'">
-        <label class="text-xs text-muted-foreground">Company *</label>
+              <select [(ngModel)]="userForm.companyId"
+                class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm">
 
-        <select [(ngModel)]="userForm.companyId"
-          class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm">
+                <option [ngValue]="null" disabled>Select company</option>
 
-          <option [ngValue]="null" disabled>Select company</option>
+                <option *ngFor="let c of companies" [value]="c.id">
+                  {{ c.name }}
+                </option>
 
-          <option *ngFor="let c of companies" [value]="c.id">
-            {{ c.name }}
-          </option>
+              </select>
+            </div>
 
-        </select>
-      </div>
+            <div>
+              <label class="text-xs text-muted-foreground">First Name *</label>
+              <input [(ngModel)]="userForm.firstName"
+                class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
+            </div>
 
-      <div>
-        <label class="text-xs text-muted-foreground">First Name *</label>
-        <input [(ngModel)]="userForm.firstName"
-          class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
-      </div>
+            <div>
+              <label class="text-xs text-muted-foreground">Last Name *</label>
+              <input [(ngModel)]="userForm.lastName"
+                class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
+            </div>
 
-      <div>
-        <label class="text-xs text-muted-foreground">Last Name *</label>
-        <input [(ngModel)]="userForm.lastName"
-          class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
-      </div>
+            <div>
+              <label class="text-xs text-muted-foreground">Phone</label>
+              <input [(ngModel)]="userForm.phone"
+                class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
+            </div>
 
-      <div>
-        <label class="text-xs text-muted-foreground">Phone</label>
-        <input [(ngModel)]="userForm.phone"
-          class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
-      </div>
+            <!-- EMAIL SOLO USER / USER_STAFF -->
+            <div *ngIf="userForm.accountType !== 'STAFF'">
+              <label class="text-xs text-muted-foreground">Email *</label>
+              <input [(ngModel)]="userForm.email"
+                class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
+            </div>
 
-      <!-- EMAIL SOLO USER / USER_STAFF -->
-      <div *ngIf="userForm.accountType !== 'STAFF'">
-        <label class="text-xs text-muted-foreground">Email *</label>
-        <input [(ngModel)]="userForm.email"
-          class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
-      </div>
+          </div>
 
-    </div>
+          <!-- ADDRESS SOLO USER_STAFF -->
+          <div *ngIf="userForm.accountType === 'USER_STAFF'">
+            <label class="text-xs text-muted-foreground">Address</label>
+            <input [(ngModel)]="userForm.address"
+              class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
+          </div>
+          <!-- PASSWORD (solo USER / USER_STAFF) -->
+          <div *ngIf="userForm.accountType !== 'STAFF'">
+            <label class="text-xs text-muted-foreground">Password *</label>
+            <input [(ngModel)]="userForm.password" type="password"
+              class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
+          </div>
+          <!-- ========================= -->
+          <!-- STAFF EXTRA FIELDS -->
+          <!-- ========================= -->
+          <div *ngIf="userForm.accountType !== 'USER'" class="grid grid-cols-2 gap-3 pt-2 border-t border-border">
 
-    <!-- ADDRESS SOLO USER_STAFF -->
-    <div *ngIf="userForm.accountType === 'USER_STAFF'">
-      <label class="text-xs text-muted-foreground">Address</label>
-      <input [(ngModel)]="userForm.address"
-        class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
-    </div>
-    <!-- PASSWORD (solo USER / USER_STAFF) -->
-    <div *ngIf="userForm.accountType !== 'STAFF'">
-      <label class="text-xs text-muted-foreground">Password *</label>
-      <input [(ngModel)]="userForm.password" type="password"
-        class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
-    </div>
-    <!-- ========================= -->
-    <!-- STAFF EXTRA FIELDS -->
-    <!-- ========================= -->
-    <div *ngIf="userForm.accountType !== 'USER'" class="grid grid-cols-2 gap-3 pt-2 border-t border-border">
+            <div>
+              <label class="text-xs text-muted-foreground">Specialty</label>
+              <input [(ngModel)]="userForm.specialty"
+                class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
+            </div>
 
-      <div>
-        <label class="text-xs text-muted-foreground">Specialty</label>
-        <input [(ngModel)]="userForm.specialty"
-          class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
-      </div>
-
-      <div>
-        <label class="text-xs text-muted-foreground">Notes</label>
-        <textarea [(ngModel)]="userForm.notes" rows="3"
-          class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm resize-none">
+            <div>
+              <label class="text-xs text-muted-foreground">Notes</label>
+              <textarea [(ngModel)]="userForm.notes" rows="3"
+                class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm resize-none">
         </textarea>
-      </div>
+            </div>
 
-    </div>
+          </div>
 
-    <!-- ========================= -->
-    <!-- ROLE -->
-    <!-- ========================= -->
-    <div *ngIf="userForm.accountType !== 'STAFF'">
-      <label class="text-xs text-muted-foreground">Role</label>
+          <!-- ========================= -->
+          <!-- ROLE -->
+          <!-- ========================= -->
+          <div *ngIf="userForm.accountType !== 'STAFF'">
+            <label class="text-xs text-muted-foreground">Role</label>
 
-      <select [(ngModel)]="userForm.role" class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm">
+            <select [(ngModel)]="userForm.role"
+              class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm">
 
-        <option *ngFor="let role of availableRoles" [value]="role">
-          {{ role }}
-        </option>
+              <option *ngFor="let role of availableRoles" [value]="role">
+                {{ role }}
+              </option>
 
-      </select>
-    </div>
+            </select>
+          </div>
 
-  </div>
+        </div>
 
-  <!-- ========================= -->
-  <!-- FOOTER -->
-  <!-- ========================= -->
-  <div class="flex gap-2 justify-end px-6 py-4 border-t border-border">
+        <!-- ========================= -->
+        <!-- FOOTER -->
+        <!-- ========================= -->
+        <div class="flex gap-2 justify-end px-6 py-4 border-t border-border">
 
-    <button type="button" (click)="closeModal()" class="px-4 py-1.5 text-sm rounded-xl bg-secondary">
-      Cancel
-    </button>
+          <button type="button" (click)="closeModal()" class="px-4 py-1.5 text-sm rounded-xl bg-secondary">
+            Cancel
+          </button>
 
-    <button type="button" (click)="createUser()"
-      class="px-4 py-1.5 text-sm rounded-xl bg-primary text-primary-foreground">
-      Create
-    </button>
+          <button type="button" (click)="createUser()"
+            class="px-4 py-1.5 text-sm rounded-xl bg-primary text-primary-foreground">
+            Create
+          </button>
 
-  </div>
+        </div>
 
-</app-modal>
+      </app-modal>
 
-<!-- ========================= -->
-<!-- EDIT USER MODAL -->
-<!-- ========================= -->
-<app-modal [open]="editModalOpen" (openChange)="editModalOpen = $event">
+      <!-- ========================= -->
+      <!-- EDIT USER MODAL -->
+      <!-- ========================= -->
+      <app-modal [open]="editModalOpen" (openChange)="editModalOpen = $event">
 
-  <!-- HEADER -->
-  <div class="flex items-center justify-between px-6 py-4 border-b border-border">
-    <h3 class="font-semibold text-foreground">Edit User</h3>
+        <!-- HEADER -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-border">
+          <h3 class="font-semibold text-foreground">Edit User</h3>
 
-    <button (click)="closeEditModal()"
+          <button (click)="closeEditModal()"
+            class="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors">
+
+            <lucide-angular [img]="icons.X" class="w-4 h-4"></lucide-angular>
+          </button>
+        </div>
+
+        <!-- BODY -->
+        <div class="overflow-y-auto flex-1 p-6 space-y-6">
+
+          <!-- ========================= -->
+          <!-- PERSON -->
+          <!-- ========================= -->
+          <div class="grid grid-cols-2 gap-3">
+
+            <div>
+              <label class="text-xs text-muted-foreground">First Name</label>
+              <input [(ngModel)]="editForm.firstName"
+                class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
+            </div>
+
+            <div>
+              <label class="text-xs text-muted-foreground">Last Name</label>
+              <input [(ngModel)]="editForm.lastName"
+                class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
+            </div>
+
+            <div>
+              <label class="text-xs text-muted-foreground">Phone</label>
+              <input [(ngModel)]="editForm.phone"
+                class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
+            </div>
+
+            <div>
+              <label class="text-xs text-muted-foreground">Email</label>
+              <input [(ngModel)]="editForm.email"
+                class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
+            </div>
+
+          </div>
+
+          <!-- ADDRESS -->
+          <div>
+            <label class="text-xs text-muted-foreground">Address</label>
+            <input [(ngModel)]="editForm.address"
+              class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
+          </div>
+
+          <!-- ========================= -->
+          <!-- ROLE (ONLY IF USER EXISTS) -->
+          <!-- ========================= -->
+          <div *ngIf="editForm.role">
+            <label class="text-xs text-muted-foreground">Role</label>
+
+            <select [(ngModel)]="editForm.role"
+              class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm">
+
+              <option *ngFor="let role of availableRoles" [value]="role">
+                {{ role }}
+              </option>
+
+            </select>
+          </div>
+
+          <!-- ========================= -->
+          <!-- SUPPLIER SECTION -->
+          <!-- ========================= -->
+          <div class="pt-4 border-t border-border" *ngIf="editForm.supplier">
+
+            <h4 class="text-sm font-medium text-foreground mb-3">Supplier Info</h4>
+
+            <div class="grid grid-cols-2 gap-3">
+
+              <div>
+                <label class="text-xs text-muted-foreground">Specialty</label>
+                <input [(ngModel)]="editForm.supplier.specialty"
+                  class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
+              </div>
+
+              <div>
+                <label class="text-xs text-muted-foreground">Notes</label>
+                <textarea [(ngModel)]="editForm.supplier.notes"
+                  class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm resize-none"></textarea>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="flex gap-2 justify-end px-6 py-4 border-t border-border">
+
+          <button type="button" (click)="closeEditModal()" class="px-4 py-1.5 text-sm rounded-xl bg-secondary">
+            Cancel
+          </button>
+
+          <button type="button" (click)="updateUser()"
+            class="px-4 py-1.5 text-sm rounded-xl bg-primary text-primary-foreground">
+            Save Changes
+          </button>
+
+        </div>
+
+      </app-modal>
+
+      <!-- ========================= -->
+      <!-- DELETE CONFIRMATION MODAL -->
+      <!-- ========================= -->
+      <app-modal [open]="deleteModalOpen" (openChange)="deleteModalOpen = $event">
+
+        <div class="relative w-full bg-card border border-border rounded-2xl shadow-2xl flex flex-col">
+
+          <!-- HEADER -->
+          <div class="flex items-center justify-between px-6 py-4 border-b border-border">
+            <h3 class="font-semibold text-foreground">Delete User</h3>
+
+            <button (click)="closeDeleteModal()"
+              class="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors">
+              <lucide-angular [img]="icons.X" class="w-4 h-4"></lucide-angular>
+            </button>
+          </div>
+
+          <!-- BODY -->
+          <div class="p-6 text-sm text-muted-foreground">
+            Are you sure you want to delete
+            <span class="text-foreground font-medium">
+              {{ userToDelete?.person?.firstName }} {{ userToDelete?.person?.lastName }}
+            </span>?
+            <br />
+            <span class="text-xs text-muted-foreground/70">This action cannot be undone.</span>
+          </div>
+
+          <!-- FOOTER -->
+          <div class="flex gap-2 justify-end px-6 py-4 border-t border-border">
+
+            <button (click)="closeDeleteModal()"
+              class="px-4 py-1.5 text-sm rounded-xl bg-secondary text-secondary-foreground hover:bg-secondary/80">
+              Cancel
+            </button>
+
+            <button (click)="confirmDelete()"
+              class="px-4 py-1.5 text-sm rounded-xl bg-red-500 text-white hover:opacity-90 active:scale-95">
+              Delete
+            </button>
+
+          </div>
+
+        </div>
+
+      </app-modal>
+
+<!-- PERMISSIONS MODAL -->
+<app-modal [open]="permissionsModalOpen" (openChange)="permissionsModalOpen = $event">
+  <div class="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
+    <h3 class="font-semibold text-foreground">Permissions – {{ selectedUser?.person?.firstName }} {{
+      selectedUser?.person?.lastName }}</h3>
+    <button (click)="closePermissionsModal()"
       class="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors">
-
       <lucide-angular [img]="icons.X" class="w-4 h-4"></lucide-angular>
     </button>
   </div>
 
-  <!-- BODY -->
-  <div class="overflow-y-auto flex-1 p-6 space-y-6">
+  <div class="overflow-y-auto flex-1 p-6">
+    <div class="space-y-5">
 
-    <!-- ========================= -->
-    <!-- PERSON -->
-    <!-- ========================= -->
-    <div class="grid grid-cols-2 gap-3">
-
-      <div>
-        <label class="text-xs text-muted-foreground">First Name</label>
-        <input [(ngModel)]="editForm.firstName"
-          class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
+      <!-- Supplier Permissions List -->
+      <div *ngIf="supplierPermissions.length === 0" class="text-center py-8 text-muted-foreground">
+        <p>No permissions assigned yet.</p>
+        <p class="text-sm">Add a supplier below to start managing permissions.</p>
       </div>
 
-      <div>
-        <label class="text-xs text-muted-foreground">Last Name</label>
-        <input [(ngModel)]="editForm.lastName"
-          class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
-      </div>
-
-      <div>
-        <label class="text-xs text-muted-foreground">Phone</label>
-        <input [(ngModel)]="editForm.phone"
-          class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
-      </div>
-
-      <div>
-        <label class="text-xs text-muted-foreground">Email</label>
-        <input [(ngModel)]="editForm.email"
-          class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
-      </div>
-
-    </div>
-
-    <!-- ADDRESS -->
-    <div>
-      <label class="text-xs text-muted-foreground">Address</label>
-      <input [(ngModel)]="editForm.address"
-        class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
-    </div>
-
-    <!-- ========================= -->
-    <!-- ROLE (ONLY IF USER EXISTS) -->
-    <!-- ========================= -->
-    <div *ngIf="editForm.role">
-      <label class="text-xs text-muted-foreground">Role</label>
-
-      <select [(ngModel)]="editForm.role" class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm">
-
-        <option *ngFor="let role of availableRoles" [value]="role">
-          {{ role }}
-        </option>
-
-      </select>
-    </div>
-
-    <!-- ========================= -->
-    <!-- SUPPLIER SECTION -->
-    <!-- ========================= -->
-    <div class="pt-4 border-t border-border" *ngIf="editForm.supplier">
-
-      <h4 class="text-sm font-medium text-foreground mb-3">Supplier Info</h4>
-
-      <div class="grid grid-cols-2 gap-3">
-
-        <div>
-          <label class="text-xs text-muted-foreground">Specialty</label>
-          <input [(ngModel)]="editForm.supplier.specialty"
-            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm" />
+      <div *ngFor="let supplierPerm of supplierPermissions" class="bg-secondary rounded-xl p-4">
+        <div class="flex items-center gap-2 mb-3">
+          <div
+            class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+            {{ supplierPerm.person.firstName.charAt(0) }}
+          </div>
+          <div>
+            <div class="text-sm font-semibold text-foreground">
+              {{ supplierPerm.person.firstName }} {{ supplierPerm.person.lastName }}
+            </div>
+            <div class="text-xs text-muted-foreground">{{ supplierPerm.supplier.specialty || 'Supplier' }}</div>
+          </div>
+          <button (click)="removeSupplierPermissions(supplierPerm.supplier.id)"
+            class="ml-auto p-1 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors">
+            <lucide-angular [img]="icons.Trash2" class="w-4 h-4"></lucide-angular>
+          </button>
         </div>
 
-        <div>
-          <label class="text-xs text-muted-foreground">Notes</label>
-          <textarea [(ngModel)]="editForm.supplier.notes"
-            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm resize-none"></textarea>
+        <!-- Permission Groups -->
+        <div *ngFor="let group of permissionGroups" class="mb-3">
+          <div class="text-xs text-muted-foreground mb-1.5 font-medium">{{ group.label }}</div>
+          <div class="flex flex-wrap gap-1.5">
+            <button *ngFor="let perm of group.permissions"
+              (click)="togglePermission(supplierPerm.supplier.id, perm)"
+              class="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium transition-all" [ngClass]="hasPermission(supplierPerm.supplier.id, perm) 
+                ? 'bg-primary/15 text-primary border border-primary/30' 
+                : 'bg-card text-muted-foreground border border-border hover:border-primary/20'">
+
+              <lucide-angular *ngIf="hasPermission(supplierPerm.supplier.id, perm)" [img]="icons.CheckCircle"
+                class="w-3 h-3"></lucide-angular>
+              <lucide-angular *ngIf="!hasPermission(supplierPerm.supplier.id, perm)" [img]="icons.Lock"
+                class="w-3 h-3"></lucide-angular>
+
+              {{ perm.toLowerCase().replace('_', ' ') }}
+            </button>
+          </div>
         </div>
-
       </div>
-    </div>
 
+      <!-- Add New Supplier -->
+      <div class="border-t border-border pt-4">
+        <div class="text-xs font-medium text-muted-foreground mb-2">Add permissions for another supplier</div>
+        <div class="flex gap-2">
+          <div class="flex-1">
+            <select [(ngModel)]="selectedSupplierId"
+              class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+              <option [ngValue]="null">Select supplier</option>
+              <option *ngFor="let s of availableSuppliers" [ngValue]="s.id">
+                {{ s.person.firstName }} {{ s.person.lastName }}
+              </option>
+            </select>
+          </div>
+          <button (click)="addSupplierPermissions()" [disabled]="!selectedSupplierId"
+            class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95"
+            [ngClass]="{'opacity-50 cursor-not-allowed': !selectedSupplierId}">
+            <lucide-angular [img]="icons.Plus" class="w-4 h-4"></lucide-angular>
+            Add
+          </button>
+        </div>
+        <div *ngIf="availableSuppliers.length === 0 && supplierPermissions.length > 0" 
+          class="text-xs text-muted-foreground mt-2">
+          All suppliers in this company already have permissions assigned.
+        </div>
+      </div>
+
+      <!-- FOOTER ACTIONS -->
+      <div class="flex items-center justify-between pt-4 border-t border-border mt-4">
+        <div *ngIf="hasChanges" class="text-xs text-amber-400">
+          <lucide-angular [img]="icons.Shield" class="w-3 h-3 inline mr-1"></lucide-angular>
+          You have unsaved changes
+        </div>
+        <div *ngIf="!hasChanges" class="text-xs text-muted-foreground">
+          No changes pending
+        </div>
+        <div class="flex gap-2">
+          <button (click)="closePermissionsModal()" 
+            [disabled]="isSaving"
+            class="px-4 py-1.5 text-sm rounded-xl bg-secondary text-secondary-foreground hover:bg-secondary/80"
+            [ngClass]="{'opacity-50 cursor-not-allowed': isSaving}">
+            Cancel
+          </button>
+          <button (click)="saveAllPermissions()" 
+            [disabled]="!hasChanges || isSaving"
+            class="px-4 py-1.5 text-sm rounded-xl bg-primary text-primary-foreground hover:opacity-90 active:scale-95"
+            [ngClass]="{'opacity-50 cursor-not-allowed': !hasChanges || isSaving}">
+            <span *ngIf="!isSaving">Save Changes</span>
+            <span *ngIf="isSaving">Saving...</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
   </div>
-
-  <!-- FOOTER -->
-  <div class="flex gap-2 justify-end px-6 py-4 border-t border-border">
-
-    <button type="button" (click)="closeEditModal()" class="px-4 py-1.5 text-sm rounded-xl bg-secondary">
-      Cancel
-    </button>
-
-    <button type="button" (click)="updateUser()"
-      class="px-4 py-1.5 text-sm rounded-xl bg-primary text-primary-foreground">
-      Save Changes
-    </button>
-
-  </div>
-
-</app-modal>
-
-<!-- ========================= -->
-<!-- DELETE CONFIRMATION MODAL -->
-<!-- ========================= -->
-<app-modal [open]="deleteModalOpen" (openChange)="deleteModalOpen = $event">
-
-  <div class="relative w-full bg-card border border-border rounded-2xl shadow-2xl flex flex-col">
-
-    <!-- HEADER -->
-    <div class="flex items-center justify-between px-6 py-4 border-b border-border">
-      <h3 class="font-semibold text-foreground">Delete User</h3>
-
-      <button (click)="closeDeleteModal()" 
-        class="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors">
-        <lucide-angular [img]="icons.X" class="w-4 h-4"></lucide-angular>
-      </button>
-    </div>
-
-    <!-- BODY -->
-    <div class="p-6 text-sm text-muted-foreground">
-      Are you sure you want to delete
-      <span class="text-foreground font-medium">
-        {{ userToDelete?.person?.firstName }} {{ userToDelete?.person?.lastName }}
-      </span>?
-      <br />
-      <span class="text-xs text-muted-foreground/70">This action cannot be undone.</span>
-    </div>
-
-    <!-- FOOTER -->
-    <div class="flex gap-2 justify-end px-6 py-4 border-t border-border">
-
-      <button (click)="closeDeleteModal()"
-        class="px-4 py-1.5 text-sm rounded-xl bg-secondary text-secondary-foreground hover:bg-secondary/80">
-        Cancel
-      </button>
-
-      <button (click)="confirmDelete()" 
-        class="px-4 py-1.5 text-sm rounded-xl bg-red-500 text-white hover:opacity-90 active:scale-95">
-        Delete
-      </button>
-
-    </div>
-
-  </div>
-
 </app-modal>

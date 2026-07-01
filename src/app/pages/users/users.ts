@@ -4,10 +4,17 @@ import { FormsModule } from '@angular/forms';
 import { PersonService } from '../../services/person-identity/person-identity';
 import { CompaniesService } from '../../services/companies/companies';
 import { AuthService } from '../../services/auth/auth';
+import { PermissionService } from '../../services/permissions/perimssions';
 import { PersonIdentityDTO } from '../../models/person-identity';
 import { CompanyDTO } from '../../models/company';
 import { CurrentUser } from '../../models/currentUser';
-import { LucideAngularModule, Search, Plus, Pencil, Trash2, Shield, X } from 'lucide-angular';
+import {
+  Permission,
+  PermissionGroupsWithLabels,
+  UserPermissionMapResponse,
+  UserSupplierPermissionCreateDTO
+} from '../../models/permission';
+import { LucideAngularModule, Search, Plus, Pencil, Trash2, Shield, X, CheckCircle, Lock } from 'lucide-angular';
 import { ModalComponent } from '../../components/modal/modal/modal';
 
 type Role = 'OWNER' | 'ADMIN' | 'USER';
@@ -40,6 +47,13 @@ interface EditUserForm {
   } | null;
 }
 
+interface SupplierPermission {
+  supplierId: number;
+  supplier: NonNullable<PersonIdentityDTO['supplier']>;
+  person: PersonIdentityDTO['person'];
+  permissions: Set<Permission>;
+}
+
 @Component({
   selector: 'app-users',
   standalone: true,
@@ -48,14 +62,27 @@ interface EditUserForm {
   styleUrl: './users.scss'
 })
 export class UsersComponent implements OnInit {
-  
+
   isEditMode = false;
   editModalOpen = false;
   editUserId: number | null = null;
 
-  // Para el modal de confirmación de eliminación
   deleteModalOpen = false;
   userToDelete: PersonIdentityDTO | null = null;
+
+  permissionsModalOpen = false;
+  selectedUser: PersonIdentityDTO | null = null;
+  selectedUserId: number | null = null;
+  selectedSupplierId: number | null = null;
+  supplierPermissions: SupplierPermission[] = [];
+  availableSuppliers: (NonNullable<PersonIdentityDTO['supplier']> & { person: PersonIdentityDTO['person'] })[] = [];
+
+  private originalPermissions: SupplierPermission[] = [];
+  private permissionsToAdd: { supplierId: number; permission: Permission }[] = [];
+  private permissionsToRemove: { supplierId: number; permission: Permission }[] = [];
+
+  public hasChanges = false;
+  public isSaving = false;
 
   userForm: UserForm = this.createEmptyForm();
   editForm: EditUserForm = this.createEmptyEditForm();
@@ -70,12 +97,14 @@ export class UsersComponent implements OnInit {
   selectedCompanyId: number | null = null;
   modalOpen = false;
 
-  icons = { Search, Plus, Pencil, Trash2, Shield, X };
+  permissionGroups = PermissionGroupsWithLabels;
+  icons = { Search, Plus, Pencil, Trash2, Shield, X, CheckCircle, Lock };
   availableRoles: Role[] = [];
-  
+
   private personService = inject(PersonService);
   private companiesService = inject(CompaniesService);
   private authService = inject(AuthService);
+  private permissionService = inject(PermissionService);
   private cdr = inject(ChangeDetectorRef);
 
   get isOwner() { return this.currentUser?.role === 'OWNER' }
@@ -127,7 +156,6 @@ export class UsersComponent implements OnInit {
     this.loading = true;
     this.personService.getAll().subscribe({
       next: d => {
-        // 🔴 FILTRO: Solo los que tienen user (excluye customers)
         this.allUsers = (d ?? []).filter(x => x.user !== null && x.user !== undefined);
         this.loading = false;
         this.ready = true;
@@ -145,15 +173,11 @@ export class UsersComponent implements OnInit {
   applyFilter() {
     const u = this.currentUser;
     let r = [...this.allUsers];
-
     if (u?.role === 'ADMIN' && u.companyId)
       r = r.filter(x => x.person.companyId === u.companyId);
-
     if (u?.role === 'OWNER' && this.selectedCompanyId !== null)
       r = r.filter(x => x.person.companyId === this.selectedCompanyId);
-
     const t = this.searchTerm.trim().toLowerCase();
-
     if (t)
       r = r.filter(x =>
         (x.person.firstName ?? '').toLowerCase().includes(t) ||
@@ -161,7 +185,6 @@ export class UsersComponent implements OnInit {
         (x.user?.email ?? '').toLowerCase().includes(t) ||
         (x.person.phone ?? '').toLowerCase().includes(t)
       );
-
     this.users = r;
   }
 
@@ -171,7 +194,6 @@ export class UsersComponent implements OnInit {
   onEdit(u: PersonIdentityDTO) {
     this.isEditMode = true;
     this.editUserId = u.person.id;
-
     this.editForm = {
       firstName: u.person.firstName,
       lastName: u.person.lastName,
@@ -184,7 +206,6 @@ export class UsersComponent implements OnInit {
         notes: u.supplier.notes ?? ''
       } : null
     };
-
     this.editModalOpen = true;
   }
 
@@ -206,17 +227,11 @@ export class UsersComponent implements OnInit {
 
   createUser() {
     const f = this.userForm;
-
-    const companyId =
-      this.currentUser?.role === 'OWNER'
-        ? f.companyId
-        : this.currentUser?.companyId;
-
+    const companyId = this.currentUser?.role === 'OWNER' ? f.companyId : this.currentUser?.companyId;
     if (!companyId) {
       console.error('Company ID is required');
       return;
     }
-
     const payload: any = {
       person: {
         firstName: f.firstName,
@@ -230,24 +245,12 @@ export class UsersComponent implements OnInit {
       supplier: null,
       customer: null
     };
-
     if (f.accountType !== 'STAFF') {
-      payload.user = {
-        email: f.email,
-        password: f.password,
-        companyId,
-        role: f.role
-      };
+      payload.user = { email: f.email, password: f.password, companyId, role: f.role };
     }
-
     if (f.accountType !== 'USER') {
-      payload.supplier = {
-        companyId,
-        specialty: f.specialty,
-        notes: f.notes
-      };
+      payload.supplier = { companyId, specialty: f.specialty, notes: f.notes };
     }
-
     this.personService.create(payload).subscribe({
       next: () => {
         this.modalOpen = false;
@@ -262,35 +265,18 @@ export class UsersComponent implements OnInit {
       console.error('No user ID for update');
       return;
     }
-
     const f = this.editForm;
-
     const payload: any = {
-      person: {
-        firstName: f.firstName,
-        lastName: f.lastName,
-        phone: f.phone,
-        address: f.address
-      }
+      person: { firstName: f.firstName, lastName: f.lastName, phone: f.phone, address: f.address }
     };
-
     if (f.role) {
-      payload.user = {
-        email: f.email,
-        role: f.role
-      };
+      payload.user = { email: f.email, role: f.role };
     }
-
     if (f.supplier) {
-      payload.supplier = {
-        specialty: f.supplier.specialty,
-        notes: f.supplier.notes
-      };
+      payload.supplier = { specialty: f.supplier.specialty, notes: f.supplier.notes };
     }
-
     this.personService.patch(this.editUserId, payload).subscribe({
       next: () => {
-        // Cerrar el modal de edición después de guardar
         this.editModalOpen = false;
         this.editUserId = null;
         this.loadUsers();
@@ -307,7 +293,6 @@ export class UsersComponent implements OnInit {
     }
   }
 
-  // MÉTODOS PARA ELIMINAR CON CONFIRMACIÓN
   onDelete(user: PersonIdentityDTO) {
     this.userToDelete = user;
     this.deleteModalOpen = true;
@@ -320,7 +305,6 @@ export class UsersComponent implements OnInit {
 
   confirmDelete() {
     if (!this.userToDelete) return;
-
     this.personService.delete(this.userToDelete.person.id).subscribe({
       next: () => {
         this.deleteModalOpen = false;
@@ -329,6 +313,235 @@ export class UsersComponent implements OnInit {
       },
       error: console.error
     });
+  }
+
+  openPermissionsModal(user: PersonIdentityDTO) {
+    if (user.user?.role !== 'USER' && user.user?.role !== 'STAFF') {
+      console.warn('User is not USER or STAFF, cannot manage permissions');
+      return;
+    }
+    this.supplierPermissions = [];
+    this.availableSuppliers = [];
+    this.originalPermissions = [];
+    this.permissionsToAdd = [];
+    this.permissionsToRemove = [];
+    this.hasChanges = false;
+    this.isSaving = false;
+    this.selectedUser = user;
+    this.selectedUserId = user.person.id;
+    this.permissionsModalOpen = true;
+    this.loadSupplierPermissions();
+  }
+
+  closePermissionsModal() {
+    if (this.isSaving) return;
+    if (this.hasChanges) {
+      if (confirm('You have unsaved changes. Do you want to save them before closing?')) {
+        this.saveAllPermissions();
+        return;
+      }
+    }
+    this.permissionsModalOpen = false;
+    this.selectedUser = null;
+    this.selectedUserId = null;
+    this.selectedSupplierId = null;
+    this.supplierPermissions = [];
+    this.availableSuppliers = [];
+    this.originalPermissions = [];
+    this.permissionsToAdd = [];
+    this.permissionsToRemove = [];
+    this.hasChanges = false;
+    this.isSaving = false;
+  }
+
+  saveAllPermissions() {
+    if (!this.selectedUserId || this.isSaving) return;
+    if (this.permissionsToAdd.length === 0 && this.permissionsToRemove.length === 0) {
+      this.hasChanges = false;
+      this.permissionsModalOpen = false;
+      return;
+    }
+    this.isSaving = true;
+    this.cdr.detectChanges();
+    const operations: (() => Promise<any>)[] = [
+      ...this.permissionsToRemove.map(r => () => this.permissionService.delete({
+        userId: this.selectedUserId!,
+        supplierId: r.supplierId,
+        permission: r.permission
+      }).toPromise()),
+      ...this.permissionsToAdd.map(a => () => this.permissionService.create({
+        userId: this.selectedUserId!,
+        supplierId: a.supplierId,
+        permission: a.permission
+      }).toPromise())
+    ];
+    this.executeSequentially(operations);
+  }
+
+  private async executeSequentially(operations: (() => Promise<any>)[]) {
+    try {
+      for (const op of operations) {
+        try {
+          await op();
+        } catch (error: any) {
+          if (error.error?.message === 'Permission does not exist' || error.error?.message === 'Permission already exists') {
+            continue;
+          }
+          throw error;
+        }
+      }
+      setTimeout(() => {
+        this.isSaving = false;
+        this.hasChanges = false;
+        this.permissionsToAdd = [];
+        this.permissionsToRemove = [];
+        this.permissionsModalOpen = false;
+        this.loadSupplierPermissions();
+        this.cdr.detectChanges();
+      }, 0);
+    } catch (error) {
+      console.error('Error in permission operation:', error);
+      setTimeout(() => {
+        this.isSaving = false;
+        this.loadSupplierPermissions();
+        alert('Error saving permissions. Please try again.');
+        this.cdr.detectChanges();
+      }, 0);
+    }
+  }
+
+  loadSupplierPermissions() {
+    if (!this.selectedUserId) return;
+    this.supplierPermissions = [];
+    this.originalPermissions = [];
+    this.availableSuppliers = [];
+    this.permissionsToAdd = [];
+    this.permissionsToRemove = [];
+    this.permissionService.getPermissionMap(this.selectedUserId).subscribe({
+      next: (permissionMap: UserPermissionMapResponse) => {
+        const supplierIds = Object.keys(permissionMap).map(Number);
+        if (supplierIds.length === 0) {
+          this.supplierPermissions = [];
+          this.originalPermissions = [];
+          this.loadAvailableSuppliers();
+          this.cdr.detectChanges();
+          return;
+        }
+        this.personService.getAll().subscribe({
+          next: (allUsers) => {
+            const supplierUsers = allUsers
+              .filter(u => u.supplier !== null && u.supplier !== undefined)
+              .filter(u => supplierIds.includes(u.supplier!.id));
+            this.supplierPermissions = supplierUsers.map(u => ({
+              supplierId: u.supplier!.id,
+              supplier: u.supplier!,
+              person: u.person,
+              permissions: new Set(permissionMap[u.supplier!.id] || [])
+            }));
+            this.originalPermissions = this.supplierPermissions.map(sp => ({
+              ...sp,
+              permissions: new Set(sp.permissions)
+            }));
+            this.loadAvailableSuppliers();
+            this.cdr.detectChanges();
+          },
+          error: console.error
+        });
+      },
+      error: (error) => {
+        console.error('Error loading permissions:', error);
+        this.supplierPermissions = [];
+        this.originalPermissions = [];
+        this.loadAvailableSuppliers();
+      }
+    });
+  }
+
+  loadAvailableSuppliers() {
+    if (!this.selectedUser) return;
+    const companyId = this.selectedUser.person.companyId;
+    const currentSupplierId = this.selectedUser.supplier?.id;
+    this.personService.getAll().subscribe({
+      next: (allUsers) => {
+        const supplierUsers = allUsers
+          .filter(u => u.supplier !== null && u.supplier !== undefined)
+          .filter(u => u.person.companyId === companyId);
+        const assignedSupplierIds = new Set(this.supplierPermissions.map(sp => sp.supplier.id));
+        this.availableSuppliers = supplierUsers
+          .filter(u => {
+            const supplierId = u.supplier!.id;
+            if (assignedSupplierIds.has(supplierId)) return false;
+            if (currentSupplierId && supplierId === currentSupplierId) return false;
+            return true;
+          })
+          .map(u => ({ ...u.supplier!, person: u.person }));
+        this.cdr.detectChanges();
+      },
+      error: console.error
+    });
+  }
+
+  hasPermission(supplierId: number, permission: Permission): boolean {
+    const supplierPerm = this.supplierPermissions.find(sp => sp.supplier.id === supplierId);
+    return supplierPerm?.permissions.has(permission) || false;
+  }
+
+  private isPendingAdd(supplierId: number, permission: Permission): boolean {
+    return this.permissionsToAdd.some(p => p.supplierId === supplierId && p.permission === permission);
+  }
+
+  private isPendingRemove(supplierId: number, permission: Permission): boolean {
+    return this.permissionsToRemove.some(p => p.supplierId === supplierId && p.permission === permission);
+  }
+
+  togglePermission(supplierId: number, permission: Permission) {
+    const supplierPerm = this.supplierPermissions.find(sp => sp.supplier.id === supplierId);
+    if (!supplierPerm) return;
+    const hasPerm = supplierPerm.permissions.has(permission);
+    if (hasPerm) {
+      supplierPerm.permissions.delete(permission);
+      this.permissionsToAdd = this.permissionsToAdd.filter(p => !(p.supplierId === supplierId && p.permission === permission));
+      if (!this.isPendingRemove(supplierId, permission)) {
+        this.permissionsToRemove.push({ supplierId, permission });
+      }
+    } else {
+      supplierPerm.permissions.add(permission);
+      this.permissionsToRemove = this.permissionsToRemove.filter(p => !(p.supplierId === supplierId && p.permission === permission));
+      if (!this.isPendingAdd(supplierId, permission)) {
+        this.permissionsToAdd.push({ supplierId, permission });
+      }
+    }
+    this.hasChanges = true;
+  }
+
+  addSupplierPermissions() {
+    if (!this.selectedSupplierId || !this.selectedUserId) return;
+    const supplierWithPerson = this.availableSuppliers.find(s => s.id === this.selectedSupplierId);
+    if (!supplierWithPerson) return;
+    this.hasChanges = true;
+    this.supplierPermissions.push({
+      supplierId: supplierWithPerson.id,
+      supplier: supplierWithPerson,
+      person: supplierWithPerson.person,
+      permissions: new Set()
+    });
+    this.availableSuppliers = this.availableSuppliers.filter(s => s.id !== this.selectedSupplierId);
+    this.selectedSupplierId = null;
+  }
+
+  removeSupplierPermissions(supplierId: number) {
+    const supplierPerm = this.supplierPermissions.find(sp => sp.supplier.id === supplierId);
+    if (!supplierPerm) return;
+    const permissionsToRemove = Array.from(supplierPerm.permissions);
+    this.hasChanges = true;
+    for (const perm of permissionsToRemove) {
+      this.permissionsToAdd = this.permissionsToAdd.filter(p => !(p.supplierId === supplierId && p.permission === perm));
+      if (!this.isPendingRemove(supplierId, perm)) {
+        this.permissionsToRemove.push({ supplierId, permission: perm });
+      }
+    }
+    this.supplierPermissions = this.supplierPermissions.filter(sp => sp.supplier.id !== supplierId);
+    this.availableSuppliers.push({ ...supplierPerm.supplier, person: supplierPerm.person });
   }
 
   private createEmptyForm(): UserForm {
