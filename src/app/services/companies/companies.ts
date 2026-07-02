@@ -23,7 +23,7 @@ export class CompaniesService {
     return this.http.post<CompanyDTO>(this.baseUrl, dto);
   }
 
-  patch(id: number, dto: CompanyPatchDTO): Observable<CompanyDTO> {
+  patch(id: number, dto: CompanyPatchDTO):Observable<CompanyDTO> {
     return this.http.patch<CompanyDTO>(`${this.baseUrl}/${id}`, dto);
   }
 

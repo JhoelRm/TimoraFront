@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { PermissionService } from './perimssions';
 
-describe('Perimssions', () => {
+describe('PermissionService', () => {
   let service: PermissionService;
 
   beforeEach(() => {

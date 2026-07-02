@@ -336,10 +336,9 @@ export class UsersComponent implements OnInit {
   closePermissionsModal() {
     if (this.isSaving) return;
     if (this.hasChanges) {
-      if (confirm('You have unsaved changes. Do you want to save them before closing?')) {
-        this.saveAllPermissions();
-        return;
-      }
+      this.saveAllPermissions();
+      return;
+      
     }
     this.permissionsModalOpen = false;
     this.selectedUser = null;
@@ -404,7 +403,7 @@ export class UsersComponent implements OnInit {
       setTimeout(() => {
         this.isSaving = false;
         this.loadSupplierPermissions();
-        alert('Error saving permissions. Please try again.');
+        //alert('Error saving permissions. Please try again.');
         this.cdr.detectChanges();
       }, 0);
     }
