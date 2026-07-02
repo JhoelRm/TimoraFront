@@ -14,8 +14,8 @@ export class AvailabilityService {
     return this.http.post<AvailabilityDTO>(this.baseUrl, dto);
   }
 
-  patch(id: number, dto: AvailabilityPatchDTO): Observable<AvailabilityDTO> {
-    return this.http.patch<AvailabilityDTO>(`${this.baseUrl}/${id}`, dto);
+  patch(id: number, data: AvailabilityPatchDTO): Observable<AvailabilityDTO> {
+    return this.http.patch<AvailabilityDTO>(`${this.baseUrl}/${id}`, data);
   }
 
   delete(id: number): Observable<void> {

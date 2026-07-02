@@ -1,8 +1,7 @@
 // models/availability.ts
 export type AvailabilityStatus = 'ACTIVE' | 'INACTIVE';
 export type RecurrenceType = 'NONE' | 'DAILY' | 'WEEKLY' | 'MONTHLY';
-export type DayOfWeek = 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT' | 'SUN';
-
+export type DayOfWeek = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY';
 export interface AvailabilityDTO {
   id: number;
   companyId: number;

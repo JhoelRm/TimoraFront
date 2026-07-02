@@ -28,8 +28,8 @@ export class AvailabilitiesComponent implements OnInit {
   modalSuppliers: PersonIdentityDTO[] = [];
   
   // Estado
-  viewMode: ViewMode = 'calendar'; // 'calendar' o 'list'
-  calendarViewMode: CalendarViewMode = 'week'; // 'day', 'week', 'month'
+  viewMode: ViewMode = 'calendar';
+  calendarViewMode: CalendarViewMode = 'week';
   availabilities: AvailabilityDTO[] = [];
   filteredAvailabilities: AvailabilityDTO[] = [];
   loading = false;
@@ -46,6 +46,10 @@ export class AvailabilitiesComponent implements OnInit {
   currentUser: CurrentUser | null = null;
   currentUserSupplier: PersonIdentityDTO | null = null;
   currentCompany: CompanyDTO | null = null;
+
+  // Companies
+  allCompanies: CompanyDTO[] = [];
+  selectedCompanyId: number | null = null;
 
   // Suppliers
   allSuppliers: PersonIdentityDTO[] = [];
@@ -82,6 +86,7 @@ export class AvailabilitiesComponent implements OnInit {
   get isOwner() { return this.currentUser?.role === 'OWNER'; }
   get isAdmin() { return this.currentUser?.role === 'ADMIN'; }
   get isUser() { return this.currentUser?.role === 'USER'; }
+  get canSelectCompany() { return this.isOwner; }
   get canSelectSupplier() { return this.isOwner || this.isAdmin; }
 
   get totalSchedules(): number {
@@ -98,9 +103,8 @@ export class AvailabilitiesComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser = this.authService.getUser();
-    this.loadCompany();
+    this.loadCompanies();
     this.loadSuppliers();
-    // No cargar availabilities automáticamente - esperar a que seleccione un supplier
   }
 
   generateTimeSlots(): void {
@@ -113,14 +117,22 @@ export class AvailabilitiesComponent implements OnInit {
 
   // ==================== LOAD DATA ====================
 
-  private loadCompany(): void {
-    if (!this.currentUser?.companyId) return;
-    this.companiesService.getById(this.currentUser.companyId).subscribe({
-      next: (company) => {
-        this.currentCompany = company;
+  private loadCompanies(): void {
+    this.companiesService.getAll().subscribe({
+      next: (companies) => {
+        this.allCompanies = companies ?? [];
+        
+        // Si es OWNER, seleccionar su compañía por defecto
+        if (this.isOwner && this.currentUser?.companyId) {
+          this.selectedCompanyId = this.currentUser.companyId;
+        }
+        
+        this.onCompanyChange();
         this.cdr.detectChanges();
       },
-      error: console.error
+      error: (err) => {
+        console.error('Error loading companies:', err);
+      }
     });
   }
 
@@ -133,18 +145,9 @@ export class AvailabilitiesComponent implements OnInit {
         if (this.isUser && this.currentUser) {
           suppliers = suppliers.filter(s => s.person.id === this.currentUser?.personId);
         }
-        if (this.isAdmin && this.currentUser) {
-          suppliers = suppliers.filter(s => s.person.companyId === this.currentUser?.companyId);
-        }
         
         this.allSuppliers = suppliers;
-        this.filteredSuppliers = suppliers;
-        
-        // Cargar supplier del usuario actual si es USER
-        if (this.isUser && this.currentUser) {
-          this.loadCurrentUserSupplier();
-        }
-        
+        this.applyFilters();
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -168,48 +171,114 @@ export class AvailabilitiesComponent implements OnInit {
     });
   }
 
-  loadAvailabilities(): void {
-    if (!this.selectedSupplierId && !this.isUser) {
-      this.filteredAvailabilities = [];
-      this.events = [];
+loadAvailabilities(): void {
+  // Si es USER, usar su supplier automáticamente
+  if (this.isUser) {
+    if (!this.currentUserSupplier) {
+      this.loadCurrentUserSupplier();
       return;
     }
-    
-    this.loading = true;
-    this.error = null;
-    
-    let supplierId: number | null = null;
-    
-    // Si es USER, usar su supplier
-    if (this.isUser && this.currentUserSupplier) {
-      supplierId = this.currentUserSupplier.supplier?.id ?? null;
-    } else {
-      supplierId = this.selectedSupplierId;
+    // Si el supplier no está seleccionado, seleccionarlo
+    if (!this.selectedSupplierId && this.currentUserSupplier) {
+      this.selectedSupplierId = this.currentUserSupplier.supplier?.id ?? null;
     }
-
-    if (!supplierId) {
-      this.loading = false;
-      return;
-    }
-
-    this.availabilityService.getAllBySupplier(supplierId).subscribe({
-      next: (data) => {
-        this.availabilities = data;
-        this.filteredAvailabilities = data;
-        this.events = this.convertToEvents(data);
-        this.loading = false;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Error loading availabilities:', err);
-        this.error = 'Failed to load availabilities';
-        this.loading = false;
-        this.cdr.detectChanges();
-      }
-    });
   }
 
+  if (!this.selectedSupplierId && !this.isUser) {
+    this.filteredAvailabilities = [];
+    this.events = [];
+    return;
+  }
+  
+  this.loading = true;
+  this.error = null;
+  
+  let supplierId: number | null = null;
+  
+  // Si es USER, usar su supplier
+  if (this.isUser && this.currentUserSupplier) {
+    supplierId = this.currentUserSupplier.supplier?.id ?? null;
+  } else {
+    supplierId = this.selectedSupplierId;
+  }
+
+  if (!supplierId) {
+    this.loading = false;
+    return;
+  }
+
+  // Asegurar que el supplierId sea un número
+  const id = Number(supplierId);
+  if (isNaN(id)) {
+    this.loading = false;
+    this.error = 'Invalid supplier ID';
+    return;
+  }
+
+  this.availabilityService.getAllBySupplier(id).subscribe({
+    next: (data) => {
+      this.availabilities = data;
+      this.filteredAvailabilities = data;
+      this.events = this.convertToEvents(data);
+      this.loading = false;
+      this.cdr.detectChanges();
+    },
+    error: (err) => {
+      console.error('Error loading availabilities:', err);
+      this.error = 'Failed to load availabilities';
+      this.loading = false;
+      this.cdr.detectChanges();
+    }
+  });
+}
   // ==================== FILTERS ====================
+
+// ==================== FILTERS ====================
+
+private applyFilters(): void {
+  // Aplicar filtro de compañía
+  let suppliers = this.allSuppliers;
+  
+  // Filtro por compañía (solo OWNER)
+  if (this.canSelectCompany && this.selectedCompanyId) {
+    suppliers = suppliers.filter(s => s.person.companyId === this.selectedCompanyId);
+  }
+  
+  // Para ADMIN, mostrar solo suppliers de su compañía
+  if (this.isAdmin) {
+    const companyId = this.currentUser?.companyId;
+    if (companyId) {
+      suppliers = suppliers.filter(s => s.person.companyId === companyId);
+    }
+  }
+  
+  this.filteredSuppliers = suppliers;
+  
+  // Si no hay suppliers seleccionados o el seleccionado ya no está disponible
+  if (this.selectedSupplierId) {
+    const stillExists = this.filteredSuppliers.some(s => s.supplier?.id === this.selectedSupplierId);
+    if (!stillExists) {
+      this.selectedSupplierId = null;
+      this.filteredAvailabilities = [];
+      this.events = [];
+    }
+  }
+  
+  // Si es USER, cargar su supplier
+  if (this.isUser) {
+    this.loadCurrentUserSupplier();
+  }
+  
+  this.cdr.detectChanges();
+}
+  onCompanyChange(): void {
+    this.applyFilters();
+    // Resetear supplier seleccionado
+    this.selectedSupplierId = null;
+    this.filteredAvailabilities = [];
+    this.events = [];
+    this.cdr.detectChanges();
+  }
 
   onSupplierChange(): void {
     this.loadAvailabilities();
@@ -280,7 +349,6 @@ export class AvailabilitiesComponent implements OnInit {
 
   setView(mode: ViewMode): void {
     this.viewMode = mode;
-    // Si cambiamos a calendario, aseguramos que la vista interna sea week por defecto
     if (mode === 'calendar') {
       this.calendarViewMode = 'week';
     }
@@ -416,97 +484,129 @@ export class AvailabilitiesComponent implements OnInit {
 
   // ==================== FORM HELPERS ====================
 
-  createEmptyForm(): AvailabilityCreateDTO {
-    const today = new Date();
-    const formattedDate = today.toISOString().split('T')[0];
-    return {
-      companyId: this.currentUser?.companyId || 0,
-      supplierId: 0,
-      startDate: formattedDate,
-      endDate: formattedDate,
-      dayOfWeek: 'MON',
-      startTime: '09:00',
-      endTime: '18:00',
-      slotDurationMinutes: 60,
-      capacity: 1,
-      recurrenceType: 'NONE',
-      notes: ''
-    };
+// ==================== FORM HELPERS ====================
+
+createEmptyForm(): AvailabilityCreateDTO {
+  const today = new Date();
+  const formattedDate = today.toISOString().split('T')[0];
+  
+  // Obtener el companyId del supplier seleccionado o del usuario actual
+  let companyId = this.currentUser?.companyId || 0;
+  
+  // Si hay un supplier seleccionado, usar su compañía
+  if (this.selectedSupplierId) {
+    const selectedSupplier = this.allSuppliers.find(
+      s => s.supplier?.id === this.selectedSupplierId
+    );
+    if (selectedSupplier) {
+      companyId = selectedSupplier.person.companyId;
+    }
   }
+  
+  return {
+    companyId: companyId,
+    supplierId: this.selectedSupplierId || 0,
+    startDate: formattedDate,
+    endDate: formattedDate,
+    dayOfWeek: 'MONDAY',
+    startTime: '09:00',
+    endTime: '18:00',
+    slotDurationMinutes: 60,
+    capacity: 1,
+    recurrenceType: 'NONE',
+    notes: ''
+  };
+}
 
   // ==================== CRUD OPERATIONS ====================
 
-  openCreateModal(): void {
-    this.isEditMode = false;
-    this.editAvailabilityId = null;
-    this.availabilityForm = this.createEmptyForm();
-    
-    // Actualizar modalSuppliers
-    this.modalSuppliers = this.allSuppliers;
-    
-    if (this.isUser && this.currentUserSupplier) {
-      this.availabilityForm.supplierId = this.currentUserSupplier.supplier?.id || 0;
-    } else if (this.selectedSupplierId) {
-      this.availabilityForm.supplierId = this.selectedSupplierId;
+openCreateModal(): void {
+  this.isEditMode = false;
+  this.editAvailabilityId = null;
+  this.availabilityForm = this.createEmptyForm();
+  
+  // Actualizar modalSuppliers basado en el filtro actual
+  this.modalSuppliers = this.filteredSuppliers;
+  
+  // Si es USER, usar su supplier
+  if (this.isUser && this.currentUserSupplier) {
+    const supplierId = this.currentUserSupplier.supplier?.id || 0;
+    this.availabilityForm.supplierId = supplierId;
+    // Asegurar que el companyId coincida con el supplier
+    const supplier = this.allSuppliers.find(s => s.supplier?.id === supplierId);
+    if (supplier) {
+      this.availabilityForm.companyId = supplier.person.companyId;
     }
-    
-    // Set companyId
-    if (this.currentUser?.companyId) {
-      this.availabilityForm.companyId = this.currentUser.companyId;
+  } else if (this.selectedSupplierId) {
+    this.availabilityForm.supplierId = this.selectedSupplierId;
+    // Asegurar que el companyId coincida con el supplier seleccionado
+    const supplier = this.allSuppliers.find(s => s.supplier?.id === this.selectedSupplierId);
+    if (supplier) {
+      this.availabilityForm.companyId = supplier.person.companyId;
     }
-    
-    this.modalOpen = true;
-    this.cdr.detectChanges();
   }
-
+  
+  this.modalOpen = true;
+  this.cdr.detectChanges();
+}
   closeModal(): void {
     this.modalOpen = false;
   }
 
-  createAvailability(): void {
-    const form = this.availabilityForm;
-    
-    if (form.supplierId === 0) {
-      alert('Please select a supplier');
-      return;
-    }
-
-    if (!form.companyId || form.companyId === 0) {
-      alert('Company ID is required');
-      return;
-    }
-
-    // Validar fechas
-    const startDate = new Date(form.startDate);
-    const endDate = new Date(form.endDate);
-    if (endDate < startDate) {
-      alert('End date must be after start date');
-      return;
-    }
-
-    // Validar horas
-    const [startHour, startMinute] = form.startTime.split(':').map(Number);
-    const [endHour, endMinute] = form.endTime.split(':').map(Number);
-    if (endHour < startHour || (endHour === startHour && endMinute <= startMinute)) {
-      alert('End time must be after start time');
-      return;
-    }
-
-    this.loading = true;
-    this.availabilityService.create(form).subscribe({
-      next: () => {
-        this.modalOpen = false;
-        this.loadAvailabilities();
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Error creating availability:', err);
-        alert('Failed to create availability: ' + (err.error?.message || err.message));
-        this.loading = false;
-        this.cdr.detectChanges();
-      }
-    });
+createAvailability(): void {
+  const form = this.availabilityForm;
+  
+  if (form.supplierId === 0) {
+    alert('Please select a supplier');
+    return;
   }
+
+  // Validar que el supplier pertenezca a la compañía seleccionada
+  const supplier = this.allSuppliers.find(s => s.supplier?.id === form.supplierId);
+  if (!supplier) {
+    alert('Selected supplier not found');
+    return;
+  }
+
+  // Asegurar que el companyId coincida con el supplier
+  form.companyId = supplier.person.companyId;
+
+  if (!form.companyId || form.companyId === 0) {
+    alert('Company ID is required');
+    return;
+  }
+
+  // Validar fechas
+  const startDate = new Date(form.startDate);
+  const endDate = new Date(form.endDate);
+  if (endDate < startDate) {
+    alert('End date must be after start date');
+    return;
+  }
+
+  // Validar horas
+  const [startHour, startMinute] = form.startTime.split(':').map(Number);
+  const [endHour, endMinute] = form.endTime.split(':').map(Number);
+  if (endHour < startHour || (endHour === startHour && endMinute <= startMinute)) {
+    alert('End time must be after start time');
+    return;
+  }
+
+  this.loading = true;
+  this.availabilityService.create(form).subscribe({
+    next: () => {
+      this.modalOpen = false;
+      this.loadAvailabilities();
+      this.cdr.detectChanges();
+    },
+    error: (err) => {
+      console.error('Error creating availability:', err);
+      alert('Failed to create availability: ' + (err.error?.message || err.message));
+      this.loading = false;
+      this.cdr.detectChanges();
+    }
+  });
+}
 
   openEditModal(availability: AvailabilityDTO): void {
     this.isEditMode = true;
@@ -531,26 +631,33 @@ export class AvailabilitiesComponent implements OnInit {
     this.editModalOpen = false;
     this.editAvailabilityId = null;
   }
+updateAvailability(): void {
+  if (!this.editAvailabilityId) return;
 
-  updateAvailability(): void {
-    if (!this.editAvailabilityId) return;
-
-    this.loading = true;
-    this.availabilityService.patch(this.editAvailabilityId, this.editForm).subscribe({
-      next: () => {
-        this.editModalOpen = false;
-        this.editAvailabilityId = null;
-        this.loadAvailabilities();
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Error updating availability:', err);
-        alert('Failed to update availability: ' + (err.error?.message || err.message));
-        this.loading = false;
-        this.cdr.detectChanges();
-      }
-    });
+  // Asegurar que el ID sea un número
+  const id = Number(this.editAvailabilityId);
+  
+  if (isNaN(id)) {
+    alert('Invalid availability ID');
+    return;
   }
+
+  this.loading = true;
+  this.availabilityService.patch(id, this.editForm).subscribe({
+    next: () => {
+      this.editModalOpen = false;
+      this.editAvailabilityId = null;
+      this.loadAvailabilities();
+      this.cdr.detectChanges();
+    },
+    error: (err) => {
+      console.error('Error updating availability:', err);
+      alert('Failed to update availability: ' + (err.error?.message || err.message));
+      this.loading = false;
+      this.cdr.detectChanges();
+    }
+  });
+}
 
   openDeleteModal(availability: AvailabilityDTO): void {
     this.availabilityToDelete = availability;
@@ -562,25 +669,34 @@ export class AvailabilitiesComponent implements OnInit {
     this.availabilityToDelete = null;
   }
 
-  confirmDelete(): void {
-    if (!this.availabilityToDelete) return;
+confirmDelete(): void {
+  if (!this.availabilityToDelete) return;
 
-    this.loading = true;
-    this.availabilityService.delete(this.availabilityToDelete.id).subscribe({
-      next: () => {
-        this.deleteModalOpen = false;
-        this.availabilityToDelete = null;
-        this.loadAvailabilities();
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Error deleting availability:', err);
-        alert('Failed to delete availability');
-        this.loading = false;
-        this.cdr.detectChanges();
-      }
-    });
+  this.loading = true;
+  // Asegurar que el ID sea un número
+  const id = Number(this.availabilityToDelete.id);
+  
+  if (isNaN(id)) {
+    alert('Invalid availability ID');
+    this.loading = false;
+    return;
   }
+
+  this.availabilityService.delete(id).subscribe({
+    next: () => {
+      this.deleteModalOpen = false;
+      this.availabilityToDelete = null;
+      this.loadAvailabilities();
+      this.cdr.detectChanges();
+    },
+    error: (err) => {
+      console.error('Error deleting availability:', err);
+      alert('Failed to delete availability: ' + (err.error?.message || err.message));
+      this.loading = false;
+      this.cdr.detectChanges();
+    }
+  });
+}
 
   // ==================== UI HELPERS ====================
 
@@ -593,13 +709,13 @@ export class AvailabilitiesComponent implements OnInit {
   getDaysLabel(dayOfWeek: DayOfWeek): string {
     if (!dayOfWeek) return 'N/A';
     const map: Record<DayOfWeek, string> = {
-      'MON': 'Monday',
-      'TUE': 'Tuesday',
-      'WED': 'Wednesday',
-      'THU': 'Thursday',
-      'FRI': 'Friday',
-      'SAT': 'Saturday',
-      'SUN': 'Sunday'
+      'MONDAY': 'Monday',
+      'TUESDAY': 'Tuesday',
+      'WEDNESDAY': 'Wednesday',
+      'THURSDAY': 'Thursday',
+      'FRIDAY': 'Friday',
+      'SATURDAY': 'Saturday',
+      'SUNDAY': 'Sunday'
     };
     return map[dayOfWeek] || dayOfWeek;
   }
@@ -622,7 +738,7 @@ export class AvailabilitiesComponent implements OnInit {
   }
 
   getDayOfWeekOptions(): string[] {
-    return ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+    return ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
   }
 
   isDaySelected(day: string): boolean {
@@ -654,4 +770,22 @@ export class AvailabilitiesComponent implements OnInit {
   trackByEventId(index: number, item: AvailabilityEvent): number {
     return item.id;
   }
+
+  trackByCompanyId(index: number, item: CompanyDTO): number {
+    return item.id;
+  }
+  onModalSupplierChange(): void {
+  const supplierId = this.availabilityForm.supplierId;
+  if (supplierId) {
+    const supplier = this.allSuppliers.find(s => s.supplier?.id === supplierId);
+    if (supplier) {
+      this.availabilityForm.companyId = supplier.person.companyId;
+      this.cdr.detectChanges();
+    }
+  }
+}
+getCompanyName(companyId: number): string {
+  const company = this.allCompanies.find(c => c.id === companyId);
+  return company?.name || 'Unknown';
+}
 }
