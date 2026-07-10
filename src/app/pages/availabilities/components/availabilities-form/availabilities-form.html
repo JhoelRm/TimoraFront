@@ -1,0 +1,151 @@
+<div class="overflow-y-auto flex-1 p-6 space-y-5">
+  <!-- Supplier selector (always show for non-USER in create mode) -->
+  <div *ngIf="mode === 'create' && !isUser">
+    <label class="block text-xs font-medium text-muted-foreground mb-1.5">
+      Provider *
+    </label>
+    <select
+      [(ngModel)]="formData.supplierId"
+      (ngModelChange)="onSupplierChange()"
+      class="w-full h-11 px-3 rounded-xl border border-border bg-input-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition cursor-pointer">
+      <option [ngValue]="0">Select a provider</option>
+      <option *ngFor="let supplier of suppliers" [ngValue]="supplier.supplier?.id">
+        {{ supplier.person.firstName }} {{ supplier.person.lastName }}
+        <span *ngIf="supplier.supplier?.specialty">({{ supplier.supplier?.specialty }})</span>
+      </option>
+    </select>
+  </div>
+
+  <!-- Company info -->
+  <div *ngIf="formData.companyId" class="text-xs text-muted-foreground">
+    Company: {{ getCompanyName(formData.companyId) }}
+  </div>
+
+  <!-- Date Range -->
+  <div class="grid grid-cols-2 gap-4">
+    <div>
+      <label class="block text-xs font-medium text-muted-foreground mb-1.5">
+        Start Date *
+      </label>
+      <input
+        type="date"
+        [(ngModel)]="formData.startDate"
+        class="w-full h-11 px-3 rounded-xl border border-border bg-input-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition" />
+    </div>
+    <div>
+      <label class="block text-xs font-medium text-muted-foreground mb-1.5">
+        End Date *
+      </label>
+      <input
+        type="date"
+        [(ngModel)]="formData.endDate"
+        class="w-full h-11 px-3 rounded-xl border border-border bg-input-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition" />
+    </div>
+  </div>
+
+  <!-- Day of Week -->
+  <div>
+    <label class="block text-xs font-medium text-muted-foreground mb-1.5">
+      Day of Week *
+    </label>
+    <div class="flex flex-wrap gap-1.5">
+      <button
+        *ngFor="let day of getDayOptions()"
+        (click)="selectDayOfWeek(day)"
+        [class.bg-primary]="isDaySelected(day)"
+        [class.text-primary-foreground]="isDaySelected(day)"
+        [class.bg-secondary]="!isDaySelected(day)"
+        [class.text-foreground]="!isDaySelected(day)"
+        class="px-3 py-1 text-xs font-medium rounded-lg transition-all hover:opacity-80 cursor-pointer">
+        {{ getDayLabel(day) }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Time Range -->
+  <div class="grid grid-cols-2 gap-4">
+    <div>
+      <label class="block text-xs font-medium text-muted-foreground mb-1.5">
+        Start Time *
+      </label>
+      <input
+        type="time"
+        [(ngModel)]="formData.startTime"
+        class="w-full h-11 px-3 rounded-xl border border-border bg-input-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition" />
+    </div>
+    <div>
+      <label class="block text-xs font-medium text-muted-foreground mb-1.5">
+        End Time *
+      </label>
+      <input
+        type="time"
+        [(ngModel)]="formData.endTime"
+        class="w-full h-11 px-3 rounded-xl border border-border bg-input-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition" />
+    </div>
+  </div>
+
+  <!-- Slot Duration & Capacity -->
+  <div class="grid grid-cols-2 gap-4">
+    <div>
+      <label class="block text-xs font-medium text-muted-foreground mb-1.5">
+        Slot Duration (min) *
+      </label>
+      <input
+        type="number"
+        [(ngModel)]="formData.slotDurationMinutes"
+        min="15"
+        step="15"
+        class="w-full h-11 px-3 rounded-xl border border-border bg-input-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition" />
+    </div>
+    <div>
+      <label class="block text-xs font-medium text-muted-foreground mb-1.5">
+        Capacity *
+      </label>
+      <input
+        type="number"
+        [(ngModel)]="formData.capacity"
+        min="1"
+        class="w-full h-11 px-3 rounded-xl border border-border bg-input-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition" />
+    </div>
+  </div>
+
+  <!-- Recurrence -->
+  <div>
+    <label class="block text-xs font-medium text-muted-foreground mb-1.5">
+      Recurrence
+    </label>
+    <select
+      [(ngModel)]="formData.recurrenceType"
+      class="w-full h-11 px-3 rounded-xl border border-border bg-input-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition cursor-pointer">
+      <option value="NONE">One-time</option>
+      <option value="DAILY">Daily</option>
+      <option value="WEEKLY">Weekly</option>
+      <option value="MONTHLY">Monthly</option>
+    </select>
+  </div>
+
+  <!-- Notes -->
+  <div>
+    <label class="block text-xs font-medium text-muted-foreground mb-1.5">
+      Notes
+    </label>
+    <textarea
+      [(ngModel)]="formData.notes"
+      rows="3"
+      class="w-full px-3 py-2 rounded-xl border border-border bg-input-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition resize-none"
+      placeholder="Add any notes about this availability..."></textarea>
+  </div>
+</div>
+
+<div class="flex gap-2 justify-end px-6 py-4 border-t border-border">
+  <button
+    (click)="cancel.emit()"
+    class="px-4 py-1.5 text-sm rounded-xl bg-secondary text-secondary-foreground border-none cursor-pointer hover:opacity-80 transition">
+    Cancel
+  </button>
+  <button
+    (click)="save.emit()"
+    class="px-4 py-1.5 text-sm rounded-xl bg-primary text-primary-foreground border-none cursor-pointer hover:opacity-90 transition">
+    {{ mode === 'create' ? 'Create' : 'Save Changes' }}
+  </button>
+</div>

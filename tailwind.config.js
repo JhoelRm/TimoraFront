@@ -63,6 +63,19 @@ module.exports = {
           4: "var(--chart-4)",
           5: "var(--chart-5)",
         },
+
+        /* Figma design tokens */
+        "bg-main": "#0d0d14",
+        "bg-panel": "#15151f",
+        "bg-input": "#1a1a24",
+        "border-subtle": "#2a2a35",
+        "accent-purple": "#7c5cff",
+        "accent-purple-soft": "rgba(124,92,255,0.15)",
+        "text-secondary": "#9ca3af",
+        "status-active-bg": "rgba(34,197,94,0.15)",
+        "status-active-text": "#22c55e",
+        "status-inactive-bg": "rgba(239,68,68,0.15)",
+        "status-inactive-text": "#ef4444",
       },
 
       fontSize: {

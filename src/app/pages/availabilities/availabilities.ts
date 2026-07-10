@@ -1,4 +1,4 @@
-// pages/availability/availabilities.ts
+﻿// pages/availability/availabilities.ts
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -6,12 +6,17 @@ import { AvailabilityService } from '../../services/availability/availability';
 import { PersonService } from '../../services/person-identity/person-identity';
 import { AuthService } from '../../services/auth/auth';
 import { CompaniesService } from '../../services/companies/companies';
-import { AvailabilityDTO, AvailabilityEvent, DayOfWeek, RecurrenceType, AvailabilityCreateDTO, AvailabilityPatchDTO } from '../../models/availability';
+import { AvailabilityDTO, AvailabilityEvent, AvailabilityCreateDTO, AvailabilityPatchDTO } from '../../models/availability';
 import { PersonIdentityDTO } from '../../models/person-identity';
 import { CurrentUser } from '../../models/currentUser';
 import { CompanyDTO } from '../../models/company';
-import { LucideAngularModule, CalendarDays, Plus, Pen, Trash2, ChevronLeft, ChevronRight, Clock, User, X, List } from 'lucide-angular';
-import { ModalComponent } from '../../components/modal/modal/modal';
+import { LucideAngularModule, X } from 'lucide-angular';
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
+import { AvailabilitiesFilter } from './components/availabilities-filter/availabilities-filter';
+import { AvailabilitiesList } from './components/availabilities-list/availabilities-list';
+import { AvailabilitiesCalendar } from './components/availabilities-calendar/availabilities-calendar';
+import { AvailabilitiesForm } from './components/availabilities-form/availabilities-form';
 
 type ViewMode = 'list' | 'calendar';
 type CalendarViewMode = 'day' | 'week' | 'month';
@@ -19,13 +24,12 @@ type CalendarViewMode = 'day' | 'week' | 'month';
 @Component({
   selector: 'app-availability',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule, ModalComponent],
+  imports: [CommonModule, FormsModule, LucideAngularModule, DialogModule, ButtonModule, AvailabilitiesFilter, AvailabilitiesList, AvailabilitiesCalendar, AvailabilitiesForm],
   templateUrl: './availabilities.html',
   styleUrls: ['./availabilities.scss']
 })
 export class AvailabilitiesComponent implements OnInit {
-  icons = { CalendarDays, Plus, Pen, Trash2, ChevronLeft, ChevronRight, Clock, User, X, List };
-  modalSuppliers: PersonIdentityDTO[] = [];
+  icons = { X };
   
   // Estado
   viewMode: ViewMode = 'calendar';
@@ -68,14 +72,7 @@ export class AvailabilitiesComponent implements OnInit {
   availabilityForm: AvailabilityCreateDTO = this.createEmptyForm();
   editForm: AvailabilityPatchDTO = {};
 
-  // Días de la semana
-  weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  dayOfWeekOptions = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
-
-  // Horas para el calendario
-  timeSlots: { hour: number; label: string }[] = [];
-
-  // Inyección de dependencias
+  // Inyecci├│n de dependencias
   private availabilityService = inject(AvailabilityService);
   private personService = inject(PersonService);
   private authService = inject(AuthService);
@@ -93,26 +90,18 @@ export class AvailabilitiesComponent implements OnInit {
     return this.filteredAvailabilities.length;
   }
 
-  get supplierOptions(): PersonIdentityDTO[] {
-    return this.filteredSuppliers;
+  setViewMode(mode: ViewMode): void {
+    this.setView(mode);
   }
 
-  constructor() {
-    this.generateTimeSlots();
+  get supplierOptions(): PersonIdentityDTO[] {
+    return this.filteredSuppliers;
   }
 
   ngOnInit(): void {
     this.currentUser = this.authService.getUser();
     this.loadCompanies();
     this.loadSuppliers();
-  }
-
-  generateTimeSlots(): void {
-    this.timeSlots = [];
-    for (let i = 6; i <= 22; i++) {
-      const label = i < 12 ? `${i} AM` : i === 12 ? '12 PM' : `${i - 12} PM`;
-      this.timeSlots.push({ hour: i, label });
-    }
   }
 
   // ==================== LOAD DATA ====================
@@ -122,12 +111,12 @@ export class AvailabilitiesComponent implements OnInit {
       next: (companies) => {
         this.allCompanies = companies ?? [];
         
-        // Si es OWNER, seleccionar su compañía por defecto
+        // Si es OWNER, seleccionar su compa├▒├¡a por defecto
         if (this.isOwner && this.currentUser?.companyId) {
           this.selectedCompanyId = this.currentUser.companyId;
         }
         
-        this.onCompanyChange();
+        this.onCompanyChange(this.selectedCompanyId);
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -172,13 +161,13 @@ export class AvailabilitiesComponent implements OnInit {
   }
 
 loadAvailabilities(): void {
-  // Si es USER, usar su supplier automáticamente
+  // Si es USER, usar su supplier autom├íticamente
   if (this.isUser) {
     if (!this.currentUserSupplier) {
       this.loadCurrentUserSupplier();
       return;
     }
-    // Si el supplier no está seleccionado, seleccionarlo
+    // Si el supplier no est├í seleccionado, seleccionarlo
     if (!this.selectedSupplierId && this.currentUserSupplier) {
       this.selectedSupplierId = this.currentUserSupplier.supplier?.id ?? null;
     }
@@ -207,7 +196,7 @@ loadAvailabilities(): void {
     return;
   }
 
-  // Asegurar que el supplierId sea un número
+  // Asegurar que el supplierId sea un n├║mero
   const id = Number(supplierId);
   if (isNaN(id)) {
     this.loading = false;
@@ -236,15 +225,15 @@ loadAvailabilities(): void {
 // ==================== FILTERS ====================
 
 private applyFilters(): void {
-  // Aplicar filtro de compañía
+  // Aplicar filtro de compa├▒├¡a
   let suppliers = this.allSuppliers;
   
-  // Filtro por compañía (solo OWNER)
+  // Filtro por compa├▒├¡a (solo OWNER)
   if (this.canSelectCompany && this.selectedCompanyId) {
     suppliers = suppliers.filter(s => s.person.companyId === this.selectedCompanyId);
   }
   
-  // Para ADMIN, mostrar solo suppliers de su compañía
+  // Para ADMIN, mostrar solo suppliers de su compa├▒├¡a
   if (this.isAdmin) {
     const companyId = this.currentUser?.companyId;
     if (companyId) {
@@ -254,7 +243,7 @@ private applyFilters(): void {
   
   this.filteredSuppliers = suppliers;
   
-  // Si no hay suppliers seleccionados o el seleccionado ya no está disponible
+  // Si no hay suppliers seleccionados o el seleccionado ya no est├í disponible
   if (this.selectedSupplierId) {
     const stillExists = this.filteredSuppliers.some(s => s.supplier?.id === this.selectedSupplierId);
     if (!stillExists) {
@@ -271,16 +260,17 @@ private applyFilters(): void {
   
   this.cdr.detectChanges();
 }
-  onCompanyChange(): void {
+  onCompanyChange(companyId: number | null): void {
+    this.selectedCompanyId = companyId;
     this.applyFilters();
-    // Resetear supplier seleccionado
     this.selectedSupplierId = null;
     this.filteredAvailabilities = [];
     this.events = [];
     this.cdr.detectChanges();
   }
 
-  onSupplierChange(): void {
+  onSupplierChange(supplierId: number | null): void {
+    this.selectedSupplierId = supplierId;
     this.loadAvailabilities();
   }
 
@@ -376,7 +366,7 @@ private applyFilters(): void {
       start.setDate(date.getDate() - date.getDay() + 1);
       const end = new Date(start);
       end.setDate(start.getDate() + 6);
-      return `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+      return `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} ÔÇô ${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
     } else if (this.calendarViewMode === 'month') {
       return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
     }
@@ -493,7 +483,7 @@ createEmptyForm(): AvailabilityCreateDTO {
   // Obtener el companyId del supplier seleccionado o del usuario actual
   let companyId = this.currentUser?.companyId || 0;
   
-  // Si hay un supplier seleccionado, usar su compañía
+  // Si hay un supplier seleccionado, usar su compa├▒├¡a
   if (this.selectedSupplierId) {
     const selectedSupplier = this.allSuppliers.find(
       s => s.supplier?.id === this.selectedSupplierId
@@ -524,9 +514,6 @@ openCreateModal(): void {
   this.isEditMode = false;
   this.editAvailabilityId = null;
   this.availabilityForm = this.createEmptyForm();
-  
-  // Actualizar modalSuppliers basado en el filtro actual
-  this.modalSuppliers = this.filteredSuppliers;
   
   // Si es USER, usar su supplier
   if (this.isUser && this.currentUserSupplier) {
@@ -561,7 +548,7 @@ createAvailability(): void {
     return;
   }
 
-  // Validar que el supplier pertenezca a la compañía seleccionada
+  // Validar que el supplier pertenezca a la compa├▒├¡a seleccionada
   const supplier = this.allSuppliers.find(s => s.supplier?.id === form.supplierId);
   if (!supplier) {
     alert('Selected supplier not found');
@@ -634,7 +621,7 @@ createAvailability(): void {
 updateAvailability(): void {
   if (!this.editAvailabilityId) return;
 
-  // Asegurar que el ID sea un número
+  // Asegurar que el ID sea un n├║mero
   const id = Number(this.editAvailabilityId);
   
   if (isNaN(id)) {
@@ -673,7 +660,7 @@ confirmDelete(): void {
   if (!this.availabilityToDelete) return;
 
   this.loading = true;
-  // Asegurar que el ID sea un número
+  // Asegurar que el ID sea un n├║mero
   const id = Number(this.availabilityToDelete.id);
   
   if (isNaN(id)) {
@@ -698,67 +685,6 @@ confirmDelete(): void {
   });
 }
 
-  // ==================== UI HELPERS ====================
-
-  getStatusClass(status: string): string {
-    return status === 'ACTIVE' 
-      ? 'bg-emerald-500/10 text-emerald-400' 
-      : 'bg-red-500/10 text-red-400';
-  }
-
-  getDaysLabel(dayOfWeek: DayOfWeek): string {
-    if (!dayOfWeek) return 'N/A';
-    const map: Record<DayOfWeek, string> = {
-      'MONDAY': 'Monday',
-      'TUESDAY': 'Tuesday',
-      'WEDNESDAY': 'Wednesday',
-      'THURSDAY': 'Thursday',
-      'FRIDAY': 'Friday',
-      'SATURDAY': 'Saturday',
-      'SUNDAY': 'Sunday'
-    };
-    return map[dayOfWeek] || dayOfWeek;
-  }
-
-  getRecurrenceLabel(recurrenceType: RecurrenceType): string {
-    const map: Record<RecurrenceType, string> = {
-      'NONE': 'One-time',
-      'DAILY': 'Daily',
-      'WEEKLY': 'Weekly',
-      'MONTHLY': 'Monthly'
-    };
-    return map[recurrenceType] || recurrenceType;
-  }
-
-  formatTime(time: string): string {
-    const [hours, minutes] = time.split(':').map(Number);
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    const h = hours % 12 || 12;
-    return `${h}:${minutes.toString().padStart(2, '0')} ${ampm}`;
-  }
-
-  getDayOfWeekOptions(): string[] {
-    return ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
-  }
-
-  isDaySelected(day: string): boolean {
-    return this.availabilityForm.dayOfWeek === day as DayOfWeek;
-  }
-
-  selectDayOfWeek(day: string): void {
-    this.availabilityForm.dayOfWeek = day as DayOfWeek;
-    this.cdr.detectChanges();
-  }
-
-  isEditDaySelected(day: string): boolean {
-    return this.editForm.dayOfWeek === day as DayOfWeek;
-  }
-
-  selectEditDayOfWeek(day: string): void {
-    this.editForm.dayOfWeek = day as DayOfWeek;
-    this.cdr.detectChanges();
-  }
-
   trackBySupplierId(index: number, item: PersonIdentityDTO): number {
     return item.supplier?.id ?? index;
   }
@@ -774,18 +700,4 @@ confirmDelete(): void {
   trackByCompanyId(index: number, item: CompanyDTO): number {
     return item.id;
   }
-  onModalSupplierChange(): void {
-  const supplierId = this.availabilityForm.supplierId;
-  if (supplierId) {
-    const supplier = this.allSuppliers.find(s => s.supplier?.id === supplierId);
-    if (supplier) {
-      this.availabilityForm.companyId = supplier.person.companyId;
-      this.cdr.detectChanges();
-    }
-  }
-}
-getCompanyName(companyId: number): string {
-  const company = this.allCompanies.find(c => c.id === companyId);
-  return company?.name || 'Unknown';
-}
 }

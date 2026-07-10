@@ -1,0 +1,44 @@
+:host ::ng-deep .p-autocomplete-input-pill {
+  outline: none !important;
+  box-shadow: none !important;
+
+  &:focus {
+    border-color: rgb(var(--primary) / 0.3) !important;
+    box-shadow: 0 0 0 2px rgb(var(--primary) / 0.3) !important;
+  }
+}
+
+:host ::ng-deep .p-autocomplete-panel {
+  margin-top: 4px;
+  border-radius: 0.75rem !important;
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4) !important;
+
+  .p-autocomplete-items {
+    padding: 0.25rem !important;
+  }
+
+  .p-autocomplete-item {
+    border-radius: 0.5rem !important;
+    padding: 0.5rem 0.75rem !important;
+    color: var(--foreground) !important;
+    transition: background 0.15s;
+
+    &:hover,
+    &.p-highlight {
+      background: rgb(var(--primary) / 0.1) !important;
+    }
+  }
+}
+
+:host ::ng-deep .p-autocomplete {
+  .p-autocomplete-loader {
+    display: none !important;
+  }
+
+  .p-autocomplete-clear-icon {
+    right: 0.75rem !important;
+    color: #9ca3af !important;
+  }
+}

@@ -1,0 +1,60 @@
+<div class="bg-card border border-border rounded-2xl overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="border-b border-border">
+      <tr>
+        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Provider</th>
+        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Days</th>
+        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Hours</th>
+        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Recurrence</th>
+        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Slot</th>
+        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Capacity</th>
+        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Status</th>
+        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground"></th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-border">
+      <tr *ngFor="let a of availabilities; trackBy: trackById"
+        class="hover:bg-secondary/20 transition-colors">
+        <td class="px-4 py-3">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+              {{ getInitials(a.supplierName) }}
+            </div>
+            <span class="text-sm font-medium text-foreground">{{ a.supplierName || 'Supplier ' + a.supplierId }}</span>
+          </div>
+        </td>
+        <td class="px-4 py-3 text-sm text-muted-foreground">{{ getDaysLabel(a.dayOfWeek) }}</td>
+        <td class="px-4 py-3 text-sm text-muted-foreground">{{ formatTime(a.startTime) }} – {{ formatTime(a.endTime) }}</td>
+        <td class="px-4 py-3 text-sm text-muted-foreground">{{ getRecurrenceLabel(a.recurrenceType) }}</td>
+        <td class="px-4 py-3 text-sm text-muted-foreground">{{ a.slotDurationMinutes }}m</td>
+        <td class="px-4 py-3 text-sm text-muted-foreground">{{ a.capacity }}</td>
+        <td class="px-4 py-3">
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+            [class.bg-emerald-500/10]="a.status === 'ACTIVE'"
+            [class.text-emerald-400]="a.status === 'ACTIVE'"
+            [class.bg-red-500/10]="a.status === 'INACTIVE'"
+            [class.text-red-400]="a.status === 'INACTIVE'">
+            {{ getStatusLabel(a.status) }}
+          </span>
+        </td>
+        <td class="px-4 py-3">
+          <div class="flex gap-1">
+            <button (click)="edit.emit(a)"
+              class="inline-flex items-center rounded-xl px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary transition-all cursor-pointer">
+              <lucide-angular [img]="icons.Pencil" class="w-3.5 h-3.5"></lucide-angular>
+            </button>
+            <button (click)="delete.emit(a)"
+              class="inline-flex items-center rounded-xl px-2.5 py-1 text-xs bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all cursor-pointer">
+              <lucide-angular [img]="icons.Trash2" class="w-3.5 h-3.5"></lucide-angular>
+            </button>
+          </div>
+        </td>
+      </tr>
+      <tr *ngIf="availabilities.length === 0">
+        <td colspan="8" class="px-4 py-8 text-center text-sm text-muted-foreground">
+          No schedules available
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

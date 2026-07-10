@@ -1,0 +1,70 @@
+<div class="flex items-center justify-between shrink-0 flex-wrap gap-3">
+  <div>
+    <h1 class="text-xl font-semibold text-foreground">Availability</h1>
+    <p class="text-sm text-muted-foreground">{{ totalSchedules }} schedules</p>
+  </div>
+
+  <div class="flex items-center gap-3">
+    <div class="relative" *ngIf="canSelectCompany">
+      <lucide-angular [img]="icons.Search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10"></lucide-angular>
+      <p-autoComplete
+        [(ngModel)]="selectedCompanyObj"
+        [suggestions]="filteredCompanies"
+        (completeMethod)="filterCompany($event)"
+        (onSelect)="onCompanySelect($event.value)"
+        (onClear)="onCompanyClear()"
+        field="name"
+        placeholder="All companies"
+        [minLength]="0"
+        [showClear]="true"
+        [style]="{ width: '176px' }"
+        inputStyleClass="w-full pl-8 pr-3 py-1.5 text-sm bg-secondary transition border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 text-foreground placeholder:text-muted-foreground">
+      </p-autoComplete>
+    </div>
+
+    <div class="relative" *ngIf="canSelectSupplier">
+      <lucide-angular [img]="icons.Search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10"></lucide-angular>
+      <p-autoComplete
+        [(ngModel)]="selectedSupplierObj"
+        [suggestions]="filteredSuppliers"
+        (completeMethod)="filterSupplier($event)"
+        (onSelect)="onSupplierSelect($event.value)"
+        (onClear)="onSupplierClear()"
+        placeholder="Select supplier"
+        [minLength]="0"
+        [showClear]="true"
+        [style]="{ width: '200px' }"
+        inputStyleClass="w-full pl-8 pr-3 py-1.5 text-sm bg-secondary transition border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 text-foreground placeholder:text-muted-foreground">
+        <ng-template let-supplier pTemplate="item">
+          <div class="text-sm text-foreground">{{ supplier.person.firstName }} {{ supplier.person.lastName }}</div>
+        </ng-template>
+        <ng-template let-supplier pTemplate="selectedItem">
+          <span>{{ supplier.person.firstName }} {{ supplier.person.lastName }}</span>
+        </ng-template>
+      </p-autoComplete>
+    </div>
+
+    <div class="flex items-center h-9 px-1 rounded-xl bg-secondary border border-border">
+      <button (click)="setView('calendar')"
+        [class.bg-primary]="viewMode === 'calendar'"
+        [class.text-primary-foreground]="viewMode === 'calendar'"
+        [class.text-muted-foreground]="viewMode !== 'calendar'"
+        class="flex items-center justify-center w-7 h-7 rounded-lg transition-all cursor-pointer">
+        <lucide-angular [img]="icons.Calendar" class="w-4 h-4"></lucide-angular>
+      </button>
+      <button (click)="setView('list')"
+        [class.bg-primary]="viewMode === 'list'"
+        [class.text-primary-foreground]="viewMode === 'list'"
+        [class.text-muted-foreground]="viewMode !== 'list'"
+        class="flex items-center justify-center w-7 h-7 rounded-lg transition-all cursor-pointer ml-1">
+        <lucide-angular [img]="icons.List" class="w-4 h-4"></lucide-angular>
+      </button>
+    </div>
+
+    <button (click)="addClick.emit()"
+      class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95">
+      <lucide-angular [img]="icons.Plus" class="w-4 h-4"></lucide-angular>
+      <span>Add schedule</span>
+    </button>
+  </div>
+</div>
