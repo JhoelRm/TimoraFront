@@ -1,0 +1,20 @@
+{
+  "/api": {
+    "target": "https://timorabackend.onrender.com",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api": "/api"
+    }
+  },
+  "/auth": {
+    "target": "https://timorabackend.onrender.com",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/auth": "/auth"
+    }
+  }
+}
