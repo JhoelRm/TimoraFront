@@ -1,156 +1,91 @@
 <main class="flex-1 overflow-auto p-6">
-  <div class="flex flex-col h-full space-y-4">
+  <div class="space-y-4">
+    
+    <!-- FILTRO (siempre visible) -->
+  <app-availabilities-filter
+    [companies]="allCompanies"
+    [suppliers]="filteredSuppliers"
+    [selectedCompanyId]="selectedCompanyId"
+    [selectedSupplierId]="selectedSupplierId"
+    [canSelectCompany]="canSelectCompany"
+    [canSelectSupplier]="canSelectSupplier"
+    [viewMode]="viewMode"
+    [totalSchedules]="totalSchedules"
+    [isReadOnly]="isReadOnly"
+    [currentUserPersonId]="currentUser?.personId ?? null"
+    (companyChange)="onCompanyChange($event)"
+    (supplierChange)="onSupplierChange($event)"
+    (viewModeChange)="onViewModeChange($event)"
+    (addClick)="onAddClick()">
+  </app-availabilities-filter>
 
-    <app-availabilities-filter
-      [companies]="allCompanies"
-      [suppliers]="supplierOptions"
-      [selectedCompanyId]="selectedCompanyId"
-      [selectedSupplierId]="selectedSupplierId"
-      [canSelectCompany]="canSelectCompany"
-      [canSelectSupplier]="canSelectSupplier"
-      [viewMode]="viewMode"
-      [totalSchedules]="totalSchedules"
-      (companyChange)="onCompanyChange($event)"
-      (supplierChange)="onSupplierChange($event)"
-      (viewModeChange)="setViewMode($event)"
-      (addClick)="openCreateModal()">
-    </app-availabilities-filter>
+    <!-- ERRORES -->
+    @if (error) {
+      <div class="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 text-sm text-red-700">
+        {{ error }}
+      </div>
+    }
 
-    <div *ngIf="loading" class="flex items-center justify-center py-12">
-      <div class="text-sm text-muted-foreground">Loading availabilities...</div>
-    </div>
+    <!-- LOADING -->
+    @if (loading) {
+      <div class="flex justify-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    }
 
-    <div *ngIf="error" class="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 text-sm text-red-700">
-      {{ error }}
-    </div>
+    <!-- SIN SUPPLIER SELECCIONADO -->
+    @if (!loading && ready && !selectedSupplierId && !isUser) {
+      <div class="bg-yellow-500/10 border border-yellow-500/20 rounded-2xl p-4 text-sm text-yellow-700 text-center">
+        Please select a supplier to view their availability
+      </div>
+    }
 
-    <div *ngIf="!selectedSupplierId && canSelectSupplier && !loading" class="bg-yellow-500/10 border border-yellow-500/20 rounded-2xl p-4 text-sm text-yellow-700 text-center">
-      Please select a supplier to view their availability
-    </div>
+    <!-- SIN SUPPLIERS DISPONIBLES -->
+    @if (!loading && ready && filteredSuppliers.length === 0 && selectedSupplierId === null && !isUser) {
+      <div class="bg-yellow-500/10 border border-yellow-500/20 rounded-2xl p-4 text-sm text-yellow-700 text-center">
+        No suppliers available for the selected company
+      </div>
+    }
 
-    <div *ngIf="canSelectSupplier && supplierOptions.length === 0 && !loading && !isUser" class="bg-yellow-500/10 border border-yellow-500/20 rounded-2xl p-4 text-sm text-yellow-700 text-center">
-      No suppliers available for the selected company
-    </div>
-
-    <div *ngIf="viewMode === 'list' && !loading && selectedSupplierId" class="bg-card border border-border rounded-2xl overflow-hidden">
+    <!-- VISTA DE LISTA -->
+    @if (viewMode === 'list' && !loading && selectedSupplierId) {
       <app-availabilities-list
         [availabilities]="filteredAvailabilities"
         [loading]="loading"
         (edit)="openEditModal($event)"
         (delete)="openDeleteModal($event)">
       </app-availabilities-list>
-    </div>
+    }
 
-    <div *ngIf="viewMode === 'calendar' && !loading && selectedSupplierId" class="flex-1 min-h-0" style="min-height: 520px;">
-      <app-availabilities-calendar
-        [events]="events"
-        [currentDate]="currentDate"
-        [selectedDate]="selectedDate"
-        [calendarViewMode]="calendarViewMode"
-        (today)="goToToday()"
-        (previous)="previous()"
-        (next)="next()"
-        (viewModeChange)="setCalendarView($event)"
-        (selectedDateChange)="selectDay($event)">
-      </app-availabilities-calendar>
-    </div>
+    <!-- VISTA DE CALENDARIO (placeholder) -->
+    @if (viewMode === 'calendar' && !loading && selectedSupplierId) {
+      <div class="bg-card border border-border rounded-2xl p-8 text-center text-muted-foreground">
+        <p class="text-sm">📅 Calendar view coming soon...</p>
+        <p class="text-xs mt-1">Showing availability for supplier ID: {{ selectedSupplierId }}</p>
+      </div>
+    }
+
+    <!-- MODAL DE CREACIÓN/EDICIÓN -->
+    <app-availabilities-form
+      [(visible)]="showModal"
+      [mode]="modalMode"
+      [formData]="createFormData"
+      [editData]="editData"
+      [suppliers]="filteredSuppliers"
+      [companies]="allCompanies"
+      [loading]="loading"
+      (save)="saveAvailability($event)"
+      (cancel)="closeModal()">
+    </app-availabilities-form>
+
+    <!-- MODAL DE ELIMINACIÓN -->
+    <app-availabilities-delete-modal
+      [(visible)]="showDeleteModal"
+      [availability]="availabilityToDelete"
+      [loading]="loading"
+      (confirm)="confirmDelete()"
+      (cancel)="closeDeleteModal()">
+    </app-availabilities-delete-modal>
 
   </div>
 </main>
-
-<!-- CREATE MODAL -->
-<p-dialog
-  [(visible)]="modalOpen"
-  [modal]="true"
-  [closable]="false"
-  [draggable]="false"
-  [resizable]="false"
-  [style]="{ maxWidth: '600px', width: '100%' }">
-  <ng-template pTemplate="header">
-    <div class="flex items-center justify-between w-full px-6 py-4 border-b border-border">
-      <h3 class="font-semibold text-foreground">Create Availability</h3>
-      <button (click)="closeModal()" class="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors">
-        <lucide-angular [img]="icons.X" class="w-4 h-4"></lucide-angular>
-      </button>
-    </div>
-  </ng-template>
-
-  <app-availabilities-form
-    [formData]="availabilityForm"
-    [mode]="'create'"
-    [suppliers]="filteredSuppliers"
-    [isUser]="isUser"
-    [companies]="allCompanies"
-    (save)="createAvailability()"
-    (cancel)="closeModal()">
-  </app-availabilities-form>
-</p-dialog>
-
-<!-- EDIT MODAL -->
-<p-dialog
-  [(visible)]="editModalOpen"
-  [modal]="true"
-  [closable]="false"
-  [draggable]="false"
-  [resizable]="false"
-  [style]="{ maxWidth: '600px', width: '100%' }">
-  <ng-template pTemplate="header">
-    <div class="flex items-center justify-between w-full px-6 py-4 border-b border-border">
-      <h3 class="font-semibold text-foreground">Edit Availability</h3>
-      <button (click)="closeEditModal()" class="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors">
-        <lucide-angular [img]="icons.X" class="w-4 h-4"></lucide-angular>
-      </button>
-    </div>
-  </ng-template>
-
-  <app-availabilities-form
-    [formData]="editForm"
-    [mode]="'edit'"
-    [suppliers]="filteredSuppliers"
-    [isUser]="isUser"
-    [companies]="allCompanies"
-    (save)="updateAvailability()"
-    (cancel)="closeEditModal()">
-  </app-availabilities-form>
-</p-dialog>
-
-<!-- DELETE MODAL -->
-<p-dialog
-  [(visible)]="deleteModalOpen"
-  [modal]="true"
-  [closable]="false"
-  [draggable]="false"
-  [resizable]="false"
-  [style]="{ maxWidth: '450px', width: '100%' }">
-  <ng-template pTemplate="header">
-    <div class="flex items-center justify-between w-full px-6 py-4 border-b border-border">
-      <h3 class="font-semibold text-foreground">Delete Availability</h3>
-      <button (click)="closeDeleteModal()" class="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors">
-        <lucide-angular [img]="icons.X" class="w-4 h-4"></lucide-angular>
-      </button>
-    </div>
-  </ng-template>
-
-  <div class="p-6 text-sm text-muted-foreground">
-    Are you sure you want to delete this availability for
-    <span class="text-foreground font-medium">
-      {{ availabilityToDelete?.supplierName || 'Supplier ' + availabilityToDelete?.supplierId }}
-    </span>?
-  </div>
-
-  <ng-template pTemplate="footer">
-    <div class="flex gap-2 justify-end px-6 py-4 border-t border-border">
-      <button
-        (click)="closeDeleteModal()"
-        class="px-4 py-1.5 text-sm rounded-xl bg-secondary text-secondary-foreground border-none cursor-pointer hover:opacity-80 transition">
-        Cancel
-      </button>
-      <button
-        (click)="confirmDelete()"
-        [disabled]="loading"
-        class="px-4 py-1.5 text-sm rounded-xl bg-red-500 text-white border-none cursor-pointer hover:opacity-90 transition disabled:opacity-50">
-        Delete
-      </button>
-    </div>
-  </ng-template>
-</p-dialog>

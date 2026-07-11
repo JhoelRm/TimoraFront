@@ -4,65 +4,116 @@
     <p class="text-sm text-muted-foreground">{{ totalSchedules }} schedules</p>
   </div>
 
-  <div class="flex items-center gap-3">
-    <div class="relative" *ngIf="canSelectCompany">
-      <lucide-angular [img]="icons.Search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10"></lucide-angular>
-      <p-autoComplete
-        [(ngModel)]="selectedCompanyObj"
-        [suggestions]="filteredCompanies"
-        (completeMethod)="filterCompany($event)"
-        (onSelect)="onCompanySelect($event.value)"
-        (onClear)="onCompanyClear()"
-        field="name"
-        placeholder="All companies"
-        [minLength]="0"
-        [showClear]="true"
-        [style]="{ width: '176px' }"
-        inputStyleClass="w-full pl-8 pr-3 py-1.5 text-sm bg-secondary transition border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 text-foreground placeholder:text-muted-foreground">
-      </p-autoComplete>
+  <div class="flex items-center gap-2">
+    <!-- AutoComplete de compañías (solo si canSelectCompany) -->
+    <div class="w-40" *ngIf="canSelectCompany">
+      <div class="relative">
+        <lucide-angular 
+          [img]="icons.Search" 
+          class="absolute left-1 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10">
+        </lucide-angular>
+        <lucide-angular 
+          *ngIf="selectedCompanyObj"
+          [img]="icons.X" 
+          (click)="onCompanyClear()"
+          class="absolute right-1 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground cursor-pointer hover:text-foreground z-10">
+        </lucide-angular>
+        <p-autoComplete
+          [(ngModel)]="selectedCompanyObj"
+          [suggestions]="filteredCompanies"
+          (completeMethod)="filterCompany($event)"
+          (onSelect)="onCompanySelect($event)"
+          optionLabel="name"
+          placeholder="All companies"
+          [minLength]="0"
+          [showClear]="false"
+          [style]="{ width: '100%' }"
+          [appendTo]="'body'"
+          inputStyleClass="company-autocomplete-input"
+          panelStyleClass="custom-autocomplete-panel">
+          <ng-template let-company pTemplate="item">
+            <div class="text-sm text-foreground px-3 py-2">
+              {{ company.name }}
+            </div>
+          </ng-template>
+        </p-autoComplete>
+      </div>
     </div>
 
-    <div class="relative" *ngIf="canSelectSupplier">
-      <lucide-angular [img]="icons.Search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10"></lucide-angular>
-      <p-autoComplete
-        [(ngModel)]="selectedSupplierObj"
-        [suggestions]="filteredSuppliers"
-        (completeMethod)="filterSupplier($event)"
-        (onSelect)="onSupplierSelect($event.value)"
-        (onClear)="onSupplierClear()"
-        placeholder="Select supplier"
-        [minLength]="0"
-        [showClear]="true"
-        [style]="{ width: '200px' }"
-        inputStyleClass="w-full pl-8 pr-3 py-1.5 text-sm bg-secondary transition border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 text-foreground placeholder:text-muted-foreground">
-        <ng-template let-supplier pTemplate="item">
-          <div class="text-sm text-foreground">{{ supplier.person.firstName }} {{ supplier.person.lastName }}</div>
-        </ng-template>
-        <ng-template let-supplier pTemplate="selectedItem">
-          <span>{{ supplier.person.firstName }} {{ supplier.person.lastName }}</span>
-        </ng-template>
-      </p-autoComplete>
+    <!-- AutoComplete de proveedores (solo si canSelectSupplier) -->
+    <div class="w-44" *ngIf="canSelectSupplier">
+      <div class="relative">
+        <lucide-angular 
+          [img]="icons.Search" 
+          class="absolute left-1 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10">
+        </lucide-angular>
+        <lucide-angular 
+          *ngIf="selectedSupplierObj"
+          [img]="icons.X" 
+          (click)="onSupplierClear()"
+          class="absolute right-1 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground cursor-pointer hover:text-foreground z-10">
+        </lucide-angular>
+        <p-autoComplete
+          [(ngModel)]="selectedSupplierObj"
+          [suggestions]="filteredSuppliers"
+          (completeMethod)="filterSupplier($event)"
+          (onSelect)="onSupplierSelect($event)"
+          optionLabel="person.firstName"
+          placeholder="Select supplier"
+          [minLength]="0"
+          [showClear]="false"
+          [style]="{ width: '100%' }"
+          [appendTo]="'body'"
+          inputStyleClass="supplier-autocomplete-input"
+          panelStyleClass="custom-autocomplete-panel">
+          <ng-template let-supplier pTemplate="item">
+            <div class="text-sm text-foreground px-3 py-2">
+              <!-- 🔴 Si el supplier es el usuario actual, mostrar "Míos" -->
+              <span *ngIf="currentUserPersonId === supplier.person.id" class="font-medium text-primary">
+                ⭐ {{ supplier.person.firstName }} {{ supplier.person.lastName }} (Míos)
+              </span>
+              <span *ngIf="currentUserPersonId !== supplier.person.id">
+                {{ supplier.person.firstName }} {{ supplier.person.lastName }}
+              </span>
+            </div>
+          </ng-template>
+          <!-- 🔴 Template para el valor seleccionado -->
+          <ng-template let-supplier pTemplate="selectedItem">
+            <span *ngIf="currentUserPersonId === supplier?.person?.id">
+              ⭐ {{ supplier.person.firstName }} {{ supplier.person.lastName }} (Míos)
+            </span>
+            <span *ngIf="currentUserPersonId !== supplier?.person?.id">
+              {{ supplier.person.firstName }} {{ supplier.person.lastName }}
+            </span>
+          </ng-template>
+        </p-autoComplete>
+      </div>
     </div>
 
-    <div class="flex items-center h-9 px-1 rounded-xl bg-secondary border border-border">
+    <!-- Botones de vista (SIEMPRE VISIBLES) -->
+    <div class="flex items-center h-9 px-1 rounded-xl bg-input-background border border-border">
       <button (click)="setView('calendar')"
         [class.bg-primary]="viewMode === 'calendar'"
         [class.text-primary-foreground]="viewMode === 'calendar'"
         [class.text-muted-foreground]="viewMode !== 'calendar'"
-        class="flex items-center justify-center w-7 h-7 rounded-lg transition-all cursor-pointer">
+        class="flex items-center justify-center w-7 h-7 rounded-lg transition-all cursor-pointer hover:bg-primary/10">
         <lucide-angular [img]="icons.Calendar" class="w-4 h-4"></lucide-angular>
       </button>
       <button (click)="setView('list')"
         [class.bg-primary]="viewMode === 'list'"
         [class.text-primary-foreground]="viewMode === 'list'"
         [class.text-muted-foreground]="viewMode !== 'list'"
-        class="flex items-center justify-center w-7 h-7 rounded-lg transition-all cursor-pointer ml-1">
+        class="flex items-center justify-center w-7 h-7 rounded-lg transition-all cursor-pointer hover:bg-primary/10 ml-1">
         <lucide-angular [img]="icons.List" class="w-4 h-4"></lucide-angular>
       </button>
     </div>
 
+    <!-- Botón agregar (SIEMPRE VISIBLE) -->
     <button (click)="addClick.emit()"
-      class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95">
+      [disabled]="isReadOnly"
+      [class.opacity-50]="isReadOnly"
+      [class.cursor-not-allowed]="isReadOnly"
+      class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:opacity-50">
       <lucide-angular [img]="icons.Plus" class="w-4 h-4"></lucide-angular>
       <span>Add schedule</span>
     </button>

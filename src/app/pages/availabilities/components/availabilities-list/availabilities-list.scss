@@ -1,3 +1,15 @@
+// Estilos adicionales si son necesarios
 :host {
   display: block;
+}
+
+// Asegurar que la tabla sea responsive
+@media (max-width: 768px) {
+  .bg-card {
+    overflow-x: auto;
+  }
+  
+  table {
+    min-width: 700px;
+  }
 }

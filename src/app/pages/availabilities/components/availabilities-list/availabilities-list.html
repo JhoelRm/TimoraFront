@@ -13,21 +13,49 @@
       </tr>
     </thead>
     <tbody class="divide-y divide-border">
+      <!-- Loading state -->
+      <tr *ngIf="loading">
+        <td colspan="8" class="px-4 py-8 text-center text-sm text-muted-foreground">
+          <div class="flex items-center justify-center gap-2">
+            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+            Loading schedules...
+          </div>
+        </td>
+      </tr>
+
+      <!-- Empty state -->
+      <tr *ngIf="!loading && availabilities.length === 0">
+        <td colspan="8" class="px-4 py-8 text-center text-sm text-muted-foreground">
+          No schedules available
+        </td>
+      </tr>
+
+      <!-- Data rows -->
       <tr *ngFor="let a of availabilities; trackBy: trackById"
         class="hover:bg-secondary/20 transition-colors">
         <td class="px-4 py-3">
-          <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-              {{ getInitials(a.supplierName) }}
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+              {{ getInitials(getSupplierName(a)) }}
             </div>
-            <span class="text-sm font-medium text-foreground">{{ a.supplierName || 'Supplier ' + a.supplierId }}</span>
+            <span class="text-sm font-medium text-foreground">{{ getSupplierName(a) }}</span>
           </div>
         </td>
-        <td class="px-4 py-3 text-sm text-muted-foreground">{{ getDaysLabel(a.dayOfWeek) }}</td>
-        <td class="px-4 py-3 text-sm text-muted-foreground">{{ formatTime(a.startTime) }} – {{ formatTime(a.endTime) }}</td>
-        <td class="px-4 py-3 text-sm text-muted-foreground">{{ getRecurrenceLabel(a.recurrenceType) }}</td>
-        <td class="px-4 py-3 text-sm text-muted-foreground">{{ a.slotDurationMinutes }}m</td>
-        <td class="px-4 py-3 text-sm text-muted-foreground">{{ a.capacity }}</td>
+        <td class="px-4 py-3 text-xs text-muted-foreground max-w-[130px] truncate">
+          {{ getDaysDisplay(a) }}
+        </td>
+        <td class="px-4 py-3 text-muted-foreground text-xs">
+          {{ formatTime(a.startTime) }}–{{ formatTime(a.endTime) }}
+        </td>
+        <td class="px-4 py-3 text-muted-foreground text-xs">
+          {{ getRecurrenceLabel(a.recurrenceType) }}
+        </td>
+        <td class="px-4 py-3 text-muted-foreground text-xs">
+          {{ a.slotDurationMinutes }}m
+        </td>
+        <td class="px-4 py-3 text-muted-foreground text-xs">
+          {{ a.capacity }}
+        </td>
         <td class="px-4 py-3">
           <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
             [class.bg-emerald-500/10]="a.status === 'ACTIVE'"
@@ -40,19 +68,14 @@
         <td class="px-4 py-3">
           <div class="flex gap-1">
             <button (click)="edit.emit(a)"
-              class="inline-flex items-center rounded-xl px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary transition-all cursor-pointer">
+              class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1 text-muted-foreground hover:text-foreground hover:bg-secondary">
               <lucide-angular [img]="icons.Pencil" class="w-3.5 h-3.5"></lucide-angular>
             </button>
             <button (click)="delete.emit(a)"
-              class="inline-flex items-center rounded-xl px-2.5 py-1 text-xs bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all cursor-pointer">
+              class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1 text-muted-foreground hover:text-foreground hover:bg-secondary">
               <lucide-angular [img]="icons.Trash2" class="w-3.5 h-3.5"></lucide-angular>
             </button>
           </div>
-        </td>
-      </tr>
-      <tr *ngIf="availabilities.length === 0">
-        <td colspan="8" class="px-4 py-8 text-center text-sm text-muted-foreground">
-          No schedules available
         </td>
       </tr>
     </tbody>
