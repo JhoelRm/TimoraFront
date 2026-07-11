@@ -1,0 +1,50 @@
+<app-modal [open]="open" (openChange)="openChange.emit($event)">
+  <div
+    class="relative w-full max-w-md bg-card border border-border rounded-2xl shadow-2xl flex flex-col"
+  >
+    <!-- HEADER -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-border">
+      <h3 class="font-semibold text-foreground">Delete Client</h3>
+
+      <button
+        (click)="close()"
+        class="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+      >
+        <lucide-angular [img]="icons.X" class="w-4 h-4"> </lucide-angular>
+      </button>
+    </div>
+
+    <!-- BODY -->
+    <div class="p-6 text-sm text-muted-foreground">
+      Are you sure you want to delete
+
+      <span class="text-foreground font-medium">
+        {{ customer?.person?.firstName }}
+        {{ customer?.person?.lastName }}
+      </span>
+
+      ?
+
+      <br />
+
+      <span class="text-xs text-muted-foreground/70"> This action cannot be undone. </span>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="flex gap-2 justify-end px-6 py-4 border-t border-border">
+      <button
+        (click)="close()"
+        class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-secondary text-secondary-foreground hover:bg-muted"
+      >
+        Cancel
+      </button>
+
+      <button
+        (click)="delete()"
+        class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-red-500 text-white hover:opacity-90 active:scale-95"
+      >
+        Delete
+      </button>
+    </div>
+  </div>
+</app-modal>
