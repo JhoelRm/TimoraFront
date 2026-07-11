@@ -1,0 +1,86 @@
+<div
+  class="bg-card border border-border rounded-2xl p-5 hover:border-primary/30 transition-all group">
+
+  <!-- TOP -->
+  <div class="flex items-start justify-between mb-4">
+
+    <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
+      <lucide-angular
+        [img]="icons.Building2"
+        class="text-primary w-5 h-5">
+      </lucide-angular>
+    </div>
+
+    <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+
+      <button
+        (click)="onEdit()"
+        class="p-2 text-muted-foreground hover:text-foreground">
+
+        <lucide-angular
+          [img]="icons.Pencil"
+          class="w-3 h-3">
+        </lucide-angular>
+
+      </button>
+
+      <button
+        (click)="onDelete()"
+        class="p-2 text-muted-foreground hover:text-red-500">
+
+        <lucide-angular
+          [img]="icons.Trash2"
+          class="w-3 h-3">
+        </lucide-angular>
+
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- INFO -->
+  <h3 class="font-semibold text-foreground">
+    {{ company.name }}
+  </h3>
+
+  <p class="text-xs text-muted-foreground font-mono">
+    {{ company.ruc }}
+  </p>
+
+  <div class="mt-3 space-y-1.5 text-xs text-muted-foreground">
+
+    <div class="flex items-center gap-2">
+      <lucide-angular [img]="icons.MapPin" class="w-3 h-3"></lucide-angular>
+      {{ company.address }}
+    </div>
+
+    <div class="flex items-center gap-2">
+      <lucide-angular [img]="icons.Phone" class="w-3 h-3"></lucide-angular>
+      {{ company.phone }}
+    </div>
+
+    <div class="flex items-center gap-2">
+      <lucide-angular [img]="icons.Mail" class="w-3 h-3"></lucide-angular>
+      {{ company.email }}
+    </div>
+
+  </div>
+
+  <!-- STATUS -->
+  <div class="mt-4">
+
+    <span
+      class="text-xs px-2 py-1 rounded-lg"
+      [ngClass]="{
+        'bg-green-500/10 text-green-700': company.status === 'ACTIVE',
+        'bg-red-500/10 text-red-700': company.status === 'INACTIVE'
+      }">
+
+      {{ company.status }}
+
+    </span>
+
+  </div>
+
+</div>

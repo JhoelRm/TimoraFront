@@ -1,0 +1,49 @@
+<!-- HEADER -->
+<div class="flex items-center justify-between">
+
+  <div>
+    <h1 class="text-xl font-semibold text-foreground">
+      Companies
+    </h1>
+
+    <p class="text-sm text-muted-foreground">
+      {{ totalCompanies }} tenants
+    </p>
+  </div>
+
+  <div class="flex items-center gap-2">
+
+    <!-- SEARCH -->
+    <div class="relative">
+
+      <lucide-angular
+        [img]="icons.Search"
+        class="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4">
+      </lucide-angular>
+
+      <input
+        [ngModel]="search"
+        (ngModelChange)="searchChange.emit($event)"
+        placeholder="Search companies…"
+        class="pl-10 pr-3 py-1.5 text-sm bg-input-background border transition border-border rounded-xl w-44 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30" />
+
+    </div>
+
+    <!-- BUTTON -->
+    <button
+      type="button"
+      (click)="create.emit()"
+      class="inline-flex items-center rounded-xl font-medium px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95">
+
+      <lucide-angular
+        [img]="icons.Plus"
+        class="w-4 h-4">
+      </lucide-angular>
+
+      New Company
+
+    </button>
+
+  </div>
+
+</div>
