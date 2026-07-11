@@ -5,11 +5,14 @@ import { CompaniesService } from '../../services/companies/companies';
 import { AuthService } from '../../services/auth/auth';
 import { CompanyDTO, CompanyPatchDTO } from '../../models/company';
 import { LucideAngularModule, Building2, Phone, Mail, MapPin, Save, X, AlertCircle } from 'lucide-angular';
+import { CompanyHeader } from '../../components/company-header/company-header';
+import { CompanyForm } from '../../components/company-form/company-form';
+import { CompanyFeedback } from '../../components/company-feedback/company-feedback';
 
 @Component({
   selector: 'app-company',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule, CompanyHeader,CompanyForm, CompanyFeedback],
   templateUrl: './company.html',
   styleUrls: ['./company.scss']
 })

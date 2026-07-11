@@ -1,129 +1,27 @@
 <main class="flex-1 overflow-auto p-6">
-  <div class="space-y-5 max-w-2xl ">
-    
-    <!-- HEADER -->
-    <div>
-      <h1 class="text-xl font-semibold text-foreground">Company Profile</h1>
-      <p class="text-sm text-muted-foreground">Manage your company information</p>
-    </div>
+  <div class="space-y-5 max-w-2xl">
 
-    <!-- LOADING -->
-    <div *ngIf="loading" class="flex items-center justify-center py-12">
-      <div class="text-sm text-muted-foreground">Loading company data...</div>
-    </div>
+    <app-company-header></app-company-header>
 
-    <!-- ERROR -->
-    <div *ngIf="error" class="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 text-sm text-red-700 flex items-start gap-3">
-      <lucide-angular [img]="icons.AlertCircle" class="w-5 h-5 shrink-0 mt-0.5"></lucide-angular>
-      <div>
-        <p class="font-medium">Error loading company</p>
-        <p class="text-red-600/80">{{ error }}</p>
-        <button (click)="loadCompany()" class="mt-2 text-sm font-medium text-red-700 hover:underline">
-          Retry
-        </button>
-      </div>
-    </div>
+    <app-company-feedback
+      [loading]="loading"
+      [error]="error"
+      [company]="company"
+      [icons]="icons"
+      (retry)="loadCompany()">
+    </app-company-feedback>
 
-    <!-- FORM -->
-    <div *ngIf="company && !loading" class="bg-card border border-border rounded-2xl p-6 space-y-4">
-      
-      <h2 class="text-sm font-semibold text-foreground">Company Information</h2>
-
-      <!-- COMPANY NAME -->
-      <div>
-        <label class="block text-xs font-medium text-muted-foreground mb-1.5">
-          Company Name <span class="text-destructive ml-0.5">*</span>
-        </label>
-        <input 
-          type="text" 
-          [(ngModel)]="editForm.name"
-          [class.border-destructive]="validationErrors['name']"
-          class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all" 
-          placeholder="Enter company name" />
-        <p *ngIf="validationErrors['name']" class="text-xs text-destructive mt-1">{{ validationErrors['name'] }}</p>
-      </div>
-
-      <!-- RUC + PHONE -->
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="block text-xs font-medium text-muted-foreground mb-1.5">RUC</label>
-          <input 
-            type="text" 
-            [(ngModel)]="editForm.ruc"
-            [class.border-destructive]="validationErrors['ruc']"
-            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all" 
-            placeholder="20100234567" />
-          <p *ngIf="validationErrors['ruc']" class="text-xs text-destructive mt-1">{{ validationErrors['ruc'] }}</p>
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-muted-foreground mb-1.5">Phone</label>
-          <input 
-            type="text" 
-            [(ngModel)]="editForm.phone"
-            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all" 
-            placeholder="+51 1 445-8900" />
-        </div>
-      </div>
-
-      <!-- EMAIL -->
-      <div>
-        <label class="block text-xs font-medium text-muted-foreground mb-1.5">Email</label>
-        <input 
-          type="email" 
-          [(ngModel)]="editForm.email"
-          [class.border-destructive]="validationErrors['email']"
-          class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all" 
-          placeholder="contact@company.pe" />
-        <p *ngIf="validationErrors['email']" class="text-xs text-destructive mt-1">{{ validationErrors['email'] }}</p>
-      </div>
-
-      <!-- ADDRESS -->
-      <div>
-        <label class="block text-xs font-medium text-muted-foreground mb-1.5">Address</label>
-        <input 
-          type="text" 
-          [(ngModel)]="editForm.address"
-          class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all" 
-          placeholder="Av. Larco 821, Miraflores, Lima" />
-      </div>
-
-      <!-- STATUS -->
-      <div *ngIf="company" class="pt-2 border-t border-border">
-        <div class="flex items-center gap-2">
-          <span class="text-xs text-muted-foreground">Status:</span>
-          <span class="text-xs px-2 py-1 rounded-lg" [ngClass]="{
-            'bg-green-500/10 text-green-700': company.status === 'ACTIVE',
-            'bg-red-500/10 text-red-700': company.status === 'INACTIVE'
-          }">
-            {{ company.status }}
-          </span>
-        </div>
-      </div>
-
-      <!-- SAVE BUTTON -->
-      <button 
-        (click)="saveChanges()" 
-        [disabled]="saving || !isFormValid()"
-        class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
-        
-        <lucide-angular *ngIf="!saving" [img]="icons.Save" class="w-4 h-4"></lucide-angular>
-        <span *ngIf="saving" class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-1"></span>
-        {{ saving ? 'Saving...' : 'Save Changes' }}
-      </button>
-
-      <!-- SAVE SUCCESS -->
-      <div *ngIf="saveSuccess" class="bg-green-500/10 border border-green-500/20 rounded-xl p-3 text-sm text-green-700 flex items-center gap-2">
-        <span class="text-green-500">✓</span>
-        Company information updated successfully!
-      </div>
-
-    </div>
-
-    <!-- NO COMPANY -->
-    <div *ngIf="!company && !loading && !error" class="bg-card border border-border rounded-2xl p-12 text-center">
-      <lucide-angular [img]="icons.Building2" class="w-12 h-12 text-muted-foreground/50 mx-auto mb-3"></lucide-angular>
-      <p class="text-muted-foreground">No company found for your account.</p>
-    </div>
+    <app-company-form
+      *ngIf="company && !loading"
+      [company]="company"
+      [editForm]="editForm"
+      [validationErrors]="validationErrors"
+      [saving]="saving"
+      [saveSuccess]="saveSuccess"
+      [icons]="icons"
+      [formValid]="isFormValid()"
+      (save)="saveChanges()">
+    </app-company-form>
 
   </div>
 </main>

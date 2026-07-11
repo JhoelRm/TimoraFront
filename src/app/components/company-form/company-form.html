@@ -1,0 +1,94 @@
+<!-- FORM -->
+    <div class="bg-card border border-border rounded-2xl p-6 space-y-4">
+      
+      <h2 class="text-sm font-semibold text-foreground">Company Information</h2>
+
+      <!-- COMPANY NAME -->
+      <div>
+        <label class="block text-xs font-medium text-muted-foreground mb-1.5">
+          Company Name <span class="text-destructive ml-0.5">*</span>
+        </label>
+        <input 
+          type="text" 
+          [(ngModel)]="editForm.name"
+          [class.border-destructive]="validationErrors['name']"
+          class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all" 
+          placeholder="Enter company name" />
+        <p *ngIf="validationErrors['name']" class="text-xs text-destructive mt-1">{{ validationErrors['name'] }}</p>
+      </div>
+
+      <!-- RUC + PHONE -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-muted-foreground mb-1.5">RUC</label>
+          <input 
+            type="text" 
+            [(ngModel)]="editForm.ruc"
+            [class.border-destructive]="validationErrors['ruc']"
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all" 
+            placeholder="20100234567" />
+          <p *ngIf="validationErrors['ruc']" class="text-xs text-destructive mt-1">{{ validationErrors['ruc'] }}</p>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-muted-foreground mb-1.5">Phone</label>
+          <input 
+            type="text" 
+            [(ngModel)]="editForm.phone"
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all" 
+            placeholder="+51 1 445-8900" />
+        </div>
+      </div>
+
+      <!-- EMAIL -->
+      <div>
+        <label class="block text-xs font-medium text-muted-foreground mb-1.5">Email</label>
+        <input 
+          type="email" 
+          [(ngModel)]="editForm.email"
+          [class.border-destructive]="validationErrors['email']"
+          class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all" 
+          placeholder="contact@company.pe" />
+        <p *ngIf="validationErrors['email']" class="text-xs text-destructive mt-1">{{ validationErrors['email'] }}</p>
+      </div>
+
+      <!-- ADDRESS -->
+      <div>
+        <label class="block text-xs font-medium text-muted-foreground mb-1.5">Address</label>
+        <input 
+          type="text" 
+          [(ngModel)]="editForm.address"
+          class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all" 
+          placeholder="Av. Larco 821, Miraflores, Lima" />
+      </div>
+
+      <!-- STATUS -->
+      <div *ngIf="company" class="pt-2 border-t border-border">
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-muted-foreground">Status:</span>
+          <span class="text-xs px-2 py-1 rounded-lg" [ngClass]="{
+            'bg-green-500/10 text-green-700': company.status === 'ACTIVE',
+            'bg-red-500/10 text-red-700': company.status === 'INACTIVE'
+          }">
+            {{ company.status }}
+          </span>
+        </div>
+      </div>
+
+      <!-- SAVE BUTTON -->
+      <button 
+        (click)="save.emit()" 
+        [disabled]="saving || !formValid"
+        class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+        
+        <lucide-angular *ngIf="!saving" [img]="icons.Save" class="w-4 h-4"></lucide-angular>
+        <span *ngIf="saving" class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-1"></span>
+        {{ saving ? 'Saving...' : 'Save Changes' }}
+      </button>
+
+      <!-- SAVE SUCCESS -->
+      <div *ngIf="saveSuccess" class="bg-green-500/10 border border-green-500/20 rounded-xl p-3 text-sm text-green-700 flex items-center gap-2">
+        <span class="text-green-500">✓</span>
+        Company information updated successfully!
+      </div>
+
+    </div>

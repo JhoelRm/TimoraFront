@@ -1,0 +1,34 @@
+<!-- LOADING -->
+<div *ngIf="loading" class="flex items-center justify-center py-12">
+  <div class="text-sm text-muted-foreground">
+    Loading company data...
+  </div>
+</div>
+
+<!-- ERROR -->
+<div *ngIf="error" class="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 text-sm text-red-700 flex items-start gap-3">
+  <lucide-angular
+    [img]="icons.AlertCircle"
+    class="w-5 h-5 shrink-0 mt-0.5">
+  </lucide-angular>
+  <div>
+    <p class="font-medium">
+      Error loading company
+    </p>
+    <p class="text-red-600/80">
+      {{ error }}
+    </p>
+    <button (click)="retry.emit()" class="mt-2 text-sm font-medium text-red-700 hover:underline">
+      Retry
+    </button>
+  </div>
+</div>
+
+<!-- NO COMPANY -->
+<div  *ngIf="!company && !loading && !error"  class="bg-card border border-border rounded-2xl p-12 text-center">
+  <lucide-angular [img]="icons.Building2" class="w-12 h-12 text-muted-foreground/50 mx-auto mb-3">
+  </lucide-angular>
+  <p class="text-muted-foreground">
+    No company found for your account.
+  </p>
+</div>
