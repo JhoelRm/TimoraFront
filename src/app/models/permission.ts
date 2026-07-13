@@ -10,11 +10,11 @@ export enum Permission {
   BOOKING_UPDATE = 'BOOKING_UPDATE',
   BOOKING_DELETE = 'BOOKING_DELETE',
 
-  // Abilities (Availability)
-  ABILITY_CREATE = 'ABILITY_CREATE',
-  ABILITY_READ = 'ABILITY_READ',
-  ABILITY_UPDATE = 'ABILITY_UPDATE',
-  ABILITY_DELETE = 'ABILITY_DELETE',
+  // Availability (Availability)
+  AVAILABILITY_CREATE = 'AVAILABILITY_CREATE',
+  AVAILABILITY_READ = 'AVAILABILITY_READ',
+  AVAILABILITY_UPDATE = 'AVAILABILITY_UPDATE',
+  AVAILABILITY_DELETE = 'AVAILABILITY_DELETE',
 
   // Services
   SERVICE_CREATE = 'SERVICE_CREATE',
@@ -23,10 +23,10 @@ export enum Permission {
   SERVICE_DELETE = 'SERVICE_DELETE',
 
   // Clients
-  CLIENT_CREATE = 'CLIENT_CREATE',
-  CLIENT_READ = 'CLIENT_READ',
-  CLIENT_UPDATE = 'CLIENT_UPDATE',
-  CLIENT_DELETE = 'CLIENT_DELETE'
+  CUSTOMER_CREATE = 'CUSTOMER_CREATE',
+  CUSTOMER_READ = 'CUSTOMER_READ',
+  CUSTOMER_UPDATE = 'CUSTOMER_UPDATE',
+  CUSTOMER_DELETE = 'CUSTOMER_DELETE'
 }
 
 // ============================================
@@ -68,11 +68,11 @@ export const PermissionGroups = {
     Permission.BOOKING_UPDATE,
     Permission.BOOKING_DELETE
   ] as Permission[],
-  AVAILABILITY: [
-    Permission.ABILITY_CREATE,
-    Permission.ABILITY_READ,
-    Permission.ABILITY_UPDATE,
-    Permission.ABILITY_DELETE
+  AVAILABILITIES: [
+    Permission.AVAILABILITY_CREATE,
+    Permission.AVAILABILITY_READ,
+    Permission.AVAILABILITY_UPDATE,
+    Permission.AVAILABILITY_DELETE
   ] as Permission[],
   SERVICES: [
     Permission.SERVICE_CREATE,
@@ -80,11 +80,11 @@ export const PermissionGroups = {
     Permission.SERVICE_UPDATE,
     Permission.SERVICE_DELETE
   ] as Permission[],
-  CLIENTS: [
-    Permission.CLIENT_CREATE,
-    Permission.CLIENT_READ,
-    Permission.CLIENT_UPDATE,
-    Permission.CLIENT_DELETE
+  CUSTOMERS: [
+    Permission.CUSTOMER_CREATE,
+    Permission.CUSTOMER_READ,
+    Permission.CUSTOMER_UPDATE,
+    Permission.CUSTOMER_DELETE
   ] as Permission[]
 };
 
@@ -93,9 +93,9 @@ export const PermissionGroups = {
 // ============================================
 export const PermissionGroupLabels = {
   BOOKINGS: 'Bookings',
-  AVAILABILITY: 'Availability',
+  AVAILABILITIES: 'Availabilities',
   SERVICES: 'Services',
-  CLIENTS: 'Clients'
+  CUSTOMERS: 'Customers'
 };
 
 // ============================================
@@ -108,9 +108,9 @@ export const PermissionGroupsWithLabels = [
     permissions: PermissionGroups.BOOKINGS
   },
   {
-    key: 'AVAILABILITY' as const,
-    label: PermissionGroupLabels.AVAILABILITY,
-    permissions: PermissionGroups.AVAILABILITY
+    key: 'AVAILABILITIES' as const,
+    label: PermissionGroupLabels.AVAILABILITIES,
+    permissions: PermissionGroups.AVAILABILITIES
   },
   {
     key: 'SERVICES' as const,
@@ -118,9 +118,9 @@ export const PermissionGroupsWithLabels = [
     permissions: PermissionGroups.SERVICES
   },
   {
-    key: 'CLIENTS' as const,
-    label: PermissionGroupLabels.CLIENTS,
-    permissions: PermissionGroups.CLIENTS
+    key: 'CUSTOMERS' as const,
+    label: PermissionGroupLabels.CUSTOMERS,
+    permissions: PermissionGroups.CUSTOMERS
   }
 ];
 
@@ -139,9 +139,9 @@ export function getPermissionLabel(permission: Permission): string {
 // ============================================
 export function getPermissionGroup(permission: Permission): string | null {
   if (PermissionGroups.BOOKINGS.includes(permission)) return 'BOOKINGS';
-  if (PermissionGroups.AVAILABILITY.includes(permission)) return 'AVAILABILITY';
+  if (PermissionGroups.AVAILABILITIES.includes(permission)) return 'AVAILABILITIES';
   if (PermissionGroups.SERVICES.includes(permission)) return 'SERVICES';
-  if (PermissionGroups.CLIENTS.includes(permission)) return 'CLIENTS';
+  if (PermissionGroups.CUSTOMERS.includes(permission)) return 'CUSTOMERS';
   return null;
 }
 

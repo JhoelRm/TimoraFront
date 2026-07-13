@@ -1,0 +1,171 @@
+<p-dialog
+  [(visible)]="visible"
+  (visibleChange)="onVisibleChange($event)"
+  [modal]="true"
+  [closable]="false"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ maxWidth: '600px', width: '100%' }"
+  [breakpoints]="{ '960px': '95vw' }"
+  [showHeader]="false"
+  styleClass="custom-dialog">
+  
+  <div class="relative w-full max-w-2xl bg-card border border-border rounded-2xl shadow-2xl flex flex-col max-h-[88vh]">
+    
+    <!-- Header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
+      <h3 class="font-semibold text-foreground text-lg">
+        {{ modalTitle }}
+      </h3>
+      <button 
+        (click)="onCancel()"
+        class="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+        <lucide-angular [img]="icons.X" class="w-4 h-4"></lucide-angular>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="overflow-y-auto flex-1 p-6">
+      <div class="grid grid-cols-2 gap-3">
+        
+        <!-- Nombre de la cita -->
+        <div class="col-span-2">
+          <label class="block text-xs font-medium text-muted-foreground mb-1.5">
+            Nombre de la cita
+          </label>
+          <input
+            type="text"
+            [(ngModel)]="form.name"
+            placeholder="Se genera automáticamente si está vacío"
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all">
+        </div>
+
+        <!-- Cliente -->
+        <div class="col-span-2">
+          <label class="block text-xs font-medium text-muted-foreground mb-1.5">
+            Cliente <span class="text-destructive">*</span>
+          </label>
+          <select
+            [(ngModel)]="form.customerId"
+            (change)="onCustomerChange(+$any($event.target).value)"
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+            <option value="0">Seleccionar cliente…</option>
+            <option *ngFor="let customer of customers; trackBy: trackByCustomer" [value]="customer.customer?.id">
+              {{ getPersonName(customer) }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Servicio -->
+        <div class="col-span-2">
+          <label class="block text-xs font-medium text-muted-foreground mb-1.5">
+            Servicio <span class="text-destructive">*</span>
+          </label>
+          <select
+            [(ngModel)]="form.serviceId"
+            (change)="onServiceChange(+$any($event.target).value)"
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+            <option value="0">Seleccionar servicio…</option>
+            <option *ngFor="let service of services; trackBy: trackByService" [value]="service.id">
+              {{ service.name }} ({{ service.duration }} min)
+            </option>
+          </select>
+        </div>
+
+        <!-- Fecha -->
+        <div>
+          <label class="block text-xs font-medium text-muted-foreground mb-1.5">
+            Fecha <span class="text-destructive">*</span>
+          </label>
+          <input
+            type="date"
+            [(ngModel)]="form.date"
+            [min]="minDate"
+            (change)="onDateChange()"
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all">
+        </div>
+
+        <!-- Hora inicio -->
+        <div>
+          <label class="block text-xs font-medium text-muted-foreground mb-1.5">
+            Hora inicio <span class="text-destructive">*</span>
+          </label>
+          <input
+            type="time"
+            [(ngModel)]="form.startTime"
+            [min]="minTime"
+            (change)="onStartTimeChange()"
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all">
+        </div>
+
+        <!-- Duración (solo lectura, se calcula del servicio) -->
+        <div>
+          <label class="block text-xs font-medium text-muted-foreground mb-1.5">
+            Duración (min)
+          </label>
+          <input
+            type="number"
+            [(ngModel)]="form.durationMinutes"
+            disabled
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground opacity-70 cursor-not-allowed">
+        </div>
+
+        <!-- Fin estimado (solo lectura) -->
+        <div>
+          <label class="block text-xs font-medium text-muted-foreground mb-1.5">
+            Fin estimado
+          </label>
+          <input
+            type="text"
+            [value]="(form.date && form.startTime && form.durationMinutes) ? (buildEndDateTime() | date:'HH:mm') : '--:--'"
+            disabled
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground opacity-70 cursor-not-allowed">
+        </div>
+
+        <!-- Tipo -->
+        <div>
+          <label class="block text-xs font-medium text-muted-foreground mb-1.5">
+            Tipo
+          </label>
+          <select
+            [(ngModel)]="form.type"
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+            <option *ngFor="let option of typeOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Descripción -->
+        <div class="col-span-2">
+          <label class="block text-xs font-medium text-muted-foreground mb-1.5">
+            Descripción
+          </label>
+          <textarea
+            [(ngModel)]="form.description"
+            rows="3"
+            placeholder="Notas opcionales…"
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all resize-none">
+          </textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex gap-2 justify-end px-6 py-4 border-t border-border shrink-0">
+      <button
+        (click)="onCancel()"
+        class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-secondary text-secondary-foreground hover:bg-muted">
+        Cancelar
+      </button>
+      <button
+        (click)="onSubmit()"
+        [disabled]="loading"
+        class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+        <span *ngIf="loading" class="inline-block animate-spin mr-1">⏳</span>
+        <lucide-angular [img]="icons.Plus" class="w-4 h-4"></lucide-angular>
+        Crear
+      </button>
+    </div>
+  </div>
+</p-dialog>

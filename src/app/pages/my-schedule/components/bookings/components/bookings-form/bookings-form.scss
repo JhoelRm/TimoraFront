@@ -1,0 +1,71 @@
+:host ::ng-deep {
+  // ============================================
+  // ELIMINAR COMPLETAMENTE ESTILOS DE PRIMENG
+  // PARA custom-dialog
+  // ============================================
+  
+  .p-dialog.custom-dialog .p-dialog-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .p-dialog.custom-dialog .p-dialog-header {
+    display: none !important;
+  }
+
+  .p-dialog.custom-dialog {
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .p-dialog.custom-dialog .p-dialog-content .p-dialog-content-wrapper {
+    padding: 0 !important;
+    background: transparent !important;
+  }
+
+  // ============================================
+  // SCROLLBAR PERSONALIZADA
+  // ============================================
+  
+  .overflow-y-auto::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .overflow-y-auto::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .overflow-y-auto::-webkit-scrollbar-thumb {
+    background: var(--border, rgba(0, 0, 0, 0.08));
+    border-radius: 4px;
+  }
+
+  .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: var(--muted-foreground, #6b6d84);
+  }
+}
+
+// ============================================
+// ESTILOS PARA INPUTS NATIVOS
+// ============================================
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.5);
+  cursor: pointer;
+}
+
+input[type="datetime-local"]:focus::-webkit-calendar-picker-indicator {
+  filter: invert(0.3);
+}
+
+.dark {
+  input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.8);
+  }
+}

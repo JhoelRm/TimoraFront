@@ -5,7 +5,7 @@ import { LucideAngularModule, X, Plus, Pen, Trash2, CircleCheckBig, Pencil, Save
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { BookingDTO, BookingStatus, BookingType, BookingPatchDTO } from '../../../../models/booking';
-import { PaymentDTO, PaymentCreateDTO, PaymentPatchDTO, PaymentMethod, PaymentStatus } from '../../../../models/payments';
+import { PaymentDTO, PaymentCreateDTO, PaymentPatchDTO, PaymentMethod, PaymentStatus } from '../../../../models/payment';
 import { PersonIdentityDTO } from '../../../../models/person-identity';
 import { ServiceDTO } from '../../../../models/service';
 import { 
@@ -14,7 +14,7 @@ import {
   getPaymentMethodLabel,
   formatPaymentAmount,
   isPaymentEditable
-} from '../../../../models/payments';
+} from '../../../../models/payment';
 
 interface PaymentForm {
   companyId?: number;
@@ -54,12 +54,12 @@ export class BookingDetailModal implements OnInit, OnChanges {
   // ==================== ESTADO DE EDICIÓN ====================
   isEditingBooking = false;
 
-  // Formulario de edición con campos separados
+  // Formulario de edición
   editForm: {
     customerId: number;
     serviceId: number;
-    date: string;          // YYYY-MM-DD
-    startTime: string;     // HH:mm
+    date: string;
+    startTime: string;
     durationMinutes: number;
     type: BookingType;
     name: string;
@@ -80,7 +80,7 @@ export class BookingDetailModal implements OnInit, OnChanges {
   isEditingPayment = false;
   paymentForm: PaymentForm = this.createEmptyPaymentForm();
 
-  // ==================== OPCIONES PARA SELECTS ====================
+  // ==================== OPCIONES ====================
   paymentMethods: { value: PaymentMethod; label: string }[] = [
     { value: 'CASH', label: 'Efectivo' },
     { value: 'CREDIT_CARD', label: 'Tarjeta Crédito' },
@@ -137,7 +137,6 @@ export class BookingDetailModal implements OnInit, OnChanges {
     const end = new Date(this.booking.endTime);
     const duration = Math.round((end.getTime() - start.getTime()) / 60000);
 
-    // Intentar obtener la duración del servicio
     const service = this.services.find(s => s.id === this.booking?.serviceId);
     const serviceDuration = service?.duration || duration;
 
@@ -197,7 +196,6 @@ export class BookingDetailModal implements OnInit, OnChanges {
     return '00:00';
   }
 
-  // 🔥 Getter para mostrar la hora de fin estimada
   get endTimeDisplay(): string {
     if (!this.editForm.date || !this.editForm.startTime || !this.editForm.durationMinutes) {
       return '--:--';
@@ -284,16 +282,13 @@ export class BookingDetailModal implements OnInit, OnChanges {
     return this.booking?.status === 'CANCELLED' || this.booking?.status === 'DELETED';
   }
 
-  get canEditBooking(): boolean {
-    return !this.isBookingCompleted && !this.isBookingCancelled;
+  // ---------- NUEVOS GETTERS PARA BOTONES RÁPIDOS ----------
+  get canConfirmBooking(): boolean {
+    return this.booking?.status === 'PENDING';
   }
 
-  get canEditPayment(): boolean {
-    return this.hasPayment && !this.isBookingCompleted && !this.isBookingCancelled && isPaymentEditable(this.payment!);
-  }
-
-  get canAddPayment(): boolean {
-    return !this.hasPayment && !this.isBookingCompleted && !this.isBookingCancelled;
+  get canReopenBooking(): boolean {
+    return this.booking?.status === 'CANCELLED';
   }
 
   get canCompleteBooking(): boolean {
@@ -306,6 +301,18 @@ export class BookingDetailModal implements OnInit, OnChanges {
 
   get canDeleteBooking(): boolean {
     return !this.isBookingCancelled;
+  }
+
+  get canEditBooking(): boolean {
+    return !this.isBookingCompleted && !this.isBookingCancelled;
+  }
+
+  get canEditPayment(): boolean {
+    return this.hasPayment && !this.isBookingCompleted && !this.isBookingCancelled && isPaymentEditable(this.payment!);
+  }
+
+  get canAddPayment(): boolean {
+    return !this.hasPayment && !this.isBookingCompleted && !this.isBookingCancelled;
   }
 
   // ==================== FORMATOS PARA MOSTRAR ====================
@@ -435,13 +442,8 @@ export class BookingDetailModal implements OnInit, OnChanges {
     this.editForm.customerId = customerId;
   }
 
-  onDateChange(): void {
-    // El getter endTimeDisplay se actualiza automáticamente
-  }
-
-  onStartTimeChange(): void {
-    // El getter endTimeDisplay se actualiza automáticamente
-  }
+  onDateChange(): void { /* getter actualiza automáticamente */ }
+  onStartTimeChange(): void { /* getter actualiza automáticamente */ }
 
   // ==================== TOGGLE EDICIÓN ====================
 
@@ -472,15 +474,27 @@ export class BookingDetailModal implements OnInit, OnChanges {
       description: this.editForm.description || ''
     };
 
-    console.log('🔍 Enviando PATCH:', patchData);
-
     this.updateBookingFull.emit({
       id: this.booking.id,
       data: patchData
     });
   }
 
-  // ==================== ACCIONES DEL BOOKING ====================
+  // ==================== ACCIONES RÁPIDAS DE ESTADO ====================
+
+  onConfirmBooking(): void {
+    if (!this.booking) return;
+    if (confirm('¿Confirmar esta cita?')) {
+      this.updateBookingStatus.emit({ id: this.booking.id, status: 'CONFIRMED' });
+    }
+  }
+
+  onReopenBooking(): void {
+    if (!this.booking) return;
+    if (confirm('¿Reabrir esta cita (volver a Pendiente)?')) {
+      this.updateBookingStatus.emit({ id: this.booking.id, status: 'PENDING' });
+    }
+  }
 
   onCompleteBooking(): void {
     if (!this.booking) return;

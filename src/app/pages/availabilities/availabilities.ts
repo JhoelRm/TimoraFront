@@ -145,16 +145,16 @@ export class AvailabilitiesComponent implements OnInit {
     this.loadSuppliers();
   }
 
-  private loadCompanies(): void {
-    this.companiesService.getAll().subscribe({
-      next: data => {
-        this.allCompanies = data ?? [];
-        console.log('🏢 Compañías cargadas:', this.allCompanies.length);
-        this.cdr.detectChanges();
-      },
-      error: err => console.error('Error loading companies:', err)
-    });
-  }
+private loadCompanies(): void {
+  this.companiesService.getAll().subscribe({
+    next: data => {
+      this.allCompanies = (data ?? []).filter(c => c.status === 'ACTIVE');
+      console.log('🏢 Compañías activas cargadas:', this.allCompanies.length);
+      this.cdr.detectChanges();
+    },
+    error: err => console.error('Error loading companies:', err)
+  });
+}
 
   private loadSuppliers(): void {
     this.loading = true;

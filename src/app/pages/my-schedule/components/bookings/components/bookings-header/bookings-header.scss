@@ -1,0 +1,27 @@
+// my-schedule/components/bookings/components/bookings-header/bookings-header.scss
+:host {
+  display: block;
+  width: 100%;
+}
+
+button {
+  transition: all 0.2s ease;
+  
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+}
+
+// Estilos para los botones de vista
+.view-btn {
+  transition: all 0.2s ease;
+  
+  &:hover:not(.active) {
+    background: rgba(99, 85, 232, 0.08);
+  }
+  
+  &.active {
+    background: var(--primary, #6355e8);
+    color: white;
+  }
+}

@@ -1,0 +1,253 @@
+<div class="flex flex-col h-full bg-card rounded-2xl border border-border overflow-hidden">
+  
+  <!-- HEADER -->
+  <div class="flex items-center justify-between px-5 py-3 border-b border-border shrink-0 z-20 relative">
+    <div class="flex items-center gap-2.5">
+      <button 
+        (click)="onToday()"
+        class="px-3 py-1.5 text-xs font-medium rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-secondary transition-all">
+        Hoy
+      </button>
+      <div class="flex">
+        <button 
+          (click)="onPrevious()"
+          class="p-1.5 rounded-l-lg border border-border hover:bg-secondary text-muted-foreground hover:text-foreground transition-all">
+          <lucide-angular [img]="icons.ChevronLeft" class="w-3.5 h-3.5"></lucide-angular>
+        </button>
+        <button 
+          (click)="onNext()"
+          class="p-1.5 rounded-r-lg border border-l-0 border-border hover:bg-secondary text-muted-foreground hover:text-foreground transition-all">
+          <lucide-angular [img]="icons.ChevronRight" class="w-3.5 h-3.5"></lucide-angular>
+        </button>
+      </div>
+      <span class="text-sm font-semibold text-foreground">{{ getDateDisplay() }}</span>
+    </div>
+    <div class="flex items-center gap-0.5 bg-secondary rounded-xl p-1">
+      <button 
+        (click)="setView('day')"
+        [class.bg-primary]="calendarViewMode === 'day'"
+        [class.text-primary-foreground]="calendarViewMode === 'day'"
+        [class.text-muted-foreground]="calendarViewMode !== 'day'"
+        class="px-3 py-1 text-xs font-medium rounded-lg transition-all capitalize hover:text-foreground">
+        Día
+      </button>
+      <button 
+        (click)="setView('week')"
+        [class.bg-primary]="calendarViewMode === 'week'"
+        [class.text-primary-foreground]="calendarViewMode === 'week'"
+        [class.text-muted-foreground]="calendarViewMode !== 'week'"
+        class="px-3 py-1 text-xs font-medium rounded-lg transition-all capitalize hover:text-foreground">
+        Semana
+      </button>
+      <button 
+        (click)="setView('month')"
+        [class.bg-primary]="calendarViewMode === 'month'"
+        [class.text-primary-foreground]="calendarViewMode === 'month'"
+        [class.text-muted-foreground]="calendarViewMode !== 'month'"
+        class="px-3 py-1 text-xs font-medium rounded-lg transition-all capitalize hover:text-foreground">
+        Mes
+      </button>
+    </div>
+  </div>
+
+  <!-- CONTENIDO -->
+  <div class="flex-1 overflow-hidden relative">
+
+    <!-- VISTA DÍA -->
+    <ng-container *ngIf="calendarViewMode === 'day'">
+      <div class="flex flex-col h-full">
+        <!-- Cabecera del día -->
+        <div class="sticky top-0 z-10 bg-card border-b border-border flex shrink-0">
+          <div class="w-16 shrink-0 border-r border-border"></div>
+          <div class="flex-1 py-2 text-center border-r border-border last:border-r-0">
+            <div class="text-xs text-muted-foreground">{{ getDayLabel(selectedDate) }}</div>
+            <div 
+              class="text-lg font-medium w-9 h-9 flex items-center justify-center rounded-full mx-auto mt-0.5 transition-colors"
+              [class.bg-primary]="isToday(selectedDate)"
+              [class.text-primary-foreground]="isToday(selectedDate)"
+              [class.text-foreground]="!isToday(selectedDate)">
+              {{ selectedDate.getDate() }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Grid de horas -->
+        <div class="flex-1 overflow-y-auto">
+          <div class="flex" [style.min-height.px]="hours.length * hourHeight">
+            <!-- Columna de horas -->
+            <div class="w-16 shrink-0 relative border-r border-border" [style.height.px]="hours.length * hourHeight">
+              <div *ngFor="let hour of hours; let i = index" 
+                class="absolute w-full pr-2.5 flex justify-end"
+                [style.top.px]="(i * hourHeight) - 6">
+                <span class="text-xs text-muted-foreground font-mono">{{ hour }}:00</span>
+              </div>
+            </div>
+
+            <!-- Contenido del día -->
+            <div class="flex-1 relative" [style.height.px]="hours.length * hourHeight">
+              <!-- Líneas de hora principales -->
+              <div *ngFor="let hour of hours; let i = index"
+                class="absolute left-0 right-0 border-t border-border border-border/30"
+                [style.top.px]="i * hourHeight">
+              </div>
+              <!-- Líneas de hora intermedias -->
+              <ng-container *ngFor="let hour of hours; let i = index">
+                <div *ngIf="i < hours.length - 1"
+                  class="absolute left-0 right-0 border-t  border-border border-border/15"
+                  [style.top.px]="(i * hourHeight) + (hourHeight / 2)">
+                </div>
+              </ng-container>
+
+              <!-- Eventos -->
+              <div *ngFor="let event of getDayEvents(selectedDate); trackBy: trackByEventId"
+                class="absolute left-1 right-1 rounded-xl px-2 py-1 cursor-pointer hover:opacity-90 transition-opacity overflow-hidden"
+                [style.top.px]="getEventTop(event)"
+                [style.height.px]="getEventHeight(event)"
+                [style.background]="'rgba(124, 110, 245, 0.094)'"
+                [style.borderLeft]="'3px solid rgb(124, 110, 245)'">
+                <div class="text-xs font-semibold truncate leading-tight" style="color: rgb(124, 110, 245);">
+                  {{ event.supplierName }}
+                </div>
+                <div class="text-xs truncate mt-0.5 opacity-70" style="color: rgb(124, 110, 245);">
+                  {{ formatEventTime(event.start) }}–{{ formatEventTime(event.end) }}
+                </div>
+              </div>
+
+              <!-- Línea de tiempo actual -->
+              <div *ngIf="isToday(selectedDate) && getCurrentTimePosition() >= 0 && getCurrentTimePosition() <= (hours.length * hourHeight)" 
+                class="absolute left-0 right-0 border-t-2 border-red-500 z-20"
+                [style.top.px]="getCurrentTimePosition()">
+                <div class="absolute -left-1.5 -top-1.5 w-3 h-3 rounded-full bg-red-500"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- VISTA SEMANA -->
+    <ng-container *ngIf="calendarViewMode === 'week'">
+      <div class="flex flex-col h-full">
+        <!-- Cabecera de la semana -->
+        <div class="sticky top-0 z-10 bg-card border-b border-border flex shrink-0">
+          <div class="w-16 shrink-0 border-r border-border"></div>
+          <div *ngFor="let day of getWeekDays(); let i = index; trackBy: trackByIndex" 
+            class="flex-1 py-2 text-center border-r border-border last:border-r-0">
+            <div class="text-xs text-muted-foreground">{{ weekDays[i] }}</div>
+            <div 
+              class="text-lg font-medium w-9 h-9 flex items-center justify-center rounded-full mx-auto mt-0.5 transition-colors cursor-pointer"
+              [class.bg-primary]="isToday(day)"
+              [class.text-primary-foreground]="isToday(day)"
+              [class.text-foreground]="!isToday(day)"
+              [class.ring-1]="isSelected(day)"
+              [class.ring-primary]="isSelected(day)"
+              (click)="selectDay(day)">
+              {{ day.getDate() }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Grid de la semana -->
+        <div class="flex-1 overflow-y-auto">
+          <div class="flex" [style.min-height.px]="hours.length * hourHeight">
+            <!-- Columna de horas -->
+            <div class="w-16 shrink-0 relative border-r border-border" [style.height.px]="hours.length * hourHeight">
+              <div *ngFor="let hour of hours; let i = index" 
+                class="absolute w-full pr-2.5 flex justify-end"
+                [style.top.px]="(i * hourHeight) - 6">
+                <span class="text-xs text-muted-foreground font-mono">{{ hour }}:00</span>
+              </div>
+            </div>
+
+            <!-- Días -->
+            <div *ngFor="let day of getWeekDays(); trackBy: trackByIndex" 
+              class="flex-1 relative" [style.height.px]="hours.length * hourHeight">
+              <!-- Líneas de hora -->
+              <div *ngFor="let hour of hours; let i = index"
+                class="absolute left-0 right-0 border-t border-border border-border/30"
+                [style.top.px]="i * hourHeight">
+              </div>
+              <ng-container *ngFor="let hour of hours; let i = index">
+                <div *ngIf="i < hours.length - 1"
+                  class="absolute left-0 right-0 border-t border-border border-border/15"
+                  [style.top.px]="(i * hourHeight) + (hourHeight / 2)">
+                </div>
+              </ng-container>
+
+              <!-- Eventos -->
+              <div *ngFor="let event of getDayEvents(day); trackBy: trackByEventId"
+                class="absolute left-1 right-1 rounded-xl px-2 py-1 cursor-pointer hover:opacity-90 transition-opacity overflow-hidden"
+                [style.top.px]="getEventTop(event)"
+                [style.height.px]="getEventHeight(event)"
+                [style.background]="'rgba(124, 110, 245, 0.094)'"
+                [style.borderLeft]="'3px solid rgb(124, 110, 245)'">
+                <div class="text-xs font-semibold truncate leading-tight" style="color: rgb(124, 110, 245);">
+                  {{ event.supplierName }}
+                </div>
+                <div class="text-xs truncate mt-0.5 opacity-70" style="color: rgb(124, 110, 245);">
+                  {{ formatEventTime(event.start) }}
+                </div>
+              </div>
+
+              <!-- Línea de tiempo actual -->
+              <div *ngIf="isToday(day) && getCurrentTimePosition() >= 0 && getCurrentTimePosition() <= (hours.length * hourHeight)" 
+                class="absolute left-0 right-0 border-t-2 border-red-500 z-20"
+                [style.top.px]="getCurrentTimePosition()">
+                <div class="absolute -left-1.5 -top-1.5 w-3 h-3 rounded-full bg-red-500"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- VISTA MES -->
+    <ng-container *ngIf="calendarViewMode === 'month'">
+      <div class="flex flex-col h-full">
+        <!-- Cabecera del mes -->
+        <div class="grid grid-cols-7 border-b border-border shrink-0">
+          <div *ngFor="let day of monthDays" class="py-2.5 text-center text-xs font-medium text-muted-foreground">
+            {{ day }}
+          </div>
+        </div>
+
+        <!-- Grid del mes -->
+        <div class="flex-1 overflow-y-auto">
+          <div class="grid grid-cols-7" style="grid-auto-rows: minmax(80px, 1fr);">
+            <div *ngFor="let date of getMonthDays().flat(); trackBy: trackByMonthIndex"
+              class="border-r border-b border-border p-1.5 cursor-pointer hover:bg-secondary/20 transition-colors group"
+              [class.bg-secondary/10]="!date">
+              
+              <div *ngIf="date">
+                <div 
+                  class="text-xs font-medium w-6 h-6 flex items-center justify-center rounded-full mb-1 mx-auto transition-colors"
+                  [class.bg-primary]="isToday(date)"
+                  [class.text-primary-foreground]="isToday(date)"
+                  [class.text-muted-foreground]="!isToday(date) && !isSameMonth(date)"
+                  [class.text-foreground]="!isToday(date) && isSameMonth(date)"
+                  [class.group-hover:text-foreground]="!isToday(date)">
+                  {{ date.getDate() }}
+                </div>
+                
+                <div class="space-y-0.5">
+                  <div *ngFor="let event of getDayEvents(date).slice(0, 3); trackBy: trackByEventId"
+                    class="text-xs px-1.5 py-0.5 rounded-md truncate cursor-pointer hover:opacity-80 transition-opacity"
+                    [style.background]="'rgba(124, 110, 245, 0.1)'"
+                    [style.color]="'rgb(124, 110, 245)'"
+                    [style.border]="'1px solid rgba(124, 110, 245, 0.2)'"
+                    (click)="selectDay(date)">
+                    {{ formatEventTime(event.start) }} {{ event.supplierName }}
+                  </div>
+                  <div *ngIf="getDayEvents(date).length > 3" 
+                    class="text-xs text-muted-foreground px-1">
+                    +{{ getDayEvents(date).length - 3 }} más
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

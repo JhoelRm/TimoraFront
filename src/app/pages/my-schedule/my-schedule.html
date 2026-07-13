@@ -1,420 +1,126 @@
+<!-- my-schedule/my-schedule.html -->
 <main class="flex-1 overflow-auto p-6">
   <div class="space-y-4">
+
+    <!-- HEADER -->
     <div>
       <h1 class="text-xl font-semibold text-foreground">My Schedule</h1>
-      <p class="text-sm text-muted-foreground">Suppliers you manage via permissions</p>
+      <p class="text-sm text-muted-foreground">
+        Suppliers you manage via permissions
+      </p>
     </div>
-    <div class="flex gap-2 flex-wrap"><button
-        class="flex items-center gap-2.5 px-3.5 py-2 rounded-xl border transition-all border-primary bg-primary/5 text-foreground">
-        <div class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-          I</div>
-        <div class="text-left">
-          <div class="text-xs font-semibold">Isabella Chen</div>
-          <div class="text-xs opacity-70">Hair &amp; Color Specialist</div>
+
+    <!-- SUPPLIER SELECTOR -->
+    <app-my-schedule-supplier-selector
+      [suppliers]="suppliers"
+      [selectedSupplierId]="selectedSupplierId"
+      [isLoading]="isLoading"
+      [error]="error"
+      (supplierSelected)="selectSupplier($event)"
+      (retry)="onRetry()">
+    </app-my-schedule-supplier-selector>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECCIÓN DE CONTENIDO - SOLO CUANDO HAY SUPPLIER SELECCIONADO -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <ng-container *ngIf="!isLoading && selectedSupplier && suppliers.length > 0">
+
+      <!-- SELECTED SUPPLIER INFO -->
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <!-- TABS DINÁMICOS -->
+        <div class="flex gap-0.5 bg-secondary rounded-xl p-1 w-fit">
+          <button
+            *ngFor="let tab of availableTabs"
+            (click)="setActiveTab(tab.key)"
+            class="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium rounded-lg transition-all capitalize"
+            [ngClass]="{
+              'bg-card text-foreground shadow-sm': activeTab === tab.key,
+              'text-muted-foreground hover:text-foreground hover:bg-secondary/50': activeTab !== tab.key
+            }">
+            <lucide-angular [img]="tab.icon" class="w-3.5 h-3.5"></lucide-angular>
+            {{ tab.label }}
+          </button>
         </div>
-      </button><button
-        class="flex items-center gap-2.5 px-3.5 py-2 rounded-xl border transition-all border-border bg-secondary/50 text-muted-foreground hover:border-primary/30 hover:text-foreground">
-        <div class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-          D</div>
-        <div class="text-left">
-          <div class="text-xs font-semibold">Diego Torres</div>
-          <div class="text-xs opacity-70">Massage Therapist</div>
-        </div>
-      </button></div>
-    <div class="flex items-center justify-between">
-      <div class="flex gap-0.5 bg-secondary rounded-xl p-1 w-fit"><button
-          class="px-4 py-1.5 text-xs font-medium rounded-lg transition-all capitalize bg-card text-foreground shadow-sm">Bookings</button><button
-          class="px-4 py-1.5 text-xs font-medium rounded-lg transition-all capitalize text-muted-foreground hover:text-foreground">Availability</button><button
-          class="px-4 py-1.5 text-xs font-medium rounded-lg transition-all capitalize text-muted-foreground hover:text-foreground">Services</button>
-      </div>
-      <div class="flex items-center gap-1.5 text-xs text-muted-foreground">Access:<span
-          class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-secondary text-muted-foreground">Bookings</span><span
-          class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-secondary text-muted-foreground">Availability</span><span
-          class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-secondary text-muted-foreground">Services</span>
-      </div>
-    </div>
-    <div class="flex flex-col h-full space-y-4">
-      <div class="flex items-center justify-between shrink-0">
-        <div>
-          <h1 class="text-xl font-semibold text-foreground">Bookings</h1>
-          <p class="text-sm text-muted-foreground">4 appointments</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <div class="flex bg-secondary rounded-xl p-1 gap-0.5"><button
-              class="p-1.5 rounded-lg transition-all bg-card text-foreground shadow-sm"><svg
-                xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                class="lucide lucide-calendar-days">
-                <path d="M8 2v4"></path>
-                <path d="M16 2v4"></path>
-                <rect width="18" height="18" x="3" y="4" rx="2"></rect>
-                <path d="M3 10h18"></path>
-                <path d="M8 14h.01"></path>
-                <path d="M12 14h.01"></path>
-                <path d="M16 14h.01"></path>
-                <path d="M8 18h.01"></path>
-                <path d="M12 18h.01"></path>
-                <path d="M16 18h.01"></path>
-              </svg></button><button
-              class="p-1.5 rounded-lg transition-all text-muted-foreground hover:text-foreground"><svg
-                xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                class="lucide lucide-list">
-                <path d="M3 12h.01"></path>
-                <path d="M3 18h.01"></path>
-                <path d="M3 6h.01"></path>
-                <path d="M8 12h13"></path>
-                <path d="M8 18h13"></path>
-                <path d="M8 6h13"></path>
-              </svg></button></div><button
-            class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95  "><svg
-              xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-              class="lucide lucide-plus">
-              <path d="M5 12h14"></path>
-              <path d="M12 5v14"></path>
-            </svg>New Booking</button>
-        </div>
-      </div>
-      <div class="flex-1 min-h-0" style="min-height: 520px;">
-        <div class="flex flex-col h-full bg-card rounded-2xl border border-border overflow-hidden">
-          <div class="flex items-center justify-between px-5 py-3 border-b border-border shrink-0">
-            <div class="flex items-center gap-2.5"><button
-                class="px-3 py-1.5 text-xs font-medium rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-secondary transition-all">Today</button>
-              <div class="flex"><button
-                  class="p-1.5 rounded-l-lg border border-border hover:bg-secondary text-muted-foreground hover:text-foreground transition-all"><svg
-                    xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-chevron-left">
-                    <path d="m15 18-6-6 6-6"></path>
-                  </svg></button><button
-                  class="p-1.5 rounded-r-lg border border-l-0 border-border hover:bg-secondary text-muted-foreground hover:text-foreground transition-all"><svg
-                    xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-chevron-right">
-                    <path d="m9 18 6-6-6-6"></path>
-                  </svg></button></div><span class="text-sm font-semibold text-foreground">Jun – Jul 2026</span>
-            </div>
-            <div class="flex items-center gap-0.5 bg-secondary rounded-xl p-1"><button
-                class="px-3 py-1 text-xs font-medium rounded-lg transition-all capitalize text-muted-foreground hover:text-foreground">day</button><button
-                class="px-3 py-1 text-xs font-medium rounded-lg transition-all capitalize bg-primary text-primary-foreground">week</button><button
-                class="px-3 py-1 text-xs font-medium rounded-lg transition-all capitalize text-muted-foreground hover:text-foreground">month</button>
-            </div>
+
+        <!-- PERMISSIONS BADGES - COMPACTOS -->
+        <div class="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <span class="text-muted-foreground/70 text-[10px]">Perms:</span>
+          
+          <div class="flex gap-1">
+            <!-- Booking -->
+            <span *ngIf="hasBookingPermission()" 
+                  class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-500/10 text-blue-400"
+                  title="Booking permissions">
+              📅 B
+            </span>
+
+            <!-- Availability -->
+            <span *ngIf="hasAvailabilityPermission()" 
+                  class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-400"
+                  title="Availability permissions">
+              ⏰ A
+            </span>
+
+            <!-- Service -->
+            <span *ngIf="hasServicePermission()" 
+                  class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-purple-500/10 text-purple-400"
+                  title="Service permissions">
+              🔧 S
+            </span>
+
+            <!-- Customer -->
+            <span *ngIf="hasCustomerPermission()" 
+                  class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-500/10 text-amber-400"
+                  title="Customer permissions">
+              👥 C
+            </span>
           </div>
-          <div class="flex-1 overflow-auto">
-            <div class="sticky top-0 z-10 bg-card border-b border-border flex">
-              <div class="w-16 shrink-0 border-r border-border"></div>
-              <div class="flex-1 py-2 text-center border-r border-border last:border-r-0">
-                <div class="text-xs text-muted-foreground">Mon</div>
-                <div
-                  class="text-lg font-medium w-9 h-9 flex items-center justify-center rounded-full mx-auto mt-0.5 transition-colors text-foreground">
-                  29</div>
-              </div>
-              <div class="flex-1 py-2 text-center border-r border-border last:border-r-0">
-                <div class="text-xs text-muted-foreground">Tue</div>
-                <div
-                  class="text-lg font-medium w-9 h-9 flex items-center justify-center rounded-full mx-auto mt-0.5 transition-colors bg-primary text-primary-foreground">
-                  30</div>
-              </div>
-              <div class="flex-1 py-2 text-center border-r border-border last:border-r-0">
-                <div class="text-xs text-muted-foreground">Wed</div>
-                <div
-                  class="text-lg font-medium w-9 h-9 flex items-center justify-center rounded-full mx-auto mt-0.5 transition-colors text-foreground">
-                  1</div>
-              </div>
-              <div class="flex-1 py-2 text-center border-r border-border last:border-r-0">
-                <div class="text-xs text-muted-foreground">Thu</div>
-                <div
-                  class="text-lg font-medium w-9 h-9 flex items-center justify-center rounded-full mx-auto mt-0.5 transition-colors text-foreground">
-                  2</div>
-              </div>
-              <div class="flex-1 py-2 text-center border-r border-border last:border-r-0">
-                <div class="text-xs text-muted-foreground">Fri</div>
-                <div
-                  class="text-lg font-medium w-9 h-9 flex items-center justify-center rounded-full mx-auto mt-0.5 transition-colors text-foreground">
-                  3</div>
-              </div>
-              <div class="flex-1 py-2 text-center border-r border-border last:border-r-0">
-                <div class="text-xs text-muted-foreground">Sat</div>
-                <div
-                  class="text-lg font-medium w-9 h-9 flex items-center justify-center rounded-full mx-auto mt-0.5 transition-colors text-foreground">
-                  4</div>
-              </div>
-              <div class="flex-1 py-2 text-center border-r border-border last:border-r-0">
-                <div class="text-xs text-muted-foreground">Sun</div>
-                <div
-                  class="text-lg font-medium w-9 h-9 flex items-center justify-center rounded-full mx-auto mt-0.5 transition-colors text-foreground">
-                  5</div>
-              </div>
-            </div>
-            <div class="flex">
-              <div class="w-16 shrink-0 relative border-r border-border" style="height: 832px;">
-                <div class="absolute w-full pr-2.5 flex justify-end" style="top: -8px;"><span
-                    class="text-xs text-muted-foreground font-mono">7 AM</span></div>
-                <div class="absolute w-full pr-2.5 flex justify-end" style="top: 56px;"><span
-                    class="text-xs text-muted-foreground font-mono">8 AM</span></div>
-                <div class="absolute w-full pr-2.5 flex justify-end" style="top: 120px;"><span
-                    class="text-xs text-muted-foreground font-mono">9 AM</span></div>
-                <div class="absolute w-full pr-2.5 flex justify-end" style="top: 184px;"><span
-                    class="text-xs text-muted-foreground font-mono">10 AM</span></div>
-                <div class="absolute w-full pr-2.5 flex justify-end" style="top: 248px;"><span
-                    class="text-xs text-muted-foreground font-mono">11 AM</span></div>
-                <div class="absolute w-full pr-2.5 flex justify-end" style="top: 312px;"><span
-                    class="text-xs text-muted-foreground font-mono">12 PM</span></div>
-                <div class="absolute w-full pr-2.5 flex justify-end" style="top: 376px;"><span
-                    class="text-xs text-muted-foreground font-mono">1 PM</span></div>
-                <div class="absolute w-full pr-2.5 flex justify-end" style="top: 440px;"><span
-                    class="text-xs text-muted-foreground font-mono">2 PM</span></div>
-                <div class="absolute w-full pr-2.5 flex justify-end" style="top: 504px;"><span
-                    class="text-xs text-muted-foreground font-mono">3 PM</span></div>
-                <div class="absolute w-full pr-2.5 flex justify-end" style="top: 568px;"><span
-                    class="text-xs text-muted-foreground font-mono">4 PM</span></div>
-                <div class="absolute w-full pr-2.5 flex justify-end" style="top: 632px;"><span
-                    class="text-xs text-muted-foreground font-mono">5 PM</span></div>
-                <div class="absolute w-full pr-2.5 flex justify-end" style="top: 696px;"><span
-                    class="text-xs text-muted-foreground font-mono">6 PM</span></div>
-                <div class="absolute w-full pr-2.5 flex justify-end" style="top: 760px;"><span
-                    class="text-xs text-muted-foreground font-mono">7 PM</span></div>
-              </div>
-              <div class="flex-1 relative border-r border-border last:border-r-0" style="height: 832px;">
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 0px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 64px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 128px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 192px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 256px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 320px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 384px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 448px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 512px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 576px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 640px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 704px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 768px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 32px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 96px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 160px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 224px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 288px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 352px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 416px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 480px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 544px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 608px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 672px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 736px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 800px;"></div>
-                <div
-                  class="absolute left-1 right-1 rounded-xl px-2 py-1 cursor-pointer hover:opacity-90 transition-opacity overflow-hidden"
-                  style="top: 128px; height: 64px; background: rgba(124, 110, 245, 0.094); border-left: 3px solid rgb(124, 110, 245);">
-                  <div class="text-xs font-semibold truncate leading-tight" style="color: rgb(124, 110, 245);">Valentina
-                    – Haircut &amp; Style</div>
-                  <div class="text-xs truncate mt-0.5 opacity-70" style="color: rgb(124, 110, 245);">9:00 AM–10:00 AM
-                  </div>
-                </div>
-                <div
-                  class="absolute left-1 right-1 rounded-xl px-2 py-1 cursor-pointer hover:opacity-90 transition-opacity overflow-hidden"
-                  style="top: 256px; height: 128px; background: rgba(124, 110, 245, 0.094); border-left: 3px solid rgb(124, 110, 245);">
-                  <div class="text-xs font-semibold truncate leading-tight" style="color: rgb(124, 110, 245);">Rodrigo –
-                    Color Treatment</div>
-                  <div class="text-xs truncate mt-0.5 opacity-70" style="color: rgb(124, 110, 245);">11:00 AM–1:00 PM
-                  </div>
-                </div>
-                <div class="absolute inset-0 cursor-pointer" style="z-index: -1;"></div>
-              </div>
-              <div class="flex-1 relative border-r border-border last:border-r-0" style="height: 832px;">
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 0px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 64px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 128px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 192px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 256px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 320px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 384px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 448px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 512px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 576px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 640px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 704px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 768px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 32px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 96px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 160px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 224px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 288px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 352px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 416px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 480px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 544px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 608px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 672px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 736px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 800px;"></div>
-                <div class="absolute inset-0 cursor-pointer" style="z-index: -1;"></div>
-              </div>
-              <div class="flex-1 relative border-r border-border last:border-r-0" style="height: 832px;">
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 0px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 64px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 128px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 192px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 256px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 320px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 384px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 448px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 512px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 576px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 640px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 704px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 768px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 32px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 96px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 160px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 224px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 288px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 352px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 416px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 480px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 544px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 608px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 672px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 736px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 800px;"></div>
-                <div class="absolute inset-0 cursor-pointer" style="z-index: -1;"></div>
-              </div>
-              <div class="flex-1 relative border-r border-border last:border-r-0" style="height: 832px;">
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 0px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 64px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 128px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 192px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 256px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 320px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 384px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 448px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 512px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 576px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 640px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 704px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 768px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 32px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 96px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 160px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 224px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 288px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 352px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 416px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 480px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 544px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 608px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 672px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 736px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 800px;"></div>
-                <div
-                  class="absolute left-1 right-1 rounded-xl px-2 py-1 cursor-pointer hover:opacity-90 transition-opacity overflow-hidden"
-                  style="top: 256px; height: 48px; background: rgba(52, 211, 153, 0.094); border-left: 3px solid rgb(52, 211, 153);">
-                  <div class="text-xs font-semibold truncate leading-tight" style="color: rgb(52, 211, 153);">Rodrigo –
-                    Deep Conditioning</div>
-                  <div class="text-xs truncate mt-0.5 opacity-70" style="color: rgb(52, 211, 153);">11:00 AM–11:45 AM
-                  </div>
-                </div>
-                <div
-                  class="absolute left-1 right-1 rounded-xl px-2 py-1 cursor-pointer hover:opacity-90 transition-opacity overflow-hidden"
-                  style="top: 512px; height: 64px; background: rgba(124, 110, 245, 0.094); border-left: 3px solid rgb(124, 110, 245);">
-                  <div class="text-xs font-semibold truncate leading-tight" style="color: rgb(124, 110, 245);">Camila –
-                    Haircut &amp; Style</div>
-                  <div class="text-xs truncate mt-0.5 opacity-70" style="color: rgb(124, 110, 245);">3:00 PM–4:00 PM
-                  </div>
-                </div>
-                <div class="absolute inset-0 cursor-pointer" style="z-index: -1;"></div>
-              </div>
-              <div class="flex-1 relative border-r border-border last:border-r-0" style="height: 832px;">
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 0px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 64px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 128px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 192px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 256px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 320px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 384px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 448px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 512px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 576px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 640px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 704px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 768px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 32px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 96px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 160px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 224px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 288px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 352px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 416px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 480px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 544px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 608px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 672px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 736px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 800px;"></div>
-                <div class="absolute inset-0 cursor-pointer" style="z-index: -1;"></div>
-              </div>
-              <div class="flex-1 relative border-r border-border last:border-r-0" style="height: 832px;">
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 0px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 64px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 128px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 192px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 256px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 320px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 384px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 448px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 512px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 576px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 640px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 704px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 768px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 32px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 96px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 160px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 224px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 288px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 352px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 416px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 480px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 544px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 608px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 672px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 736px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 800px;"></div>
-                <div class="absolute inset-0 cursor-pointer" style="z-index: -1;"></div>
-              </div>
-              <div class="flex-1 relative border-r border-border last:border-r-0" style="height: 832px;">
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 0px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 64px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 128px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 192px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 256px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 320px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 384px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 448px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 512px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 576px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 640px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 704px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 768px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 32px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 96px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 160px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 224px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 288px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 352px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 416px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 480px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 544px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 608px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 672px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 736px;"></div>
-                <div class="absolute left-0 right-0 border-t border-y-violet-700/15" style="top: 800px;"></div>
-                <div class="absolute inset-0 cursor-pointer" style="z-index: -1;"></div>
-              </div>
-            </div>
-          </div>
+          
+          <span *ngIf="!hasAnyCategoryPermission()" class="text-muted-foreground/50 text-[10px]">
+            No permissions
+          </span>
         </div>
       </div>
+
+      <!-- CONTENT AREA - BOOKINGS -->
+      <div *ngIf="activeTab === 'BOOKINGS'" class="flex flex-col h-full space-y-4">
+        <app-bookings
+          [supplierId]="selectedSupplierId"
+          [companyId]="selectedSupplier.person.companyId"
+          [hasCreatePermission]="hasBookingCreate"
+          [hasReadPermission]="hasBookingRead"
+          [hasUpdatePermission]="hasBookingUpdate"
+          [hasDeletePermission]="hasBookingDelete">
+        </app-bookings>
+      </div>
+
+      <!-- CONTENT AREA - AVAILABILITY -->
+    <div *ngIf="activeTab === 'AVAILABILITY'" class="flex flex-col h-full space-y-4">
+      <app-availabilities
+        [supplierId]="selectedSupplierId"
+        [companyId]="selectedSupplier.person.companyId"
+        [hasCreatePermission]="hasAvailabilityCreate"
+        [hasReadPermission]="hasAvailabilityRead"
+        [hasUpdatePermission]="hasAvailabilityUpdate"
+        [hasDeletePermission]="hasAvailabilityDelete">
+      </app-availabilities>
     </div>
+
+      <!-- CONTENT AREA - SERVICES -->
+      <div *ngIf="activeTab === 'SERVICES'" class="flex flex-col h-full space-y-4">
+        <div class="text-center py-12 text-muted-foreground">
+          <p>Services view coming soon...</p>
+        </div>
+      </div>
+
+      <!-- CONTENT AREA - CUSTOMERS -->
+      <div *ngIf="activeTab === 'CUSTOMERS'" class="flex flex-col h-full space-y-4">
+        <div class="text-center py-12 text-muted-foreground">
+          <p>Customers view coming soon...</p>
+        </div>
+      </div>
+
+    </ng-container>
+
   </div>
 </main>

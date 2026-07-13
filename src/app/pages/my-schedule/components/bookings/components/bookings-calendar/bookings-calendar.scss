@@ -1,0 +1,87 @@
+// bookings-calendar.scss
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+.grid-cols-7 {
+  grid-template-columns: repeat(7, 1fr);
+}
+
+// Scrollbar personalizada
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border, rgba(0, 0, 0, 0.08));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground, #6b6d84);
+}
+
+.dark {
+  ::-webkit-scrollbar-thumb {
+    background: var(--border, rgba(255, 255, 255, 0.06));
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--muted-foreground, #666880);
+  }
+}
+
+// Corrección para evitar que el header se coma contenido
+.sticky {
+  position: sticky;
+  top: 0;
+}
+
+// Estilos adicionales para mejorar la experiencia
+.bg-card {
+  background: var(--card);
+}
+
+.border-border {
+  border-color: var(--border);
+}
+
+.text-muted-foreground {
+  color: var(--muted-foreground);
+}
+
+.text-foreground {
+  color: var(--foreground);
+}
+
+.bg-primary {
+  background: var(--primary);
+}
+
+.text-primary-foreground {
+  color: var(--primary-foreground);
+}
+
+.bg-secondary {
+  background: var(--secondary);
+}
+
+// Animación de hover para eventos
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.transition-opacity {
+  transition: opacity 0.2s;
+}
+
+.hover\:opacity-90:hover {
+  opacity: 0.9;
+}

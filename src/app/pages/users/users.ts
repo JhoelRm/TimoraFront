@@ -14,7 +14,7 @@ import {
   UserPermissionMapResponse,
   UserSupplierPermissionCreateDTO
 } from '../../models/permission';
-import { LucideAngularModule, Search, Plus, Pencil, Trash2, Shield, X, CheckCircle, Lock } from 'lucide-angular';
+import { LucideAngularModule, Search, Plus, Pencil, Trash2, Shield, X, CheckCircle, Lock, Loader2 } from 'lucide-angular';
 import { ModalComponent } from '../../components/modal/modal/modal';
 
 type Role = 'OWNER' | 'ADMIN' | 'USER';
@@ -70,9 +70,10 @@ export class UsersComponent implements OnInit {
   deleteModalOpen = false;
   userToDelete: PersonIdentityDTO | null = null;
 
+  // PERMISSIONS MODAL
   permissionsModalOpen = false;
   selectedUser: PersonIdentityDTO | null = null;
-  selectedUserId: number | null = null;
+  selectedUserId: number | null = null; // Esto es USER.id
   selectedSupplierId: number | null = null;
   supplierPermissions: SupplierPermission[] = [];
   availableSuppliers: (NonNullable<PersonIdentityDTO['supplier']> & { person: PersonIdentityDTO['person'] })[] = [];
@@ -83,6 +84,7 @@ export class UsersComponent implements OnInit {
 
   public hasChanges = false;
   public isSaving = false;
+  public isLoadingPermissions = false;
 
   userForm: UserForm = this.createEmptyForm();
   editForm: EditUserForm = this.createEmptyEditForm();
@@ -98,7 +100,7 @@ export class UsersComponent implements OnInit {
   modalOpen = false;
 
   permissionGroups = PermissionGroupsWithLabels;
-  icons = { Search, Plus, Pencil, Trash2, Shield, X, CheckCircle, Lock };
+  icons = { Search, Plus, Pencil, Trash2, Shield, X, CheckCircle, Lock, Loader2 };
   availableRoles: Role[] = [];
 
   private personService = inject(PersonService);
@@ -147,7 +149,10 @@ export class UsersComponent implements OnInit {
 
   private loadCompanies() {
     this.companiesService.getAll().subscribe({
-      next: d => { this.companies = d ?? []; this.cdr.detectChanges() },
+      next: d => { 
+        this.companies = (d ?? []).filter(c => c.status === 'ACTIVE'); 
+        this.cdr.detectChanges();
+      },
       error: console.error
     });
   }
@@ -315,11 +320,18 @@ export class UsersComponent implements OnInit {
     });
   }
 
+  // ============================================================
+  // PERMISSIONS LOGIC - MEJORADO
+  // ============================================================
+
   openPermissionsModal(user: PersonIdentityDTO) {
-    if (user.user?.role !== 'USER' && user.user?.role !== 'STAFF') {
+    // Validación: Solo USER o STAFF pueden tener permisos
+    if (!user.user || (user.user.role !== 'USER' && user.user.role !== 'STAFF')) {
       console.warn('User is not USER or STAFF, cannot manage permissions');
       return;
     }
+
+    // Resetear estado
     this.supplierPermissions = [];
     this.availableSuppliers = [];
     this.originalPermissions = [];
@@ -327,20 +339,49 @@ export class UsersComponent implements OnInit {
     this.permissionsToRemove = [];
     this.hasChanges = false;
     this.isSaving = false;
+    this.isLoadingPermissions = false;
+
+    // Guardar usuario seleccionado
     this.selectedUser = user;
-    this.selectedUserId = user.person.id;
+    // ✅ IMPORTANTE: Usar user.id (no person.id)
+    this.selectedUserId = user.user.id;
+    
+    // Abrir modal
     this.permissionsModalOpen = true;
+    
+    // Cargar permisos
     this.loadSupplierPermissions();
   }
 
   closePermissionsModal() {
     if (this.isSaving) return;
+    
+    // Si hay cambios y no estamos guardando, preguntar
     if (this.hasChanges) {
-      this.saveAllPermissions();
-      return;
-      
+      if (confirm('Tienes cambios sin guardar. ¿Quieres guardarlos antes de cerrar?')) {
+        this.saveAllPermissions();
+        return;
+      }
+      // Si el usuario cancela, descartar cambios
+      this.discardChanges();
     }
+    
     this.permissionsModalOpen = false;
+    this.cleanupPermissionsState();
+  }
+
+  private discardChanges() {
+    // Restaurar permisos originales
+    this.supplierPermissions = this.originalPermissions.map(sp => ({
+      ...sp,
+      permissions: new Set(sp.permissions)
+    }));
+    this.permissionsToAdd = [];
+    this.permissionsToRemove = [];
+    this.hasChanges = false;
+  }
+
+  private cleanupPermissionsState() {
     this.selectedUser = null;
     this.selectedUserId = null;
     this.selectedSupplierId = null;
@@ -351,100 +392,201 @@ export class UsersComponent implements OnInit {
     this.permissionsToRemove = [];
     this.hasChanges = false;
     this.isSaving = false;
+    this.isLoadingPermissions = false;
   }
 
-  saveAllPermissions() {
-    if (!this.selectedUserId || this.isSaving) return;
-    if (this.permissionsToAdd.length === 0 && this.permissionsToRemove.length === 0) {
-      this.hasChanges = false;
-      this.permissionsModalOpen = false;
-      return;
-    }
-    this.isSaving = true;
-    this.cdr.detectChanges();
-    const operations: (() => Promise<any>)[] = [
-      ...this.permissionsToRemove.map(r => () => this.permissionService.delete({
+saveAllPermissions() {
+  console.log('\n💾 === SAVE ALL PERMISSIONS ===');
+  console.log('📊 Estado actual:');
+  console.log(`  - selectedUserId: ${this.selectedUserId}`);
+  console.log(`  - isSaving: ${this.isSaving}`);
+  console.log(`  - permissionsToAdd: ${this.permissionsToAdd.length}`);
+  console.log(`  - permissionsToRemove: ${this.permissionsToRemove.length}`);
+  console.log('📝 Detalle de cambios:');
+  console.log('  ➕ Añadir:', this.permissionsToAdd);
+  console.log('  ➖ Eliminar:', this.permissionsToRemove);
+  
+  if (!this.selectedUserId || this.isSaving) {
+    console.warn('⚠️ No se puede guardar: selectedUserId o isSaving true');
+    return;
+  }
+  
+  if (this.permissionsToAdd.length === 0 && this.permissionsToRemove.length === 0) {
+    console.log('ℹ️ No hay cambios para guardar');
+    this.hasChanges = false;
+    this.permissionsModalOpen = false;
+    this.cleanupPermissionsState();
+    return;
+  }
+
+  console.log('⏳ Iniciando guardado...');
+  this.isSaving = true;
+  this.cdr.detectChanges();
+
+  // Construir operaciones
+  const operations: (() => Promise<any>)[] = [
+    ...this.permissionsToRemove.map(r => {
+      const payload = {
         userId: this.selectedUserId!,
         supplierId: r.supplierId,
         permission: r.permission
-      }).toPromise()),
-      ...this.permissionsToAdd.map(a => () => this.permissionService.create({
+      };
+      console.log(`🗑️ Preparando DELETE:`, payload);
+      return () => {
+        console.log(`🗑️ Ejecutando DELETE para ${r.permission} en supplier ${r.supplierId}`);
+        return this.permissionService.delete(payload).toPromise();
+      };
+    }),
+    ...this.permissionsToAdd.map(a => {
+      const payload = {
         userId: this.selectedUserId!,
         supplierId: a.supplierId,
         permission: a.permission
-      }).toPromise())
-    ];
-    this.executeSequentially(operations);
-  }
+      };
+      console.log(`➕ Preparando CREATE:`, payload);
+      return () => {
+        console.log(`➕ Ejecutando CREATE para ${a.permission} en supplier ${a.supplierId}`);
+        return this.permissionService.create(payload).toPromise();
+      };
+    })
+  ];
 
-  private async executeSequentially(operations: (() => Promise<any>)[]) {
-    try {
-      for (const op of operations) {
-        try {
-          await op();
-        } catch (error: any) {
-          if (error.error?.message === 'Permission does not exist' || error.error?.message === 'Permission already exists') {
-            continue;
-          }
-          throw error;
+  console.log(`📊 Total de operaciones a ejecutar: ${operations.length}`);
+  this.executeSequentially(operations);
+}
+
+private async executeSequentially(operations: (() => Promise<any>)[]) {
+  let hasError = false;
+  
+  console.log('🚀 === INICIANDO EJECUCIÓN SECUENCIAL ===');
+  console.log(`📊 Total de operaciones: ${operations.length}`);
+  console.log('📋 Operaciones a ejecutar:', operations.map((_, i) => `Op ${i + 1}`));
+  
+  try {
+    let opIndex = 0;
+    for (const op of operations) {
+      opIndex++;
+      console.log(`\n🔄 === Operación ${opIndex}/${operations.length} ===`);
+      
+      try {
+        console.log('⏳ Ejecutando operación...');
+        const result = await op();
+        console.log('✅ Operación exitosa:', result);
+      } catch (error: any) {
+        console.error(`❌ Error en operación ${opIndex}:`, error);
+        console.error('📝 Detalles del error:', {
+          message: error.message,
+          errorObject: error.error,
+          status: error.status,
+          statusText: error.statusText,
+          url: error.url
+        });
+        
+        // Log del body si existe
+        if (error.error) {
+          console.log('📦 Body del error:', error.error);
         }
+        
+        // Ignorar errores de "ya existe" o "no existe"
+        if (error.error?.message === 'Permission does not exist' || 
+            error.error?.message === 'Permission already exists') {
+          console.log('⚠️ Error ignorado (permiso ya existe o no existe)');
+          continue;
+        }
+        
+        console.error('💥 Error no ignorable, deteniendo ejecución');
+        hasError = true;
+        break;
       }
-      setTimeout(() => {
-        this.isSaving = false;
-        this.hasChanges = false;
-        this.permissionsToAdd = [];
-        this.permissionsToRemove = [];
-        this.permissionsModalOpen = false;
-        this.loadSupplierPermissions();
-        this.cdr.detectChanges();
-      }, 0);
-    } catch (error) {
-      console.error('Error in permission operation:', error);
-      setTimeout(() => {
-        this.isSaving = false;
-        this.loadSupplierPermissions();
-        //alert('Error saving permissions. Please try again.');
-        this.cdr.detectChanges();
-      }, 0);
     }
+
+    console.log('\n📊 === RESUMEN FINAL ===');
+    console.log(`✅ Éxito: ${!hasError}`);
+    console.log(`📝 Cambios pendientes: ${this.permissionsToAdd.length} añadir, ${this.permissionsToRemove.length} eliminar`);
+
+    // Recargar permisos después de guardar
+    setTimeout(() => {
+      console.log('🔄 Limpiando estado después de guardar...');
+      this.isSaving = false;
+      this.hasChanges = false;
+      this.permissionsToAdd = [];
+      this.permissionsToRemove = [];
+      
+      if (!hasError) {
+        console.log('✅ Todo bien, cerrando modal');
+        this.permissionsModalOpen = false;
+        this.cleanupPermissionsState();
+      } else {
+        console.log('⚠️ Hubo errores, recargando permisos');
+        this.loadSupplierPermissions();
+      }
+      this.cdr.detectChanges();
+    }, 0);
+    
+  } catch (error) {
+    console.error('💥 Error catastrófico en operaciones de permisos:', error);
+    setTimeout(() => {
+      this.isSaving = false;
+      this.loadSupplierPermissions();
+      this.cdr.detectChanges();
+    }, 0);
   }
+}
 
   loadSupplierPermissions() {
-    if (!this.selectedUserId) return;
+    if (!this.selectedUserId) {
+      console.warn('No selected user ID');
+      return;
+    }
+
+    this.isLoadingPermissions = true;
     this.supplierPermissions = [];
-    this.originalPermissions = [];
     this.availableSuppliers = [];
-    this.permissionsToAdd = [];
-    this.permissionsToRemove = [];
+    this.cdr.detectChanges();
+
     this.permissionService.getPermissionMap(this.selectedUserId).subscribe({
       next: (permissionMap: UserPermissionMapResponse) => {
         const supplierIds = Object.keys(permissionMap).map(Number);
+        
+        // Si no hay permisos, cargar suppliers disponibles
         if (supplierIds.length === 0) {
           this.supplierPermissions = [];
           this.originalPermissions = [];
           this.loadAvailableSuppliers();
+          this.isLoadingPermissions = false;
           this.cdr.detectChanges();
           return;
         }
+
+        // Buscar los suppliers que tienen permisos
         this.personService.getAll().subscribe({
           next: (allUsers) => {
             const supplierUsers = allUsers
               .filter(u => u.supplier !== null && u.supplier !== undefined)
               .filter(u => supplierIds.includes(u.supplier!.id));
+            
             this.supplierPermissions = supplierUsers.map(u => ({
               supplierId: u.supplier!.id,
               supplier: u.supplier!,
               person: u.person,
               permissions: new Set(permissionMap[u.supplier!.id] || [])
             }));
+            
+            // Guardar copia original para detectar cambios
             this.originalPermissions = this.supplierPermissions.map(sp => ({
               ...sp,
               permissions: new Set(sp.permissions)
             }));
+            
             this.loadAvailableSuppliers();
+            this.isLoadingPermissions = false;
             this.cdr.detectChanges();
           },
-          error: console.error
+          error: (err) => {
+            console.error('Error loading suppliers:', err);
+            this.isLoadingPermissions = false;
+            this.cdr.detectChanges();
+          }
         });
       },
       error: (error) => {
@@ -452,38 +594,86 @@ export class UsersComponent implements OnInit {
         this.supplierPermissions = [];
         this.originalPermissions = [];
         this.loadAvailableSuppliers();
+        this.isLoadingPermissions = false;
+        this.cdr.detectChanges();
       }
     });
   }
 
   loadAvailableSuppliers() {
-    if (!this.selectedUser) return;
+    if (!this.selectedUser) {
+      console.warn('No selected user for available suppliers');
+      return;
+    }
+
     const companyId = this.selectedUser.person.companyId;
-    const currentSupplierId = this.selectedUser.supplier?.id;
-    this.personService.getAll().subscribe({
-      next: (allUsers) => {
-        const supplierUsers = allUsers
-          .filter(u => u.supplier !== null && u.supplier !== undefined)
-          .filter(u => u.person.companyId === companyId);
-        const assignedSupplierIds = new Set(this.supplierPermissions.map(sp => sp.supplier.id));
-        this.availableSuppliers = supplierUsers
-          .filter(u => {
-            const supplierId = u.supplier!.id;
-            if (assignedSupplierIds.has(supplierId)) return false;
-            if (currentSupplierId && supplierId === currentSupplierId) return false;
-            return true;
-          })
-          .map(u => ({ ...u.supplier!, person: u.person }));
-        this.cdr.detectChanges();
-      },
-      error: console.error
-    });
+    const currentUserPersonId = this.selectedUser.person.id;
+
+    // Usar this.allUsers que ya está cargado (no hacer otra llamada)
+    const allUsers = this.allUsers.length > 0 ? this.allUsers : [];
+    
+    // Filtrar suppliers de la misma empresa
+    const supplierUsers = allUsers
+      .filter(u => u.supplier !== null && u.supplier !== undefined)
+      .filter(u => u.person.companyId === companyId)
+      // Excluir al usuario actual (no puede asignarse permisos a sí mismo)
+      .filter(u => u.person.id !== currentUserPersonId);
+
+    // Obtener IDs de suppliers ya asignados
+    const assignedSupplierIds = new Set(this.supplierPermissions.map(sp => sp.supplier.id));
+
+    // Suppliers disponibles = no asignados
+    this.availableSuppliers = supplierUsers
+      .filter(u => !assignedSupplierIds.has(u.supplier!.id))
+      .map(u => ({ ...u.supplier!, person: u.person }));
+
+    this.cdr.detectChanges();
   }
 
   hasPermission(supplierId: number, permission: Permission): boolean {
     const supplierPerm = this.supplierPermissions.find(sp => sp.supplier.id === supplierId);
     return supplierPerm?.permissions.has(permission) || false;
   }
+
+togglePermission(supplierId: number, permission: Permission) {
+  console.log(`🔄 TOGGLE PERMISSION: supplier=${supplierId}, permission=${permission}`);
+  
+  const supplierPerm = this.supplierPermissions.find(sp => sp.supplier.id === supplierId);
+  if (!supplierPerm) return;
+
+  const hasPerm = supplierPerm.permissions.has(permission);
+
+  if (hasPerm) {
+    // ✅ TIENE permiso → ELIMINAR
+    console.log(`🗑️ Removiendo permiso ${permission}`);
+    supplierPerm.permissions.delete(permission);
+    
+    this.permissionsToAdd = this.permissionsToAdd.filter(
+      p => !(p.supplierId === supplierId && p.permission === permission)
+    );
+    
+    if (!this.isPendingRemove(supplierId, permission)) {
+      this.permissionsToRemove.push({ supplierId, permission });
+      console.log(`➕ Añadido a lista de REMOVER: ${permission}`);
+    }
+  } else {
+    // ❌ NO TIENE permiso → CREAR
+    console.log(`➕ Añadiendo permiso ${permission}`);
+    supplierPerm.permissions.add(permission);
+    
+    this.permissionsToRemove = this.permissionsToRemove.filter(
+      p => !(p.supplierId === supplierId && p.permission === permission)
+    );
+    
+    if (!this.isPendingAdd(supplierId, permission)) {
+      this.permissionsToAdd.push({ supplierId, permission });
+      console.log(`➕ Añadido a lista de AÑADIR: ${permission}`);
+    }
+  }
+
+  this.hasChanges = true;
+  this.cdr.detectChanges();
+}
 
   private isPendingAdd(supplierId: number, permission: Permission): boolean {
     return this.permissionsToAdd.some(p => p.supplierId === supplierId && p.permission === permission);
@@ -493,55 +683,87 @@ export class UsersComponent implements OnInit {
     return this.permissionsToRemove.some(p => p.supplierId === supplierId && p.permission === permission);
   }
 
-  togglePermission(supplierId: number, permission: Permission) {
-    const supplierPerm = this.supplierPermissions.find(sp => sp.supplier.id === supplierId);
-    if (!supplierPerm) return;
-    const hasPerm = supplierPerm.permissions.has(permission);
-    if (hasPerm) {
-      supplierPerm.permissions.delete(permission);
-      this.permissionsToAdd = this.permissionsToAdd.filter(p => !(p.supplierId === supplierId && p.permission === permission));
-      if (!this.isPendingRemove(supplierId, permission)) {
-        this.permissionsToRemove.push({ supplierId, permission });
-      }
-    } else {
-      supplierPerm.permissions.add(permission);
-      this.permissionsToRemove = this.permissionsToRemove.filter(p => !(p.supplierId === supplierId && p.permission === permission));
-      if (!this.isPendingAdd(supplierId, permission)) {
-        this.permissionsToAdd.push({ supplierId, permission });
-      }
-    }
-    this.hasChanges = true;
+
+addSupplierPermissions() {
+  console.log('\n➕ === ADD SUPPLIER PERMISSIONS ===');
+  console.log(`📊 selectedSupplierId: ${this.selectedSupplierId}`);
+  console.log(`📊 selectedUserId: ${this.selectedUserId}`);
+  
+  if (!this.selectedSupplierId || !this.selectedUserId) {
+    console.warn('⚠️ No se puede añadir: supplier o userId null');
+    return;
   }
 
-  addSupplierPermissions() {
-    if (!this.selectedSupplierId || !this.selectedUserId) return;
-    const supplierWithPerson = this.availableSuppliers.find(s => s.id === this.selectedSupplierId);
-    if (!supplierWithPerson) return;
-    this.hasChanges = true;
-    this.supplierPermissions.push({
-      supplierId: supplierWithPerson.id,
-      supplier: supplierWithPerson,
-      person: supplierWithPerson.person,
-      permissions: new Set()
-    });
-    this.availableSuppliers = this.availableSuppliers.filter(s => s.id !== this.selectedSupplierId);
-    this.selectedSupplierId = null;
+  const supplierWithPerson = this.availableSuppliers.find(s => s.id === this.selectedSupplierId);
+  if (!supplierWithPerson) {
+    console.warn(`⚠️ No se encontró supplier con ID ${this.selectedSupplierId}`);
+    return;
   }
 
-  removeSupplierPermissions(supplierId: number) {
-    const supplierPerm = this.supplierPermissions.find(sp => sp.supplier.id === supplierId);
-    if (!supplierPerm) return;
-    const permissionsToRemove = Array.from(supplierPerm.permissions);
-    this.hasChanges = true;
-    for (const perm of permissionsToRemove) {
-      this.permissionsToAdd = this.permissionsToAdd.filter(p => !(p.supplierId === supplierId && p.permission === perm));
-      if (!this.isPendingRemove(supplierId, perm)) {
-        this.permissionsToRemove.push({ supplierId, permission: perm });
-      }
-    }
-    this.supplierPermissions = this.supplierPermissions.filter(sp => sp.supplier.id !== supplierId);
-    this.availableSuppliers.push({ ...supplierPerm.supplier, person: supplierPerm.person });
+  console.log(`✅ Añadiendo supplier: ${supplierWithPerson.person.firstName} ${supplierWithPerson.person.lastName} (ID: ${supplierWithPerson.id})`);
+
+  // Añadir supplier a la lista de permisos
+  this.supplierPermissions.push({
+    supplierId: supplierWithPerson.id,
+    supplier: supplierWithPerson,
+    person: supplierWithPerson.person,
+    permissions: new Set()
+  });
+
+  // Remover de disponibles
+  this.availableSuppliers = this.availableSuppliers.filter(s => s.id !== this.selectedSupplierId);
+  this.selectedSupplierId = null;
+  this.hasChanges = true;
+  
+  console.log(`📊 Nuevo estado:`);
+  console.log(`  - supplierPermissions: ${this.supplierPermissions.length}`);
+  console.log(`  - availableSuppliers: ${this.availableSuppliers.length}`);
+  console.log(`  - hasChanges: ${this.hasChanges}`);
+  
+  this.cdr.detectChanges();
+}
+
+
+removeSupplierPermissions(supplierId: number) {
+  console.log(`\n🗑️ === REMOVE SUPPLIER PERMISSIONS: supplierId=${supplierId} ===`);
+  
+  const supplierPerm = this.supplierPermissions.find(sp => sp.supplier.id === supplierId);
+  if (!supplierPerm) {
+    console.warn(`⚠️ No se encontró supplier con ID ${supplierId}`);
+    return;
   }
+
+  const permissionsToRemove = Array.from(supplierPerm.permissions);
+  console.log(`📊 Permisos a eliminar: ${permissionsToRemove.length}`, permissionsToRemove);
+  
+  for (const perm of permissionsToRemove) {
+    this.permissionsToAdd = this.permissionsToAdd.filter(
+      p => !(p.supplierId === supplierId && p.permission === perm)
+    );
+    if (!this.isPendingRemove(supplierId, perm)) {
+      this.permissionsToRemove.push({ supplierId, permission: perm });
+      console.log(`🗑️ Marcado para eliminar: ${perm}`);
+    }
+  }
+
+  // Remover de la lista
+  this.supplierPermissions = this.supplierPermissions.filter(sp => sp.supplier.id !== supplierId);
+  
+  // Devolver a disponibles
+  this.availableSuppliers.push({ ...supplierPerm.supplier, person: supplierPerm.person });
+  
+  this.hasChanges = true;
+  console.log(`📊 Nuevo estado:`);
+  console.log(`  - supplierPermissions: ${this.supplierPermissions.length}`);
+  console.log(`  - availableSuppliers: ${this.availableSuppliers.length}`);
+  console.log(`  - hasChanges: ${this.hasChanges}`);
+  
+  this.cdr.detectChanges();
+}
+
+  // ============================================================
+  // UTILITY METHODS
+  // ============================================================
 
   private createEmptyForm(): UserForm {
     return {

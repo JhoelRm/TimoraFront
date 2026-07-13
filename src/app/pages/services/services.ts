@@ -11,11 +11,11 @@ import { PersonIdentityDTO } from '../../models/person-identity';
 import { CurrentUser } from '../../models/currentUser';
 import { LucideAngularModule, Search, Plus, Pencil, Trash2, X, Clock } from 'lucide-angular';
 import { ModalComponent } from '../../components/modal/modal/modal';
-import { ServiceHeader } from './services/service-header/service-header';
-import { ServiceList } from './services/service-list/service-list';
-import { ServiceFormModal } from './services/service-form-modal/service-form-modal';
-import { ServiceEditModal } from './services/service-edit-modal/service-edit-modal';
-import { ServiceDeleteModal } from './services/service-delete-modal/service-delete-modal';
+import { ServiceHeader } from './components/service-header/service-header';
+import { ServiceList } from './components/service-list/service-list';
+import { ServiceFormModal } from './components/service-form-modal/service-form-modal';
+import { ServiceEditModal } from './components/service-edit-modal/service-edit-modal';
+import { ServiceDeleteModal } from './components/service-delete-modal/service-delete-modal';
 
 interface ServiceForm {
   companyId: number | null;

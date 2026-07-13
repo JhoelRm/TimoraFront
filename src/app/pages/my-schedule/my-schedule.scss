@@ -1,0 +1,14 @@
+// my-schedule/my-schedule.scss
+:host {
+  display: block;
+  height: 100%;
+}
+
+// Estilos para los tabs
+.tab-btn {
+  transition: all 0.2s ease;
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}

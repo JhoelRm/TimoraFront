@@ -17,7 +17,7 @@ import { PersonIdentityDTO } from '../../models/person-identity';
 import { CurrentUser } from '../../models/currentUser';
 import { CompanyDTO } from '../../models/company';
 import { ServiceDTO } from '../../models/service';
-import { PaymentDTO, PaymentCreateDTO, PaymentPatchDTO } from '../../models/payments';
+import { PaymentDTO, PaymentCreateDTO, PaymentPatchDTO } from '../../models/payment';
 
 // Componentes
 import { BookingsFilter } from './components/bookings-filter/bookings-filter';
@@ -144,16 +144,16 @@ export class BookingsComponent implements OnInit {
     this.loadServices();
   }
 
-  private loadCompanies(): void {
-    this.companiesService.getAll().subscribe({
-      next: data => {
-        this.allCompanies = data ?? [];
-        console.log('🏢 Compañías cargadas:', this.allCompanies.length);
-        this.cdr.detectChanges();
-      },
-      error: err => console.error('Error loading companies:', err)
-    });
-  }
+private loadCompanies(): void {
+  this.companiesService.getAll().subscribe({
+    next: data => {
+      this.allCompanies = (data ?? []).filter(c => c.status === 'ACTIVE');
+      console.log('🏢 Compañías activas cargadas:', this.allCompanies.length);
+      this.cdr.detectChanges();
+    },
+    error: err => console.error('Error loading companies:', err)
+  });
+}
 
   private loadSuppliers(): void {
     this.loading = true;

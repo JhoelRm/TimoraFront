@@ -1,0 +1,100 @@
+<div class="bg-card border border-border rounded-2xl overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="border-b border-border">
+      <tr>
+        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Provider</th>
+        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Days</th>
+        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Hours</th>
+        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Recurrence</th>
+        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Slot</th>
+        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Capacity</th>
+        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Status</th>
+        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground"></th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-border">
+      <!-- Loading state -->
+      <tr *ngIf="loading">
+        <td colspan="8" class="px-4 py-8 text-center text-sm text-muted-foreground">
+          <div class="flex items-center justify-center gap-2">
+            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+            Loading schedules...
+          </div>
+        </td>
+      </tr>
+
+      <!-- Empty state -->
+      <tr *ngIf="!loading && availabilities.length === 0">
+        <td colspan="8" class="px-4 py-8 text-center text-sm text-muted-foreground">
+          No schedules available
+        </td>
+      </tr>
+
+      <!-- Data rows -->
+      <tr *ngFor="let a of availabilities; trackBy: trackById"
+        class="hover:bg-secondary/20 transition-colors">
+        <td class="px-4 py-3">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+              {{ getInitials(getSupplierName(a)) }}
+            </div>
+            <span class="text-sm font-medium text-foreground">{{ getSupplierName(a) }}</span>
+          </div>
+        </td>
+        <td class="px-4 py-3 text-xs text-muted-foreground max-w-[130px] truncate">
+          {{ getDaysDisplay(a) }}
+        </td>
+        <td class="px-4 py-3 text-muted-foreground text-xs">
+          {{ formatTime(a.startTime) }}–{{ formatTime(a.endTime) }}
+        </td>
+        <td class="px-4 py-3 text-muted-foreground text-xs">
+          {{ getRecurrenceLabel(a.recurrenceType) }}
+        </td>
+        <td class="px-4 py-3 text-muted-foreground text-xs">
+          {{ a.slotDurationMinutes }}m
+        </td>
+        <td class="px-4 py-3 text-muted-foreground text-xs">
+          {{ a.capacity }}
+        </td>
+        <td class="px-4 py-3">
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+            [class.bg-emerald-500/10]="a.status === 'ACTIVE'"
+            [class.text-emerald-400]="a.status === 'ACTIVE'"
+            [class.bg-red-500/10]="a.status === 'INACTIVE'"
+            [class.text-red-400]="a.status === 'INACTIVE'">
+            {{ getStatusLabel(a.status) }}
+          </span>
+        </td>
+        <td class="px-4 py-3">
+          <div class="flex gap-1">
+            <!-- Botón Editar -->
+            <button 
+              (click)="onEdit(a)"
+              [disabled]="!canEdit"
+              class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1"
+              [ngClass]="{
+                'text-muted-foreground hover:text-foreground hover:bg-secondary': canEdit,
+                'text-muted-foreground/40 cursor-not-allowed': !canEdit
+              }"
+              [title]="canEdit ? 'Editar' : 'Sin permiso para editar'">
+              <lucide-angular [img]="icons.Pencil" class="w-3.5 h-3.5"></lucide-angular>
+            </button>
+            
+            <!-- Botón Eliminar -->
+            <button 
+              (click)="onDelete(a)"
+              [disabled]="!canDelete"
+              class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1"
+              [ngClass]="{
+                'text-muted-foreground hover:text-red-500 hover:bg-red-500/10': canDelete,
+                'text-muted-foreground/40 cursor-not-allowed': !canDelete
+              }"
+              [title]="canDelete ? 'Eliminar' : 'Sin permiso para eliminar'">
+              <lucide-angular [img]="icons.Trash2" class="w-3.5 h-3.5"></lucide-angular>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -6,7 +6,7 @@ import {
   PaymentDTO, 
   PaymentPatchDTO,
   PaymentStatus
-} from '../../models/payments';
+} from '../../models/payment';
 
 @Injectable({ 
   providedIn: 'root' 

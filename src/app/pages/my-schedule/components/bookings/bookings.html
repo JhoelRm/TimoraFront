@@ -1,0 +1,115 @@
+<!-- my-schedule/components/bookings/bookings.html -->
+<main class="flex-1 overflow-auto p-6">
+  <div class="space-y-4">
+    
+    <!-- HEADER -->
+    <app-bookings-header
+      [totalBookings]="totalBookings"
+      [viewMode]="viewMode"
+      [canCreate]="canCreate"
+      [isLoading]="loading"
+      (viewModeChange)="setViewMode($event)"
+      (addClick)="onAddClick()">
+    </app-bookings-header>
+
+    <!-- ERRORES -->
+    @if (error) {
+      <div class="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 text-sm text-red-700 dark:text-red-400">
+        ❌ {{ error }}
+      </div>
+    }
+
+    <!-- LOADING -->
+    @if (loading) {
+      <div class="flex justify-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    }
+
+    <!-- SIN PERMISO DE LECTURA -->
+    @if (!loading && !canRead) {
+      <div class="bg-yellow-500/10 border border-yellow-500/20 rounded-2xl p-4 text-sm text-yellow-700 dark:text-yellow-400 text-center">
+        🔒 No tienes permiso para ver bookings de este proveedor
+      </div>
+    }
+
+    <!-- VISTA LISTA -->
+    @if (viewMode === 'list' && !loading && canRead && supplierId) {
+      <app-bookings-list
+        [bookings]="filteredBookings"
+        [loading]="loading"
+        [canEdit]="hasUpdatePermission"
+        [canDelete]="hasDeletePermission"
+        (edit)="openDetailModal($event)"
+        (delete)="openDeleteModal($event)">
+      </app-bookings-list>
+    }
+
+    <!-- VISTA CALENDARIO -->
+    @if (viewMode === 'calendar' && !loading && canRead && supplierId) {
+      <app-bookings-calendar
+        [events]="events"
+        [currentDate]="currentDate"
+        [selectedDate]="selectedDate"
+        [calendarViewMode]="calendarViewMode"
+        [loading]="loading"
+        [canEdit]="hasUpdatePermission"
+        [canDelete]="hasDeletePermission"
+        (today)="goToToday()"
+        (previous)="previousDate()"
+        (next)="nextDate()"
+        (viewModeChange)="setCalendarView($event)"
+        (selectedDateChange)="selectDate($event)"
+        (eventClick)="onEventClick($event)">
+      </app-bookings-calendar>
+    }
+
+    <!-- SIN BOOKINGS -->
+    @if (!loading && canRead && supplierId && filteredBookings.length === 0) {
+      <div class="bg-gray-500/10 border border-gray-500/20 rounded-2xl p-4 text-sm text-gray-700 dark:text-gray-400 text-center">
+        📭 No hay reservas para este proveedor
+      </div>
+    }
+
+    <!-- ==================== MODALES ==================== -->
+
+    <!-- Modal de creación -->
+    <app-bookings-form
+      [(visible)]="showCreateModal"
+      [createData]="createFormData"
+      [services]="filteredServices"
+      [customers]="filteredCustomers"
+      [loading]="loading"
+      (save)="onCreateBooking($event)"
+      (cancel)="closeCreateModal()">
+    </app-bookings-form>
+
+    <!-- Modal de detalle (con pagos) -->
+    <app-booking-detail-modal
+      [(visible)]="showDetailModal"
+      [booking]="selectedBooking"
+      [payment]="selectedPayment"
+      [customers]="filteredCustomers"
+      [services]="filteredServices"
+      [loading]="loading"
+      [loadingPayment]="loadingPayment"
+      (updateBookingStatus)="onUpdateBookingStatus($event)"
+      (deleteBooking)="onDeleteBookingFromDetail($event)"
+      (savePayment)="onSavePayment($event)"
+      (updatePayment)="onUpdatePayment($event)"
+      (updateBookingFull)="onUpdateBookingFull($event)"
+      (deletePayment)="onDeletePayment($event)"
+      (close)="closeDetailModal()">
+    </app-booking-detail-modal>
+
+    <!-- Modal de eliminación (desde lista) -->
+    <app-bookings-delete-modal
+      [(visible)]="showDeleteModal"
+      [booking]="bookingToDelete"
+      [loading]="loading"
+      (confirm)="confirmDeleteBooking()"
+      (cancel)="closeDeleteModal()">
+    </app-bookings-delete-modal>
+
+  </div>
+</main>

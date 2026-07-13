@@ -1,0 +1,96 @@
+<!-- my-schedule/components/availabilities/availabilities.component.html -->
+<main class="flex-1 overflow-auto p-6">
+  <div class="space-y-4">
+    
+    <!-- HEADER -->
+    <app-availabilities-header
+      [totalSchedules]="totalSchedules"
+      [viewMode]="viewMode"
+      [canCreate]="canCreate"
+      [isLoading]="loading"
+      (viewModeChange)="setViewMode($event)"
+      (addClick)="onAddClick()">
+    </app-availabilities-header>
+
+    <!-- ERRORES -->
+    @if (error) {
+      <div class="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 text-sm text-red-700 dark:text-red-400">
+        ❌ {{ error }}
+      </div>
+    }
+
+    <!-- LOADING -->
+    @if (loading) {
+      <div class="flex justify-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    }
+
+    <!-- SIN PERMISO DE LECTURA -->
+    @if (!loading && !canRead) {
+      <div class="bg-yellow-500/10 border border-yellow-500/20 rounded-2xl p-4 text-sm text-yellow-700 dark:text-yellow-400 text-center">
+        🔒 No tienes permiso para ver disponibilidad de este proveedor
+      </div>
+    }
+
+    <!-- VISTA LISTA -->
+    @if (viewMode === 'list' && !loading && canRead && supplierId) {
+      <app-availabilities-list
+        [availabilities]="filteredAvailabilities"
+        [loading]="loading"
+        [canEdit]="hasUpdatePermission"
+        [canDelete]="hasDeletePermission"
+        (edit)="openEditModal($event)"
+        (delete)="openDeleteModal($event)">
+      </app-availabilities-list>
+    }
+
+    <!-- VISTA CALENDARIO -->
+    @if (viewMode === 'calendar' && !loading && canRead && supplierId) {
+      <app-availabilities-calendar
+        [events]="events"
+        [currentDate]="currentDate"
+        [selectedDate]="selectedDate"
+        [calendarViewMode]="calendarViewMode"
+        [loading]="loading"
+        [canEdit]="hasUpdatePermission"
+        [canDelete]="hasDeletePermission"
+        (today)="goToToday()"
+        (previous)="previousDate()"
+        (next)="nextDate()"
+        (viewModeChange)="setCalendarView($event)"
+        (selectedDateChange)="selectDate($event)">
+      </app-availabilities-calendar>
+    }
+
+    <!-- SIN DISPONIBILIDAD -->
+    @if (!loading && canRead && supplierId && filteredAvailabilities.length === 0) {
+      <div class="bg-gray-500/10 border border-gray-500/20 rounded-2xl p-4 text-sm text-gray-700 dark:text-gray-400 text-center">
+        📭 No hay disponibilidad configurada para este proveedor
+      </div>
+    }
+
+    <!-- ==================== MODALES ==================== -->
+
+    <!-- Modal de creación/edición -->
+    <app-availabilities-form
+      [(visible)]="showModal"
+      [mode]="modalMode"
+      [formData]="createFormData"
+      [editData]="editData"
+      [loading]="loading"
+      (save)="saveAvailability($event)"
+      (cancel)="closeModal()">
+    </app-availabilities-form>
+
+    <!-- Modal de eliminación -->
+    <app-availabilities-delete-modal
+      [(visible)]="showDeleteModal"
+      [availability]="availabilityToDelete"
+      [loading]="loading"
+      (confirm)="confirmDelete()"
+      (cancel)="closeDeleteModal()">
+    </app-availabilities-delete-modal>
+
+  </div>
+</main>

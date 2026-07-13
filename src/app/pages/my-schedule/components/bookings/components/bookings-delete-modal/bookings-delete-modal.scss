@@ -1,0 +1,38 @@
+:host ::ng-deep {
+  // ============================================
+  // ELIMINAR COMPLETAMENTE ESTILOS DE PRIMENG
+  // ============================================
+  
+  .p-dialog.custom-dialog .p-dialog-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .p-dialog.custom-dialog .p-dialog-header {
+    display: none !important;
+  }
+
+  .p-dialog.custom-dialog {
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .p-dialog.custom-dialog .p-dialog-content .p-dialog-content-wrapper {
+    padding: 0 !important;
+    background: transparent !important;
+  }
+}
+
+// Estilos adicionales para el contenido del modal
+:host {
+  display: block;
+}
+
+// El contenido del modal se maneja en el HTML con clases de Tailwind
+// bg-card, border-border, rounded-2xl, etc.

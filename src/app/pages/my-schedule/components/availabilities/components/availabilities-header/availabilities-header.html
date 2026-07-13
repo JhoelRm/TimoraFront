@@ -1,0 +1,38 @@
+<!-- my-schedule/components/availability/components/availability-header/availability-header.html -->
+<div class="flex items-center justify-between shrink-0 flex-wrap gap-3">
+  <div>
+    <h1 class="text-xl font-semibold text-foreground">Availability</h1>
+    <p class="text-sm text-muted-foreground">{{ totalSchedules }} schedules</p>
+  </div>
+
+  <div class="flex items-center gap-2">
+    <!-- Botones de vista -->
+    <div class="flex items-center h-9 px-1 rounded-xl bg-input-background border border-border">
+      <button 
+        (click)="setView('calendar')"
+        [class.bg-primary]="viewMode === 'calendar'"
+        [class.text-primary-foreground]="viewMode === 'calendar'"
+        [class.text-muted-foreground]="viewMode !== 'calendar'"
+        class="flex items-center justify-center w-7 h-7 rounded-lg transition-all cursor-pointer hover:bg-primary/10">
+        <lucide-angular [img]="icons.Calendar" class="w-4 h-4"></lucide-angular>
+      </button>
+      <button 
+        (click)="setView('list')"
+        [class.bg-primary]="viewMode === 'list'"
+        [class.text-primary-foreground]="viewMode === 'list'"
+        [class.text-muted-foreground]="viewMode !== 'list'"
+        class="flex items-center justify-center w-7 h-7 rounded-lg transition-all cursor-pointer hover:bg-primary/10 ml-1">
+        <lucide-angular [img]="icons.List" class="w-4 h-4"></lucide-angular>
+      </button>
+    </div>
+
+    <!-- Botón agregar -->
+    <button 
+      (click)="onAddClick()"
+      [disabled]="!canCreate || isLoading"
+      class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:opacity-50">
+      <lucide-angular [img]="icons.Plus" class="w-4 h-4"></lucide-angular>
+      <span>Add schedule</span>
+    </button>
+  </div>
+</div>

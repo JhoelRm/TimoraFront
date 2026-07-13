@@ -1,0 +1,13 @@
+// my-schedule/components/availability/components/availability-header/availability-header.scss
+:host {
+  display: block;
+  width: 100%;
+}
+
+button {
+  transition: all 0.2s ease;
+  
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+}

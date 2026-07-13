@@ -1,0 +1,54 @@
+<!-- my-schedule-supplier-selector/my-schedule-supplier-selector.html -->
+<div class="supplier-selector">
+  <!-- LOADING STATE -->
+  <div *ngIf="isLoading" class="flex items-center justify-center py-8">
+    <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+    <span class="ml-3 text-sm text-muted-foreground">Loading suppliers...</span>
+  </div>
+
+  <!-- ERROR STATE -->
+  <div *ngIf="error" class="bg-destructive/10 text-destructive p-4 rounded-xl text-sm flex items-center justify-between">
+    <span>{{ error }}</span>
+    <button 
+      (click)="onRetry()"
+      class="px-3 py-1 text-xs rounded-lg bg-destructive/20 hover:bg-destructive/30 transition-colors">
+      Retry
+    </button>
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div *ngIf="!isLoading && !error && suppliers.length === 0" class="text-center py-8">
+    <div class="text-muted-foreground">
+      <p class="text-sm font-medium">No suppliers available</p>
+      <p class="text-xs">You don't have permissions to manage any supplier's schedule.</p>
+    </div>
+  </div>
+
+  <!-- SUPPLIER BUTTONS -->
+  <div *ngIf="!isLoading && !error && suppliers.length > 0" class="flex gap-2 flex-wrap">
+    <button
+      *ngFor="let supplier of suppliers"
+      (click)="selectSupplier(supplier.supplierId)"
+      class="supplier-btn flex items-center gap-2.5 px-3.5 py-2 rounded-xl border transition-all"
+      [ngClass]="{
+        'border-primary bg-primary/5 text-foreground': selectedSupplierId === supplier.supplierId,
+        'border-border bg-secondary/50 text-muted-foreground hover:border-primary/30 hover:text-foreground': selectedSupplierId !== supplier.supplierId
+      }">
+
+      <!-- Avatar -->
+      <div class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+        {{ getInitials(supplier.person.firstName, supplier.person.lastName) }}
+      </div>
+
+      <!-- Info -->
+      <div class="text-left">
+        <div class="text-xs font-semibold truncate max-w-[120px]">
+          {{ supplier.person.firstName }} {{ supplier.person.lastName }}
+        </div>
+        <div class="text-xs opacity-70 truncate max-w-[120px]">
+          {{ supplier.specialty }}
+        </div>
+      </div>
+    </button>
+  </div>
+</div>
