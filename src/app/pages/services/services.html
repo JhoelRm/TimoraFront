@@ -1,415 +1,60 @@
 <main class="flex-1 overflow-auto p-6">
-
   <div class="space-y-6">
-
     <!-- HEADER -->
-    <div class="flex items-center justify-between">
-
-      <!-- TITLE -->
-      <div>
-        <h1 class="text-xl font-semibold text-foreground">Services</h1>
-        <p class="text-sm text-muted-foreground">
-          {{ services.length }} services
-        </p>
-      </div>
-
-      <!-- ACTIONS -->
-      <div class="flex items-center gap-2">
-
-        <!-- COMPANY SELECT (ONLY OWNER) -->
-        <div class="w-36" *ngIf="canSelectCompany">
-          <select
-            class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition"
-            [(ngModel)]="selectedCompanyId" (ngModelChange)="onCompanyChange()">
-
-            <option [ngValue]="null">All companies</option>
-
-            <option *ngFor="let c of companies" [ngValue]="c.id">
-              {{ c.name }}
-            </option>
-
-          </select>
-        </div>
-
-        <!-- SUPPLIER SELECT (OWNER & ADMIN) -->
-        <div class="w-44" *ngIf="canSelectSupplier">
-          <select
-            class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition"
-            [(ngModel)]="selectedSupplierId" (ngModelChange)="onSupplierChange()">
-
-            <option [ngValue]="null">All suppliers</option>
-
-            <option *ngFor="let s of supplierOptions" [ngValue]="s.id">
-              {{ s.name }}
-            </option>
-
-          </select>
-        </div>
-
-        <!-- SEARCH -->
-        <div class="relative">
-          <lucide-angular [img]="icons.Search"
-            class="absolute left-1 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4">
-          </lucide-angular>
-
-          <input [(ngModel)]="searchTerm" (input)="onSearchChange()" placeholder="Search services…"
-            class="pl-8 pr-3 py-1.5 text-sm bg-input-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 w-48 text-foreground placeholder:text-muted-foreground" />
-        </div>
-
-        <!-- NEW SERVICE -->
-        <button (click)="openCreateModal()"
-          class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95">
-
-          <lucide-angular [img]="icons.Plus" class="w-4 h-4"></lucide-angular>
-          New Service
-        </button>
-
-      </div>
-    </div>
+    <app-service-header
+      [servicesCount]="services.length"
+      [canSelectCompany]="canSelectCompany"
+      [canSelectSupplier]="canSelectSupplier"
+      [companies]="companies"
+      [supplierOptions]="supplierOptions"
+      [(selectedCompanyId)]="selectedCompanyId"
+      [(selectedSupplierId)]="selectedSupplierId"
+      [(searchTerm)]="searchTerm"
+      (companyChange)="onCompanyChange()"
+      (supplierChange)="onSupplierChange()"
+      (searchChange)="onSearchChange()"
+      (createService)="openCreateModal()"
+    ></app-service-header>
 
     <!-- SERVICES LIST GROUPED BY SUPPLIER -->
-    <div *ngIf="services.length === 0" class="text-center py-12">
-      <p class="text-muted-foreground">No services found</p>
-    </div>
-
-    <div *ngFor="let supplier of getUniqueSuppliers()">
-
-      <!-- SUPPLIER HEADER -->
-      <div class="flex items-center gap-2 mb-3">
-        <div class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-          {{ supplier.name.charAt(0) }}
-        </div>
-        <span class="text-sm font-semibold text-foreground">
-          {{ supplier.name }}
-        </span>
-        <span class="text-xs text-muted-foreground">
-          · {{ supplier.specialty || 'Supplier' }}
-        </span>
-        <span class="text-xs text-muted-foreground ml-auto">
-          {{ getServicesBySupplier(supplier.id).length }} services
-        </span>
-      </div>
-
-      <!-- SERVICES GRID -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-
-        <div *ngFor="let service of getServicesBySupplier(supplier.id)"
-          class="bg-card border border-border rounded-xl p-4 hover:border-primary/20 transition-colors group">
-
-          <!-- HEADER -->
-          <div class="flex items-start justify-between mb-2">
-            <h3 class="text-sm font-semibold text-foreground">{{ service.name }}</h3>
-
-            <!-- ACTIONS -->
-            <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button (click)="onEdit(service)"
-                class="inline-flex items-center rounded-xl px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-input-background">
-                <lucide-angular [img]="icons.Pencil" class="w-4 h-4"></lucide-angular>
-              </button>
-
-              <button (click)="onDelete(service)"
-                class="inline-flex items-center rounded-xl px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-input-background">
-                <lucide-angular [img]="icons.Trash2" class="w-4 h-4"></lucide-angular>
-              </button>
-            </div>
-          </div>
-
-          <!-- DESCRIPTION -->
-          <p class="text-xs text-muted-foreground mb-3 leading-relaxed">
-            {{ service.description || 'No description' }}
-          </p>
-
-          <!-- FOOTER -->
-          <div class="flex items-center justify-between">
-            <span class="text-sm font-bold text-accent">S/. {{ service.price.toFixed(2) }}</span>
-
-            <div class="flex items-center gap-2">
-              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
-                [ngClass]="getStatusClass(service.status)">
-                {{ getStatusLabel(service.status) }}
-              </span>
-
-              <span class="text-xs text-muted-foreground flex items-center gap-0.5">
-                <lucide-angular [img]="icons.Clock" class="w-3 h-3"></lucide-angular>
-                {{ service.duration }}m
-              </span>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
+    <app-service-list [services]="services" [suppliers]="getUniqueSuppliers()"> </app-service-list>
   </div>
-
 </main>
 
 <!-- ========================= -->
 <!-- CREATE SERVICE MODAL -->
 <!-- ========================= -->
-<app-modal [open]="modalOpen" (openChange)="modalOpen = $event">
-
-  <div class="relative w-full max-w-lg bg-card border border-border rounded-2xl shadow-2xl flex flex-col max-h-[88vh]">
-
-    <!-- HEADER -->
-    <div class="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
-      <h3 class="font-semibold text-foreground">New Service</h3>
-
-      <button (click)="closeModal()"
-        class="p-1.5 rounded-lg hover:bg-input-background text-muted-foreground hover:text-foreground transition-colors">
-        <lucide-angular [img]="icons.X" class="w-4 h-4"></lucide-angular>
-      </button>
-    </div>
-
-    <!-- BODY -->
-    <div class="overflow-y-auto flex-1 p-6">
-      <div class="space-y-4">
-
-        <!-- COMPANY (SOLO OWNER) -->
-        <div *ngIf="isOwner">
-          <label class="block text-xs font-medium text-muted-foreground mb-1.5">
-            Company <span class="text-destructive ml-0.5">*</span>
-          </label>
-
-          <select [(ngModel)]="serviceForm.companyId" (ngModelChange)="onModalCompanyChange()"
-            class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition">
-
-            <option [ngValue]="null" disabled>Select company</option>
-
-            <option *ngFor="let c of companies" [value]="c.id">
-              {{ c.name }}
-            </option>
-
-          </select>
-        </div>
-
-        <!-- SUPPLIER (SOLO OWNER Y ADMIN) -->
-        <div *ngIf="!isUser">
-          <label class="block text-xs font-medium text-muted-foreground mb-1.5">
-            Supplier <span class="text-destructive ml-0.5">*</span>
-          </label>
-
-          <select [(ngModel)]="serviceForm.supplierId"
-            class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition">
-
-            <option [ngValue]="null" disabled>Select supplier</option>
-
-            <option *ngFor="let s of modalSuppliers; let i = index; trackBy: trackBySupplierId" [value]="s.supplier?.id">
-              {{ s.person.firstName }} {{ s.person.lastName }} - {{ s.supplier?.specialty || 'Supplier' }}
-            </option>
-
-          </select>
-          
-          <!-- Debug: Mostrar si hay suppliers -->
-          <div *ngIf="modalSuppliers.length === 0" class="text-xs text-muted-foreground mt-1">
-            No suppliers available for this company
-          </div>
-        </div>
-
-        <!-- SERVICE NAME -->
-        <div>
-          <label class="block text-xs font-medium text-muted-foreground mb-1.5">
-            Service Name <span class="text-destructive ml-0.5">*</span>
-          </label>
-          <input type="text" [(ngModel)]="serviceForm.name" placeholder="e.g. Haircut & Style"
-            class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition" />
-        </div>
-
-        <!-- DESCRIPTION -->
-        <div>
-          <label class="block text-xs font-medium text-muted-foreground mb-1.5">Description</label>
-          <textarea [(ngModel)]="serviceForm.description" placeholder="Describe the service..." rows="2"
-            class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition resize-none">
-          </textarea>
-        </div>
-
-        <!-- PRICE & DURATION -->
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-medium text-muted-foreground mb-1.5">
-              Price <span class="text-destructive ml-0.5">*</span>
-            </label>
-            <input type="number" [(ngModel)]="serviceForm.price" step="0.01" min="0" placeholder="0.00"
-              class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-medium text-muted-foreground mb-1.5">
-              Duration (minutes) <span class="text-destructive ml-0.5">*</span>
-            </label>
-            <input type="number" [(ngModel)]="serviceForm.duration" min="5" step="5" placeholder="30"
-              class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition" />
-          </div>
-        </div>
-
-        <!-- STATUS -->
-        <div>
-          <label class="block text-xs font-medium text-muted-foreground mb-1.5">Status</label>
-
-          <select [(ngModel)]="serviceForm.status"
-            class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition">
-
-            <option value="ACTIVE">Active</option>
-            <option value="TEMPORARILY_UNAVAILABLE">Temporarily Unavailable</option>
-            <option value="ARCHIVED">Archived</option>
-
-          </select>
-        </div>
-
-        <!-- FOOTER -->
-        <div class="flex gap-2 justify-end pt-2">
-          <button (click)="closeModal()"
-            class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-input-background text-secondary-foreground hover:bg-muted">
-            Cancel
-          </button>
-
-          <button (click)="createService()"
-            class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95">
-            Create Service
-          </button>
-        </div>
-
-      </div>
-    </div>
-
-  </div>
-
-</app-modal>
+<app-service-form-modal
+  [open]="modalOpen"
+  [isOwner]="isOwner"
+  [isUser]="isUser"
+  [companies]="companies"
+  [modalSuppliers]="modalSuppliers"
+  [serviceForm]="serviceForm"
+  (openChange)="modalOpen = $event"
+  (modalCompanyChange)="onModalCompanyChange()"
+  (save)="createService()"
+  (close)="closeModal()"
+>
+</app-service-form-modal>
 <!-- ========================= -->
 <!-- EDIT SERVICE MODAL -->
 <!-- ========================= -->
-<app-modal [open]="editModalOpen" (openChange)="editModalOpen = $event">
-
-  <div class="relative w-full max-w-lg bg-card border border-border rounded-2xl shadow-2xl flex flex-col max-h-[88vh]">
-
-    <!-- HEADER -->
-    <div class="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
-      <h3 class="font-semibold text-foreground">Edit Service</h3>
-
-      <button (click)="closeEditModal()"
-        class="p-1.5 rounded-lg hover:bg-input-background text-muted-foreground hover:text-foreground transition-colors">
-        <lucide-angular [img]="icons.X" class="w-4 h-4"></lucide-angular>
-      </button>
-    </div>
-
-    <!-- BODY -->
-    <div class="overflow-y-auto flex-1 p-6">
-      <div class="space-y-4">
-
-        <!-- SERVICE NAME -->
-        <div>
-          <label class="block text-xs font-medium text-muted-foreground mb-1.5">
-            Service Name <span class="text-destructive ml-0.5">*</span>
-          </label>
-          <input type="text" [(ngModel)]="editForm.name"
-            class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition" />
-        </div>
-
-        <!-- DESCRIPTION -->
-        <div>
-          <label class="block text-xs font-medium text-muted-foreground mb-1.5">Description</label>
-          <textarea [(ngModel)]="editForm.description" rows="2"
-            class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition resize-none">
-          </textarea>
-        </div>
-
-        <!-- PRICE & DURATION -->
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-medium text-muted-foreground mb-1.5">
-              Price <span class="text-destructive ml-0.5">*</span>
-            </label>
-            <input type="number" [(ngModel)]="editForm.price" step="0.01" min="0"
-              class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-medium text-muted-foreground mb-1.5">
-              Duration (minutes) <span class="text-destructive ml-0.5">*</span>
-            </label>
-            <input type="number" [(ngModel)]="editForm.duration" min="5" step="5"
-              class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition" />
-          </div>
-        </div>
-
-        <!-- STATUS -->
-        <div>
-          <label class="block text-xs font-medium text-muted-foreground mb-1.5">Status</label>
-
-          <select [(ngModel)]="editForm.status"
-            class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition">
-
-            <option value="ACTIVE">Active</option>
-            <option value="TEMPORARILY_UNAVAILABLE">Temporarily Unavailable</option>
-            <option value="ARCHIVED">Archived</option>
-
-          </select>
-        </div>
-
-        <!-- FOOTER -->
-        <div class="flex gap-2 justify-end pt-2">
-          <button (click)="closeEditModal()"
-            class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-input-background text-secondary-foreground hover:bg-muted">
-            Cancel
-          </button>
-
-          <button (click)="updateService()"
-            class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95">
-            Save Changes
-          </button>
-        </div>
-
-      </div>
-    </div>
-
-  </div>
-
-</app-modal>
+<app-service-edit-modal
+  [open]="editModalOpen"
+  [editForm]="editForm"
+  (save)="updateService()"
+  (close)="closeEditModal()"
+  (openChange)="editModalOpen = $event"
+>
+</app-service-edit-modal>
 
 <!-- ========================= -->
 <!-- DELETE CONFIRMATION MODAL -->
 <!-- ========================= -->
-<app-modal [open]="deleteModalOpen" (openChange)="deleteModalOpen = $event">
-
-  <div class="relative w-full bg-card border border-border rounded-2xl shadow-2xl flex flex-col">
-
-    <!-- HEADER -->
-    <div class="flex items-center justify-between px-6 py-4 border-b border-border">
-      <h3 class="font-semibold text-foreground">Delete Service</h3>
-
-      <button (click)="closeDeleteModal()"
-        class="p-1.5 rounded-lg hover:bg-input-background text-muted-foreground hover:text-foreground transition-colors">
-        <lucide-angular [img]="icons.X" class="w-4 h-4"></lucide-angular>
-      </button>
-    </div>
-
-    <!-- BODY -->
-    <div class="p-6 text-sm text-muted-foreground">
-      Are you sure you want to delete
-      <span class="text-foreground font-medium">
-        {{ serviceToDelete?.name }}
-      </span>?
-      <br />
-      <span class="text-xs text-muted-foreground/70">This action cannot be undone.</span>
-    </div>
-
-    <!-- FOOTER -->
-    <div class="flex gap-2 justify-end px-6 py-4 border-t border-border">
-
-      <button (click)="closeDeleteModal()"
-        class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-input-background text-secondary-foreground hover:bg-muted">
-        Cancel
-      </button>
-
-      <button (click)="confirmDelete()"
-        class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-red-500 text-white hover:opacity-90 active:scale-95">
-        Delete
-      </button>
-
-    </div>
-
-  </div>
-
-</app-modal>
+<app-service-delete-modal
+  [open]="deleteModalOpen"
+  [service]="serviceToDelete"
+  (close)="closeDeleteModal()"
+  (confirm)="confirmDelete()"
+></app-service-delete-modal>

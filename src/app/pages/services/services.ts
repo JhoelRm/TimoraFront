@@ -11,6 +11,11 @@ import { PersonIdentityDTO } from '../../models/person-identity';
 import { CurrentUser } from '../../models/currentUser';
 import { LucideAngularModule, Search, Plus, Pencil, Trash2, X, Clock } from 'lucide-angular';
 import { ModalComponent } from '../../components/modal/modal/modal';
+import { ServiceHeader } from '../../components/services/service-header/service-header';
+import { ServiceList } from '../../components/services/service-list/service-list';
+import { ServiceFormModal } from '../../components/services/service-form-modal/service-form-modal';
+import { ServiceEditModal } from '../../components/services/service-edit-modal/service-edit-modal';
+import { ServiceDeleteModal } from '../../components/services/service-delete-modal/service-delete-modal';
 
 interface ServiceForm {
   companyId: number | null;
@@ -33,7 +38,7 @@ interface EditServiceForm {
 @Component({
   selector: 'app-services',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule, ModalComponent],
+  imports: [CommonModule, FormsModule, LucideAngularModule, ServiceHeader, ServiceList, ServiceFormModal, ServiceEditModal, ServiceDeleteModal],
   templateUrl: './services.html',
   styleUrl: './services.scss'
 })

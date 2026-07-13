@@ -1,0 +1,68 @@
+<!-- HEADER -->
+<div class="flex items-center justify-between">
+  <!-- TITLE -->
+  <div>
+    <h1 class="text-xl font-semibold text-foreground">Services</h1>
+
+    <p class="text-sm text-muted-foreground">{{ servicesCount }} services</p>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="flex items-center gap-2">
+    <!-- COMPANY SELECT -->
+    <div class="w-36" *ngIf="canSelectCompany">
+      <select
+        class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition"
+        [(ngModel)]="selectedCompanyId"
+        (ngModelChange)="onCompanyChange()"
+      >
+        <option [ngValue]="null">All companies</option>
+
+        <option *ngFor="let c of companies" [ngValue]="c.id">
+          {{ c.name }}
+        </option>
+      </select>
+    </div>
+
+    <!-- SUPPLIER SELECT -->
+    <div class="w-44" *ngIf="canSelectSupplier">
+      <select
+        class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition"
+        [(ngModel)]="selectedSupplierId"
+        (ngModelChange)="onSupplierChange()"
+      >
+        <option [ngValue]="null">All suppliers</option>
+
+        <option *ngFor="let s of supplierOptions" [ngValue]="s.id">
+          {{ s.name }}
+        </option>
+      </select>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="relative">
+      <lucide-angular
+        [img]="icons.Search"
+        class="absolute left-1 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4"
+      >
+      </lucide-angular>
+
+      <input
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()"
+        placeholder="Search services…"
+        class="pl-8 pr-3 py-1.5 text-sm bg-input-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 w-48 text-foreground placeholder:text-muted-foreground"
+      />
+    </div>
+
+    <!-- NEW SERVICE -->
+    <button
+      (click)="onCreate()"
+      class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95"
+    >
+      <lucide-angular [img]="icons.Plus" class="w-4 h-4"> </lucide-angular>
+
+      New Service
+    </button>
+  </div>
+</div>

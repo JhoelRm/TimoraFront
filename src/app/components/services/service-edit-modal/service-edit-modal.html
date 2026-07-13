@@ -1,0 +1,99 @@
+<app-modal [open]="open" (openChange)="openChange.emit($event)">
+  <div
+    class="relative w-full max-w-lg bg-card border border-border rounded-2xl shadow-2xl flex flex-col max-h-[88vh]"
+  >
+    <!-- HEADER -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
+      <h3 class="font-semibold text-foreground">Edit Service</h3>
+
+      <button
+        (click)="close.emit()"
+        class="p-1.5 rounded-lg hover:bg-input-background text-muted-foreground hover:text-foreground transition-colors"
+      >
+        <lucide-angular [img]="icons.X" class="w-4 h-4"></lucide-angular>
+      </button>
+    </div>
+
+    <!-- BODY -->
+    <div class="overflow-y-auto flex-1 p-6">
+      <div class="space-y-4">
+        <!-- SERVICE NAME -->
+        <div>
+          <label class="block text-xs font-medium text-muted-foreground mb-1.5">
+            Service Name
+          </label>
+
+          <input
+            type="text"
+            [(ngModel)]="editForm.name"
+            class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm"
+          />
+        </div>
+
+        <!-- DESCRIPTION -->
+        <div>
+          <label class="block text-xs font-medium text-muted-foreground mb-1.5">
+            Description
+          </label>
+
+          <textarea
+            [(ngModel)]="editForm.description"
+            rows="2"
+            class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm"
+          ></textarea>
+        </div>
+
+        <!-- PRICE / DURATION -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-muted-foreground mb-1.5"> Price </label>
+
+            <input
+              type="number"
+              [(ngModel)]="editForm.price"
+              class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-muted-foreground mb-1.5"> Duration </label>
+
+            <input
+              type="number"
+              [(ngModel)]="editForm.duration"
+              class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm"
+            />
+          </div>
+        </div>
+
+        <!-- STATUS -->
+        <div>
+          <label class="block text-xs font-medium text-muted-foreground mb-1.5"> Status </label>
+
+          <select
+            [(ngModel)]="editForm.status"
+            class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm"
+          >
+            <option value="ACTIVE">Active</option>
+            <option value="TEMPORARILY_UNAVAILABLE">Temporarily Unavailable</option>
+            <option value="ARCHIVED">Archived</option>
+          </select>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="flex gap-2 justify-end pt-2">
+          <button (click)="close.emit()" class="px-4 py-1.5 rounded-xl bg-input-background">
+            Cancel
+          </button>
+
+          <button
+            (click)="save.emit()"
+            class="px-4 py-1.5 rounded-xl bg-primary text-primary-foreground"
+          >
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-modal>

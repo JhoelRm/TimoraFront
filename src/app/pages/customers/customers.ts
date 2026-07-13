@@ -9,7 +9,11 @@ import { CompanyDTO } from '../../models/company';
 import { CurrentUser } from '../../models/currentUser';
 import { LucideAngularModule, Search, Plus, Pencil, Trash2, X } from 'lucide-angular';
 import { ModalComponent } from '../../components/modal/modal/modal';
-
+import { CustomersHeader } from '../../components/customers/customers-header/customers-header';
+import { CustomersTable } from '../../components/customers/customers-table/customers-table';
+import { CustomerCreateModal } from '../../components/customers/customer-create-modal/customer-create-modal';
+import { CustomerEditModal } from '../../components/customers/customer-edit-modal/customer-edit-modal';
+import { CustomerDeleteModal } from '../../components/customers/customer-delete-modal/customer-delete-modal';
 interface CustomerForm {
   companyId: number | null;
   firstName: string;
@@ -32,7 +36,7 @@ interface EditCustomerForm {
 @Component({
   selector: 'app-customers',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule, ModalComponent],
+  imports: [CommonModule, FormsModule, LucideAngularModule, CustomersHeader, CustomersTable, CustomerCreateModal, CustomerEditModal, CustomerDeleteModal],
   templateUrl: './customers.html',
   styleUrl: './customers.scss'
 })

@@ -1,0 +1,82 @@
+<div class="bg-card border border-border rounded-2xl overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="border-b border-border">
+      <tr>
+        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Client</th>
+
+        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Contact</th>
+
+        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Address</th>
+
+        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Notes</th>
+
+        <th class="px-4 py-3 text-left text-xs font-medium text-muted-foreground"></th>
+      </tr>
+    </thead>
+
+    <tbody class="divide-y divide-border">
+      <tr *ngFor="let c of customers" class="hover:bg-secondary/20 transition-colors">
+        <!-- CLIENT -->
+
+        <td class="px-4 py-3">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-xs font-bold text-accent"
+            >
+              {{ c.person.firstName.charAt(0) }}
+            </div>
+
+            <span class="font-medium text-foreground">
+              {{ c.person.firstName }}
+              {{ c.person.lastName }}
+            </span>
+          </div>
+        </td>
+
+        <!-- CONTACT -->
+
+        <td class="px-4 py-3">
+          <div class="text-muted-foreground text-sm">
+            {{ c.person.email }}
+          </div>
+
+          <div class="text-xs text-muted-foreground">
+            {{ c.person.phone }}
+          </div>
+        </td>
+
+        <!-- ADDRESS -->
+
+        <td class="px-4 py-3 text-xs text-muted-foreground max-w-[160px] truncate">
+          {{ c.person.address || '-' }}
+        </td>
+
+        <!-- NOTES -->
+
+        <td class="px-4 py-3 text-xs text-muted-foreground max-w-[200px] truncate">
+          {{ c.customer?.notes || '-' }}
+        </td>
+
+        <!-- ACTIONS -->
+
+        <td class="px-4 py-3">
+          <div class="flex gap-1">
+            <button
+              (click)="onEdit(c)"
+              class="inline-flex items-center rounded-xl px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary"
+            >
+              <lucide-angular [img]="icons.Pencil" class="w-4 h-4"> </lucide-angular>
+            </button>
+
+            <button
+              (click)="onDelete(c)"
+              class="inline-flex items-center rounded-xl px-2.5 py-1 text-xs bg-destructive/10 text-destructive hover:bg-destructive/20"
+            >
+              <lucide-angular [img]="icons.Trash2" class="w-4 h-4"> </lucide-angular>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
