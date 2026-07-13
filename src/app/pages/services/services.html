@@ -17,7 +17,12 @@
     ></app-service-header>
 
     <!-- SERVICES LIST GROUPED BY SUPPLIER -->
-    <app-service-list [services]="services" [suppliers]="getUniqueSuppliers()"> </app-service-list>
+    <app-service-list 
+  [services]="services" 
+  [suppliers]="getUniqueSuppliers()"
+  (edit)="onEdit($event)"
+  (delete)="onDelete($event)">
+</app-service-list>
   </div>
 </main>
 

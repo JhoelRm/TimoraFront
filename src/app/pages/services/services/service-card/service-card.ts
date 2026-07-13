@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Pencil, Trash2, Clock } from 'lucide-angular';
 
 
-import { ServiceDTO } from '../../../models/service';
+import { ServiceDTO } from '../../../../models/service';
 
 
 @Component({

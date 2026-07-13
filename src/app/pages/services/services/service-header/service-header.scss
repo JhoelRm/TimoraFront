@@ -1,0 +1,188 @@
+:host ::ng-deep {
+  // ============================================
+  // ESTILOS BASE PARA LOS INPUTS
+  // ============================================
+  .company-autocomplete-input,
+  .supplier-autocomplete-input {
+    width: 100% !important;
+    padding: 0.375rem 0.75rem !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+    font-size: 0.875rem !important;
+    color: var(--foreground, #0d0f1a) !important;
+    background: var(--input-background, #eef0f7) !important;
+    border: 1px solid var(--border, rgba(0, 0, 0, 0.08)) !important;
+    border-radius: 0.75rem !important;
+    transition: all 0.2s ease !important;
+    height: auto !important;
+    min-height: 2.25rem !important;
+    font-family: var(--font-family, 'Outfit', system-ui, sans-serif) !important;
+  }
+
+  .company-autocomplete-input:focus,
+  .supplier-autocomplete-input:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 2px var(--ring, rgba(99, 85, 232, 0.35)) !important;
+    border-color: var(--border, rgba(0, 0, 0, 0.08)) !important;
+  }
+
+  .company-autocomplete-input::placeholder,
+  .supplier-autocomplete-input::placeholder {
+    color: var(--muted-foreground, #6b6d84) !important;
+  }
+
+  // ============================================
+  // OCULTAR ELEMENTOS DE PRIMENG
+  // ============================================
+  
+  .p-autocomplete .p-autocomplete-clear-icon {
+    display: none !important;
+  }
+
+  .p-autocomplete .p-autocomplete-dropdown {
+    display: none !important;
+  }
+
+  // ============================================
+  // PANEL DESPLEGABLE
+  // ============================================
+  .custom-autocomplete-panel {
+    background: var(--card, #ffffff) !important;
+    border: 1px solid var(--border, rgba(0, 0, 0, 0.08)) !important;
+    border-radius: 0.75rem !important;
+    margin-top: 0.25rem !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+    overflow: hidden !important;
+    padding: 0.25rem !important;
+    position: absolute !important;
+    z-index: 1000 !important;
+    max-height: 200px !important;
+    overflow-y: auto !important;
+    pointer-events: auto !important;
+    min-width: 200px !important;
+  }
+
+  .custom-autocomplete-panel .p-autocomplete-items {
+    padding: 0 !important;
+  }
+
+  .custom-autocomplete-panel .p-autocomplete-items .p-autocomplete-item {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.875rem !important;
+    color: var(--foreground, #0d0f1a) !important;
+    border-radius: 0.5rem !important;
+    transition: background 0.15s ease !important;
+    font-family: var(--font-family, 'Outfit', system-ui, sans-serif) !important;
+    cursor: pointer !important;
+  }
+
+  .custom-autocomplete-panel .p-autocomplete-items .p-autocomplete-item.p-highlight {
+    background: rgba(99, 85, 232, 0.1) !important;
+    color: var(--primary, #6355e8) !important;
+  }
+
+  .custom-autocomplete-panel .p-autocomplete-items .p-autocomplete-item:not(.p-highlight):not(.p-disabled):hover {
+    background: var(--secondary, #ece9fb) !important;
+    color: var(--foreground, #0d0f1a) !important;
+  }
+
+  // ============================================
+  // AJUSTES PARA EL WRAPPER DEL AUTOCOMPLETE
+  // ============================================
+  .p-autocomplete {
+    width: 100% !important;
+    display: block !important;
+    position: relative !important;
+    overflow: visible !important;
+  }
+
+  .p-autocomplete .p-autocomplete-input {
+    width: 100% !important;
+  }
+
+  .p-autocomplete-panel {
+    position: absolute !important;
+    z-index: 1000 !important;
+    max-height: 200px !important;
+    overflow-y: auto !important;
+    pointer-events: auto !important;
+  }
+
+  body.p-overflow-hidden {
+    overflow: visible !important;
+  }
+
+  .p-overlay {
+    position: absolute !important;
+    z-index: 1000 !important;
+    pointer-events: auto !important;
+  }
+
+  .p-overlay-open {
+    overflow: visible !important;
+  }
+
+  .relative {
+    position: relative !important;
+    overflow: visible !important;
+  }
+
+  // ============================================
+  // SCROLLBAR PERSONALIZADA
+  // ============================================
+  .custom-autocomplete-panel::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .custom-autocomplete-panel::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-autocomplete-panel::-webkit-scrollbar-thumb {
+    background: var(--border, rgba(0, 0, 0, 0.08));
+    border-radius: 4px;
+  }
+
+  .custom-autocomplete-panel::-webkit-scrollbar-thumb:hover {
+    background: var(--muted-foreground, #6b6d84);
+  }
+
+  // ============================================
+  // DARK MODE
+  // ============================================
+  .dark {
+    .company-autocomplete-input,
+    .supplier-autocomplete-input {
+      background: var(--input-background, #1a1e2e) !important;
+      color: var(--foreground, #e2e4f0) !important;
+      border-color: var(--border, rgba(255, 255, 255, 0.06)) !important;
+    }
+
+    .custom-autocomplete-panel {
+      background: var(--card, #111520) !important;
+      border-color: var(--border, rgba(255, 255, 255, 0.06)) !important;
+    }
+
+    .custom-autocomplete-panel .p-autocomplete-items .p-autocomplete-item {
+      color: var(--foreground, #e2e4f0) !important;
+    }
+
+    .custom-autocomplete-panel .p-autocomplete-items .p-autocomplete-item.p-highlight {
+      background: rgba(124, 110, 245, 0.15) !important;
+      color: var(--primary, #7c6ef5) !important;
+    }
+
+    .custom-autocomplete-panel .p-autocomplete-items .p-autocomplete-item:not(.p-highlight):not(.p-disabled):hover {
+      background: var(--secondary, #1a1e2e) !important;
+      color: var(--foreground, #e2e4f0) !important;
+    }
+
+    .custom-autocomplete-panel::-webkit-scrollbar-thumb {
+      background: var(--border, rgba(255, 255, 255, 0.06));
+    }
+
+    .custom-autocomplete-panel::-webkit-scrollbar-thumb:hover {
+      background: var(--muted-foreground, #666880);
+    }
+  }
+}

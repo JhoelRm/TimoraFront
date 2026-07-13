@@ -2,10 +2,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, X } from 'lucide-angular';
-import { ModalComponent } from '../../modal/modal/modal';
-
-interface CustomerForm {
-  companyId: number | null;
+import { ModalComponent } from '../../../../components/modal/modal/modal';
+interface EditCustomerForm {
   firstName: string;
   lastName: string;
   phone: string;
@@ -15,23 +13,16 @@ interface CustomerForm {
 }
 
 @Component({
-  selector: 'app-customer-create-modal',
+  selector: 'app-customer-edit-modal',
   standalone: true,
   imports: [CommonModule, FormsModule, LucideAngularModule, ModalComponent],
-  templateUrl: './customer-create-modal.html',
-  styleUrl: './customer-create-modal.scss',
+  templateUrl: './customer-edit-modal.html',
+  styleUrl: './customer-edit-modal.scss',
 })
-export class CustomerCreateModal {
+export class CustomerEditModal {
   @Input() open = false;
 
-  @Input() companies: any[] = [];
-
-  @Input() currentUser: any = null;
-
-  @Input() canSelectCompany = false;
-
-  @Input() form: CustomerForm = {
-    companyId: null,
+  @Input() form: EditCustomerForm = {
     firstName: '',
     lastName: '',
     phone: '',
@@ -42,7 +33,7 @@ export class CustomerCreateModal {
 
   @Output() openChange = new EventEmitter<boolean>();
 
-  @Output() save = new EventEmitter<CustomerForm>();
+  @Output() save = new EventEmitter<EditCustomerForm>();
 
   icons = {
     X,

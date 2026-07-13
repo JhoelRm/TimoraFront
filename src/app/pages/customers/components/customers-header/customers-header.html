@@ -1,0 +1,67 @@
+<div class="flex items-center justify-between shrink-0 flex-wrap gap-3">
+  <!-- TITLE -->
+  <div>
+    <h1 class="text-xl font-semibold text-foreground">Customers</h1>
+    <p class="text-sm text-muted-foreground">{{ totalCustomers }} clients</p>
+  </div>
+
+  <div class="flex items-center gap-2">
+    <!-- AutoComplete de compañías -->
+    <div class="w-40" *ngIf="canSelectCompany">
+      <div class="relative">
+        <lucide-angular 
+          [img]="icons.Search" 
+          class="absolute left-1 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10">
+        </lucide-angular>
+        <lucide-angular 
+          *ngIf="selectedCompanyObj"
+          [img]="icons.X" 
+          (click)="onCompanyClear()"
+          class="absolute right-1 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground cursor-pointer hover:text-foreground z-10">
+        </lucide-angular>
+        <p-autoComplete
+          [(ngModel)]="selectedCompanyObj"
+          [suggestions]="filteredCompanies"
+          (completeMethod)="filterCompany($event)"
+          (onSelect)="onCompanySelect($event)"
+          optionLabel="name"
+          placeholder="All companies"
+          [minLength]="0"
+          [showClear]="false"
+          [style]="{ width: '100%' }"
+          [appendTo]="'body'"
+          inputStyleClass="company-autocomplete-input"
+          panelStyleClass="custom-autocomplete-panel">
+          <ng-template let-company pTemplate="item">
+            <div class="text-sm text-foreground px-3 py-2">
+              {{ company.name }}
+            </div>
+          </ng-template>
+        </p-autoComplete>
+      </div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="relative">
+      <lucide-angular
+        [img]="icons.Search"
+        class="absolute left-1 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4 pointer-events-none"
+      ></lucide-angular>
+      <input
+        [ngModel]="searchTerm"
+        (ngModelChange)="onSearchChange($event)"
+        placeholder="Search clients..."
+        class="pl-8 pr-3 py-1.5 text-sm bg-input-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 w-48 text-foreground placeholder:text-muted-foreground"
+      />
+    </div>
+
+    <!-- ADD CLIENT -->
+    <button
+      (click)="addCustomer.emit()"
+      class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95"
+    >
+      <lucide-angular [img]="icons.Plus" class="w-4 h-4"></lucide-angular>
+      Add Client
+    </button>
+  </div>
+</div>

@@ -26,7 +26,7 @@
           <select
             [(ngModel)]="serviceForm.companyId"
             (ngModelChange)="modalCompanyChange.emit()"
-            class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm"
+            class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           >
             <option [ngValue]="null" disabled>Select company</option>
 
@@ -44,7 +44,7 @@
 
           <select
             [(ngModel)]="serviceForm.supplierId"
-            class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm"
+            class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           >
             <option [ngValue]="null" disabled>Select supplier</option>
 
@@ -67,7 +67,7 @@
             [(ngModel)]="serviceForm.name"
             type="text"
             placeholder="e.g Haircut"
-            class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm"
+            class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
         </div>
 
@@ -80,7 +80,7 @@
           <textarea
             [(ngModel)]="serviceForm.description"
             rows="2"
-            class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm"
+            class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           ></textarea>
         </div>
 
@@ -90,21 +90,21 @@
             type="number"
             [(ngModel)]="serviceForm.price"
             placeholder="Price"
-            class="bg-input-background border border-border rounded-xl px-3 py-2 text-sm"
+            class="bg-input-background border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
 
           <input
             type="number"
             [(ngModel)]="serviceForm.duration"
             placeholder="Duration"
-            class="bg-input-background border border-border rounded-xl px-3 py-2 text-sm"
+            class="bg-input-background border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
         </div>
 
         <!-- STATUS -->
         <select
           [(ngModel)]="serviceForm.status"
-          class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm"
+          class="w-full bg-input-background border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
         >
           <option value="ACTIVE">Active</option>
 

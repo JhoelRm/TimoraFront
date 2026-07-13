@@ -2,8 +2,8 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, X } from 'lucide-angular';
-import { ServiceStatus } from '../../../models/service';
-import { ModalComponent } from '../../modal/modal/modal';
+import { ServiceStatus } from '../../../../models/service';
+import { ModalComponent } from '../../../../components/modal/modal/modal';
 
 interface EditServiceForm {
   name: string;

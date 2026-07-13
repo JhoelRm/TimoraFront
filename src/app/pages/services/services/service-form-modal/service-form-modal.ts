@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, X } from 'lucide-angular';
 
-import { PersonIdentityDTO } from '../../../models/person-identity';
-import { CompanyDTO } from '../../../models/company';
-import { ServiceStatus } from '../../../models/service';
-import { ModalComponent } from '../../../components/modal/modal/modal';
+import { PersonIdentityDTO } from '../../../../models/person-identity';
+import { CompanyDTO } from '../../../../models/company';
+import { ServiceStatus } from '../../../../models/service';
+import { ModalComponent } from '../../../../components/modal/modal/modal';
 
 interface ServiceForm {
   companyId: number | null;

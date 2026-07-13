@@ -9,11 +9,11 @@ import { CompanyDTO } from '../../models/company';
 import { CurrentUser } from '../../models/currentUser';
 import { LucideAngularModule, Search, Plus, Pencil, Trash2, X } from 'lucide-angular';
 import { ModalComponent } from '../../components/modal/modal/modal';
-import { CustomersHeader } from '../../components/customers/customers-header/customers-header';
-import { CustomersTable } from '../../components/customers/customers-table/customers-table';
-import { CustomerCreateModal } from '../../components/customers/customer-create-modal/customer-create-modal';
-import { CustomerEditModal } from '../../components/customers/customer-edit-modal/customer-edit-modal';
-import { CustomerDeleteModal } from '../../components/customers/customer-delete-modal/customer-delete-modal';
+import { CustomersHeader } from './components/customers-header/customers-header';
+import { CustomersTable } from './components/customers-table/customers-table';
+import { CustomerCreateModal } from './components/customer-create-modal/customer-create-modal';
+import { CustomerEditModal } from './components/customer-edit-modal/customer-edit-modal';
+import { CustomerDeleteModal } from './components/customer-delete-modal/customer-delete-modal';
 interface CustomerForm {
   companyId: number | null;
   firstName: string;
@@ -96,7 +96,10 @@ export class CustomersComponent implements OnInit {
 
   private loadCompanies() {
     this.companiesService.getAll().subscribe({
-      next: d => { this.companies = d ?? []; this.cdr.detectChanges() },
+      next: d => { 
+        this.companies = (d ?? []).filter(c => c.status === 'ACTIVE'); 
+        this.cdr.detectChanges();
+      },
       error: console.error
     });
   }

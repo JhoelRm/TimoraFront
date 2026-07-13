@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Pencil, Trash2, Clock } from 'lucide-angular';
 import { ServiceCard } from '../service-card/service-card';
-import { ServiceDTO } from '../../../models/service';
+import { ServiceDTO } from '../../../../models/service';
 
 interface SupplierView {
   id: number;

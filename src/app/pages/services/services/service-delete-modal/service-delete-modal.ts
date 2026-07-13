@@ -1,9 +1,9 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, X } from 'lucide-angular';
-import { ModalComponent } from '../../modal/modal/modal';
+import { ModalComponent } from '../../../../components/modal/modal/modal';
 
-import { ServiceDTO } from '../../../models/service';
+import { ServiceDTO } from '../../../../models/service';
 
 @Component({
   selector: 'app-service-delete-modal',
