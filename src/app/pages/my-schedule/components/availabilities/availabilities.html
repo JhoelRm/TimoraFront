@@ -53,14 +53,12 @@
         [selectedDate]="selectedDate"
         [calendarViewMode]="calendarViewMode"
         [loading]="loading"
-        [canEdit]="hasUpdatePermission"
-        [canDelete]="hasDeletePermission"
         (today)="goToToday()"
         (previous)="previousDate()"
         (next)="nextDate()"
         (viewModeChange)="setCalendarView($event)"
         (selectedDateChange)="selectDate($event)">
-      </app-availabilities-calendar>
+      </app-availabilities-calendar>  <!-- ← ETIQUETA BIEN CERRADA -->
     }
 
     <!-- SIN DISPONIBILIDAD -->

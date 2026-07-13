@@ -1,0 +1,75 @@
+<!-- my-schedule/components/services/services.html -->
+<main class="flex-1 overflow-auto p-6">
+  <div class="space-y-6">
+    
+    <!-- HEADER -->
+    <app-service-header
+      [servicesCount]="totalServices"
+      [canCreate]="canCreate"
+      [isLoading]="loading"
+      (createService)="onAddClick()">
+    </app-service-header>
+
+    <!-- ERROR -->
+    @if (error) {
+      <div class="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 text-sm text-red-700 dark:text-red-400">
+        ❌ {{ error }}
+      </div>
+    }
+
+    <!-- SIN PERMISO DE LECTURA -->
+    @if (!loading && !canRead) {
+      <div class="bg-yellow-500/10 border border-yellow-500/20 rounded-2xl p-4 text-sm text-yellow-700 dark:text-yellow-400 text-center">
+        🔒 No tienes permiso para ver servicios de este proveedor
+      </div>
+    }
+
+    <!-- SERVICES LIST -->
+    @if (!loading && canRead && supplierId) {
+      <app-service-list
+        [services]="services"
+        [loading]="loading"
+        [canEdit]="hasUpdatePermission"
+        [canDelete]="hasDeletePermission"
+        (edit)="onEdit($event)"
+        (delete)="onDelete($event)">
+      </app-service-list>
+    }
+
+    <!-- ========================= -->
+    <!-- CREATE SERVICE MODAL -->
+    <!-- ========================= -->
+    <app-service-form-modal
+      [open]="modalOpen"
+      [isLoading]="loading"
+      [serviceForm]="serviceForm"
+      (openChange)="modalOpen = $event"
+      (save)="createService()"
+      (close)="closeModal()">
+    </app-service-form-modal>
+
+    <!-- ========================= -->
+    <!-- EDIT SERVICE MODAL -->
+    <!-- ========================= -->
+    <app-service-edit-modal
+      [open]="editModalOpen"
+      [isLoading]="loading"
+      [editForm]="editForm"
+      (save)="updateService()"
+      (close)="closeEditModal()"
+      (openChange)="editModalOpen = $event">
+    </app-service-edit-modal>
+
+    <!-- ========================= -->
+    <!-- DELETE CONFIRMATION MODAL -->
+    <!-- ========================= -->
+    <app-service-delete-modal
+      [open]="deleteModalOpen"
+      [service]="serviceToDelete"
+      [isLoading]="loading"
+      (close)="closeDeleteModal()"
+      (confirm)="confirmDelete()">
+    </app-service-delete-modal>
+
+  </div>
+</main>

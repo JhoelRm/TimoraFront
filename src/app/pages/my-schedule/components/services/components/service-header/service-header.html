@@ -1,0 +1,20 @@
+<!-- my-schedule/components/services/components/service-header/service-header.html -->
+<div class="flex items-center justify-between shrink-0 flex-wrap gap-3">
+  <!-- TITLE -->
+  <div>
+    <h1 class="text-xl font-semibold text-foreground">Services</h1>
+    <p class="text-sm text-muted-foreground">{{ servicesCount }} services</p>
+  </div>
+
+  <div class="flex items-center gap-2">
+    <!-- NEW SERVICE -->
+    <button
+      (click)="onCreate()"
+      [disabled]="!canCreate || isLoading"
+      class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:opacity-50"
+    >
+      <lucide-angular [img]="icons.Plus" class="w-4 h-4"></lucide-angular>
+      New Service
+    </button>
+  </div>
+</div>

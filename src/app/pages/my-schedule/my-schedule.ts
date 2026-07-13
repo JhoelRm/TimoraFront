@@ -11,7 +11,9 @@ import { MyScheduleSupplier } from '../../models/my-schedule';
 import { Permission } from '../../models/permission';
 import { MyScheduleSupplierSelectorComponent } from './components/my-schedule-supplier-selector/my-schedule-supplier-selector';
 import { BookingsComponent } from './components/bookings/bookings';
-import { AvailabilitiesComponent } from './components/availabilities/availabilities';  // ← IMPORTAR AVAILABILITY
+import { AvailabilitiesComponent } from './components/availabilities/availabilities';
+import { ServicesComponent } from './components/services/services';  // ← IMPORTAR SERVICES
+// import { CustomersComponent } from './components/customers/customers.component'; // ← Para cuando esté listo
 
 export type ScheduleTab = 'BOOKINGS' | 'AVAILABILITY' | 'SERVICES' | 'CUSTOMERS';
 
@@ -33,7 +35,9 @@ interface TabConfig {
     LucideAngularModule,
     MyScheduleSupplierSelectorComponent,
     BookingsComponent,
-    AvailabilitiesComponent  // ← IMPORTAR AVAILABILITY
+    AvailabilitiesComponent,
+    ServicesComponent,  // ← AGREGAR SERVICES
+    // CustomersComponent, // ← Para cuando esté listo
   ],
   templateUrl: './my-schedule.html',
   styleUrls: ['./my-schedule.scss']
@@ -330,5 +334,39 @@ export class MyScheduleComponent implements OnInit {
 
   get hasAvailabilityDelete(): boolean {
     return this.hasPermission(Permission.AVAILABILITY_DELETE);
+  }
+
+  // ==================== PERMISOS PARA SERVICES ====================
+  get hasServiceCreate(): boolean {
+    return this.hasPermission(Permission.SERVICE_CREATE);
+  }
+
+  get hasServiceRead(): boolean {
+    return this.hasPermission(Permission.SERVICE_READ);
+  }
+
+  get hasServiceUpdate(): boolean {
+    return this.hasPermission(Permission.SERVICE_UPDATE);
+  }
+
+  get hasServiceDelete(): boolean {
+    return this.hasPermission(Permission.SERVICE_DELETE);
+  }
+
+  // ==================== PERMISOS PARA CUSTOMERS ====================
+  get hasCustomerCreate(): boolean {
+    return this.hasPermission(Permission.CUSTOMER_CREATE);
+  }
+
+  get hasCustomerRead(): boolean {
+    return this.hasPermission(Permission.CUSTOMER_READ);
+  }
+
+  get hasCustomerUpdate(): boolean {
+    return this.hasPermission(Permission.CUSTOMER_UPDATE);
+  }
+
+  get hasCustomerDelete(): boolean {
+    return this.hasPermission(Permission.CUSTOMER_DELETE);
   }
 }

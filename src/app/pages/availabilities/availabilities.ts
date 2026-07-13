@@ -255,112 +255,118 @@ private loadCompanies(): void {
   }
 
   // ==================== GENERAR EVENTOS DEL CALENDARIO ====================
-  private generateCalendarEvents(
-    availabilities: AvailabilityDTO[], 
-    supplierName?: string
-  ): AvailabilityEvent[] {
-    const events: AvailabilityEvent[] = [];
-    const today = new Date();
-    const startDate = new Date(this.currentDate);
-    startDate.setMonth(startDate.getMonth() - 1); // 1 mes antes
-    const endDate = new Date(this.currentDate);
-    endDate.setMonth(endDate.getMonth() + 2); // 2 meses después
+private generateCalendarEvents(
+  availabilities: AvailabilityDTO[], 
+  supplierName?: string
+): AvailabilityEvent[] {
+  const events: AvailabilityEvent[] = [];
+  const startDate = new Date(this.currentDate);
+  startDate.setMonth(startDate.getMonth() - 1);
+  const endDate = new Date(this.currentDate);
+  endDate.setMonth(endDate.getMonth() + 2);
 
-    for (const availability of availabilities) {
-      if (availability.status !== 'ACTIVE') continue;
+  for (const availability of availabilities) {
+    if (availability.status !== 'ACTIVE') continue;
 
-      const name = supplierName || availability.supplierName || `Supplier ${availability.supplierId}`;
-      const baseStart = new Date(availability.startDate);
-      const baseEnd = availability.endDate ? new Date(availability.endDate) : new Date(2099, 11, 31);
-      
-      // Si la disponibilidad está fuera del rango visible, saltar
-      if (baseEnd < startDate || baseStart > endDate) continue;
+    const name = supplierName || availability.supplierName || `Supplier ${availability.supplierId}`;
+    
+    // 🔴 CORRECCIÓN: Crear fechas desde strings sin offset
+    const baseStart = new Date(availability.startDate + 'T00:00:00');
+    const baseEnd = availability.endDate 
+      ? new Date(availability.endDate + 'T00:00:00') 
+      : new Date(2099, 11, 31);
+    
+    if (baseEnd < startDate || baseStart > endDate) continue;
 
-      const recurrence = availability.recurrenceType;
-      
-      // Generar eventos según el tipo de recurrencia
-      if (recurrence === 'NONE') {
-        // Evento puntual
-        const event = this.createEventFromAvailability(availability, name);
-        if (event && this.isDateInRange(event.start, startDate, endDate)) {
-          events.push(event);
-        }
-      } else if (recurrence === 'DAILY') {
-        // Eventos diarios
-        const current = new Date(Math.max(baseStart.getTime(), startDate.getTime()));
-        while (current <= baseEnd && current <= endDate) {
+    const recurrence = availability.recurrenceType;
+    
+    if (recurrence === 'NONE') {
+      const event = this.createEventFromAvailability(availability, name);
+      if (event && this.isDateInRange(event.start, startDate, endDate)) {
+        events.push(event);
+      }
+    } else if (recurrence === 'DAILY') {
+      const current = new Date(Math.max(baseStart.getTime(), startDate.getTime()));
+      while (current <= baseEnd && current <= endDate) {
+        const event = this.createEventFromAvailability(availability, name, current);
+        if (event) events.push(event);
+        current.setDate(current.getDate() + 1);
+      }
+    } else if (recurrence === 'WEEKLY') {
+      const current = new Date(Math.max(baseStart.getTime(), startDate.getTime()));
+      while (current <= baseEnd && current <= endDate) {
+        const dayOfWeek = current.getDay();
+        const isActive = this.isDayActive(availability, dayOfWeek);
+        if (isActive) {
           const event = this.createEventFromAvailability(availability, name, current);
           if (event) events.push(event);
-          current.setDate(current.getDate() + 1);
         }
-      } else if (recurrence === 'WEEKLY') {
-        // Eventos semanales (con días específicos)
-        const current = new Date(Math.max(baseStart.getTime(), startDate.getTime()));
-        while (current <= baseEnd && current <= endDate) {
-          const dayOfWeek = current.getDay(); // 0=Dom, 1=Lun, ...
-          const isActive = this.isDayActive(availability, dayOfWeek);
-          if (isActive) {
-            const event = this.createEventFromAvailability(availability, name, current);
-            if (event) events.push(event);
-          }
-          current.setDate(current.getDate() + 1);
-        }
-      } else if (recurrence === 'MONTHLY') {
-        // Eventos mensuales (mismo día del mes)
-        const current = new Date(Math.max(baseStart.getTime(), startDate.getTime()));
-        const dayOfMonth = baseStart.getDate();
-        // Ajustar al día del mes
-        current.setDate(dayOfMonth);
-        while (current <= baseEnd && current <= endDate) {
-          const event = this.createEventFromAvailability(availability, name, current);
-          if (event) events.push(event);
-          current.setMonth(current.getMonth() + 1);
-        }
-      } else if (recurrence === 'YEARLY') {
-        // Eventos anuales (mismo día y mes)
-        const current = new Date(Math.max(baseStart.getTime(), startDate.getTime()));
-        const month = baseStart.getMonth();
-        const day = baseStart.getDate();
-        current.setMonth(month);
-        current.setDate(day);
-        while (current <= baseEnd && current <= endDate) {
-          const event = this.createEventFromAvailability(availability, name, current);
-          if (event) events.push(event);
-          current.setFullYear(current.getFullYear() + 1);
-        }
+        current.setDate(current.getDate() + 1);
+      }
+    } else if (recurrence === 'MONTHLY') {
+      const current = new Date(Math.max(baseStart.getTime(), startDate.getTime()));
+      const dayOfMonth = baseStart.getDate();
+      current.setDate(dayOfMonth);
+      while (current <= baseEnd && current <= endDate) {
+        const event = this.createEventFromAvailability(availability, name, current);
+        if (event) events.push(event);
+        current.setMonth(current.getMonth() + 1);
+      }
+    } else if (recurrence === 'YEARLY') {
+      const current = new Date(Math.max(baseStart.getTime(), startDate.getTime()));
+      const month = baseStart.getMonth();
+      const day = baseStart.getDate();
+      current.setMonth(month);
+      current.setDate(day);
+      while (current <= baseEnd && current <= endDate) {
+        const event = this.createEventFromAvailability(availability, name, current);
+        if (event) events.push(event);
+        current.setFullYear(current.getFullYear() + 1);
       }
     }
-
-    return events;
   }
 
-  private createEventFromAvailability(
-    availability: AvailabilityDTO,
-    supplierName: string,
-    date?: Date
-  ): AvailabilityEvent | null {
-    const startDate = date ? new Date(date) : new Date(availability.startDate);
-    const endDate = date ? new Date(date) : new Date(availability.endDate || availability.startDate);
-    
-    const [startHour, startMinute] = availability.startTime.split(':').map(Number);
-    const [endHour, endMinute] = availability.endTime.split(':').map(Number);
-    
-    const start = new Date(startDate);
-    start.setHours(startHour, startMinute, 0, 0);
-    
-    const end = new Date(endDate);
-    end.setHours(endHour, endMinute, 0, 0);
+  return events;
+}
 
-    return {
-      id: availability.id,
-      supplierId: availability.supplierId,
-      supplierName: supplierName,
-      title: `${supplierName} - Disponible`,
-      start: start,
-      end: end,
-      color: '#7C6EF5'
-    };
+private createEventFromAvailability(
+  availability: AvailabilityDTO,
+  supplierName: string,
+  date?: Date
+): AvailabilityEvent | null {
+  // 🔴 CORRECCIÓN: Usar string + T00:00:00 para evitar offset de zona horaria
+  let startDate: Date;
+  let endDate: Date;
+  
+  if (date) {
+    // Para recurrencias: usar la fecha proporcionada
+    startDate = new Date(date);
+    endDate = new Date(date);
+  } else {
+    // Para eventos puntuales: crear desde el string sin offset de zona horaria
+    startDate = new Date(availability.startDate + 'T00:00:00');
+    endDate = new Date((availability.endDate || availability.startDate) + 'T00:00:00');
   }
+  
+  const [startHour, startMinute] = availability.startTime.split(':').map(Number);
+  const [endHour, endMinute] = availability.endTime.split(':').map(Number);
+  
+  const start = new Date(startDate);
+  start.setHours(startHour, startMinute, 0, 0);
+  
+  const end = new Date(endDate);
+  end.setHours(endHour, endMinute, 0, 0);
+
+  return {
+    id: availability.id,
+    supplierId: availability.supplierId,
+    supplierName: supplierName,
+    title: `${supplierName} - Disponible`,
+    start: start,
+    end: end,
+    color: '#7C6EF5'
+  };
+}
 
   private isDayActive(availability: AvailabilityDTO, dayOfWeek: number): boolean {
     // dayOfWeek: 0=Dom, 1=Lun, 2=Mar, 3=Mié, 4=Jue, 5=Vie, 6=Sáb

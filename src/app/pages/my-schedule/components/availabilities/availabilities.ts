@@ -169,32 +169,51 @@ export class AvailabilitiesComponent implements OnInit, OnChanges {
     return events;
   }
 
-  private createEventFromAvailability(
-    availability: AvailabilityDTO,
-    date?: Date
-  ): AvailabilityEvent | null {
-    const startDate = date ? new Date(date) : new Date(availability.startDate);
-    const endDate = date ? new Date(date) : new Date(availability.endDate || availability.startDate);
-    
-    const [startHour, startMinute] = availability.startTime.split(':').map(Number);
-    const [endHour, endMinute] = availability.endTime.split(':').map(Number);
-    
-    const start = new Date(startDate);
-    start.setHours(startHour, startMinute, 0, 0);
-    
-    const end = new Date(endDate);
-    end.setHours(endHour, endMinute, 0, 0);
 
-    return {
-      id: availability.id,
-      supplierId: availability.supplierId,
-      supplierName: availability.supplierName || 'Supplier',
-      title: `Disponible`,
-      start: start,
-      end: end,
-      color: '#7C6EF5'
-    };
+private createEventFromAvailability(
+  availability: AvailabilityDTO,
+  date?: Date
+): AvailabilityEvent | null {
+  // Obtener fechas como strings
+  const startDateStr = availability.startDate;
+  const endDateStr = availability.endDate || availability.startDate;
+  
+  // Si se proporciona una fecha específica (para recurrencias), usarla
+  let startDate: Date;
+  let endDate: Date;
+  
+  if (date) {
+    // Para recurrencias: usar la fecha proporcionada
+    startDate = new Date(date);
+    endDate = new Date(date);
+  } else {
+    // Para eventos puntuales: crear desde el string sin offset de zona horaria
+    startDate = new Date(startDateStr + 'T00:00:00');
+    endDate = new Date(endDateStr + 'T00:00:00');
   }
+  
+  // Extraer horas y minutos del string de tiempo
+  const [startHour, startMinute] = availability.startTime.split(':').map(Number);
+  const [endHour, endMinute] = availability.endTime.split(':').map(Number);
+  
+  // Aplicar hora al inicio
+  const start = new Date(startDate);
+  start.setHours(startHour, startMinute, 0, 0);
+  
+  // Aplicar hora al fin
+  const end = new Date(endDate);
+  end.setHours(endHour, endMinute, 0, 0);
+
+  return {
+    id: availability.id,
+    supplierId: availability.supplierId,
+    supplierName: availability.supplierName || 'Supplier',
+    title: `Disponible`,
+    start: start,
+    end: end,
+    color: '#7C6EF5'
+  };
+}
 
   private isDayActive(availability: AvailabilityDTO, dayOfWeek: number): boolean {
     const dayMap: Record<number, keyof AvailabilityDTO> = {

@@ -95,22 +95,27 @@
       </div>
 
       <!-- CONTENT AREA - AVAILABILITY -->
-    <div *ngIf="activeTab === 'AVAILABILITY'" class="flex flex-col h-full space-y-4">
-      <app-availabilities
-        [supplierId]="selectedSupplierId"
-        [companyId]="selectedSupplier.person.companyId"
-        [hasCreatePermission]="hasAvailabilityCreate"
-        [hasReadPermission]="hasAvailabilityRead"
-        [hasUpdatePermission]="hasAvailabilityUpdate"
-        [hasDeletePermission]="hasAvailabilityDelete">
-      </app-availabilities>
-    </div>
+      <div *ngIf="activeTab === 'AVAILABILITY'" class="flex flex-col h-full space-y-4">
+        <app-availabilities
+          [supplierId]="selectedSupplierId"
+          [companyId]="selectedSupplier.person.companyId"
+          [hasCreatePermission]="hasAvailabilityCreate"
+          [hasReadPermission]="hasAvailabilityRead"
+          [hasUpdatePermission]="hasAvailabilityUpdate"
+          [hasDeletePermission]="hasAvailabilityDelete">
+        </app-availabilities>
+      </div>
 
       <!-- CONTENT AREA - SERVICES -->
       <div *ngIf="activeTab === 'SERVICES'" class="flex flex-col h-full space-y-4">
-        <div class="text-center py-12 text-muted-foreground">
-          <p>Services view coming soon...</p>
-        </div>
+        <app-services
+          [supplierId]="selectedSupplierId"
+          [companyId]="selectedSupplier.person.companyId"
+          [hasCreatePermission]="hasServiceCreate"
+          [hasReadPermission]="hasServiceRead"
+          [hasUpdatePermission]="hasServiceUpdate"
+          [hasDeletePermission]="hasServiceDelete">
+        </app-services>
       </div>
 
       <!-- CONTENT AREA - CUSTOMERS -->

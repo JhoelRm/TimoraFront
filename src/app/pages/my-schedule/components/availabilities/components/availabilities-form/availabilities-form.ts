@@ -1,3 +1,4 @@
+// my-schedule/components/availabilities/components/availabilities-form/availabilities-form.ts
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -8,11 +9,8 @@ import {
   AvailabilityCreateDTO, 
   AvailabilityPatchDTO, 
   AvailabilityDTO,
-  AvailabilityRecurring,
-  AvailabilityStatus
+  AvailabilityRecurring
 } from '../../../../../../models/availability';
-import { PersonIdentityDTO } from '../../../../../../models/person-identity';
-import { CompanyDTO } from '../../../../../../models/company';
 
 @Component({
   selector: 'app-availabilities-form',
@@ -26,8 +24,8 @@ export class AvailabilitiesForm implements OnInit, OnChanges {
   @Input() mode: 'create' | 'edit' = 'create';
   @Input() editData: AvailabilityDTO | null = null;
   @Input() formData: AvailabilityCreateDTO | null = null;
-  @Input() suppliers: PersonIdentityDTO[] = [];
-  @Input() companies: CompanyDTO[] = [];
+  @Input() supplierId: number | null = null;  // ← Supplier ID desde el padre
+  @Input() companyId: number | null = null;   // ← Company ID desde el padre
   @Input() loading = false;
 
   @Output() visibleChange = new EventEmitter<boolean>();
@@ -55,21 +53,18 @@ export class AvailabilitiesForm implements OnInit, OnChanges {
     { value: 'CUSTOM', label: 'CUSTOM' }
   ];
 
-  // 🔴 Opciones de status
   statusOptions = [
     { value: 'ACTIVE', label: 'Activo' },
     { value: 'INACTIVE', label: 'Inactivo' }
   ];
 
-  // Formulario unificado
   form: any = this.createEmptyForm();
   isEditMode = false;
 
-  // UI State
   showEndDate = true;
   showDaysOfWeek = true;
   isRecurrenceDisabled = false;
-  showStatus = false; // 🔴 Mostrar status solo en edición
+  showStatus = false;
 
   ngOnInit(): void {
     this.resetForm();
@@ -88,15 +83,23 @@ export class AvailabilitiesForm implements OnInit, OnChanges {
       this.form = { ...this.formData };
       this.updateUiByRecurrence();
     }
-  }
 
-  // ==================== CARGA DE DATOS ====================
+    // Cuando cambia supplierId, actualizar el formulario
+    if (changes['supplierId'] && this.supplierId) {
+      this.form.supplierId = this.supplierId;
+    }
+
+    // Cuando cambia companyId, actualizar el formulario
+    if (changes['companyId'] && this.companyId) {
+      this.form.companyId = this.companyId;
+    }
+  }
 
   private loadEditData(): void {
     if (!this.editData) return;
     
     this.isEditMode = true;
-    this.showStatus = true; // 🔴 Mostrar status en edición
+    this.showStatus = true;
     this.form = {
       companyId: this.editData.companyId,
       supplierId: this.editData.supplierId,
@@ -115,16 +118,15 @@ export class AvailabilitiesForm implements OnInit, OnChanges {
       slotDurationMinutes: this.editData.slotDurationMinutes,
       capacity: this.editData.capacity,
       notes: this.editData.notes,
-      status: this.editData.status // 🔴 Cargar status
+      status: this.editData.status
     };
     
-    // En edición, la recurrencia NO se puede cambiar
     this.isRecurrenceDisabled = true;
     this.updateUiByRecurrence();
   }
 
   resetForm(): void {
-    this.showStatus = false; // 🔴 Resetear status
+    this.showStatus = false;
     if (this.mode === 'edit' && this.editData) {
       this.loadEditData();
     } else if (this.formData) {
@@ -144,8 +146,8 @@ export class AvailabilitiesForm implements OnInit, OnChanges {
     const formattedDate = today.toISOString().split('T')[0];
 
     return {
-      companyId: 0,
-      supplierId: 0,
+      companyId: this.companyId || 0,
+      supplierId: this.supplierId || 0,
       startDate: formattedDate,
       endDate: formattedDate,
       startTime: '09:00:00',
@@ -164,12 +166,9 @@ export class AvailabilitiesForm implements OnInit, OnChanges {
     };
   }
 
-  // ==================== UI DINÁMICA ====================
-
   updateUiByRecurrence(): void {
     const recurrence = this.form.recurrenceType;
     
-    // 1️⃣ FECHA FIN: solo visible para DAILY, WEEKLY, MONTHLY, YEARLY, CUSTOM
     this.showEndDate = recurrence !== 'NONE';
     
     if (recurrence === 'NONE') {
@@ -185,7 +184,6 @@ export class AvailabilitiesForm implements OnInit, OnChanges {
       this.form.endDate = endDate.toISOString().split('T')[0];
     }
     
-    // 2️⃣ DÍAS DE SEMANA: solo visibles para WEEKLY
     this.showDaysOfWeek = recurrence === 'WEEKLY';
     
     if (this.showDaysOfWeek && !this.hasAnyDaySelected()) {
@@ -199,12 +197,6 @@ export class AvailabilitiesForm implements OnInit, OnChanges {
     if (this.mode === 'edit') {
       this.isRecurrenceDisabled = true;
     }
-    
-    console.log('🔄 UI actualizada para recurrencia:', recurrence);
-    console.log('  - showEndDate:', this.showEndDate);
-    console.log('  - showDaysOfWeek:', this.showDaysOfWeek);
-    console.log('  - startDate:', this.form.startDate);
-    console.log('  - endDate:', this.form.endDate);
   }
 
   hasAnyDaySelected(): boolean {
@@ -237,8 +229,6 @@ export class AvailabilitiesForm implements OnInit, OnChanges {
     this.form.sunday = false;
   }
 
-  // ==================== GETTERS ====================
-
   get todayDate(): string {
     return new Date().toISOString().split('T')[0];
   }
@@ -246,20 +236,6 @@ export class AvailabilitiesForm implements OnInit, OnChanges {
   get modalTitle(): string {
     if (this.mode === 'edit') return 'Editar disponibilidad';
     return 'Nueva disponibilidad';
-  }
-
-  // ==================== EVENTOS DEL FORMULARIO ====================
-
-  onSupplierChange(event: Event): void {
-    const select = event.target as HTMLSelectElement;
-    const supplierId = Number(select.value);
-    this.form.supplierId = supplierId;
-
-    const selectedSupplier = this.suppliers.find(s => s.supplier?.id === supplierId);
-    if (selectedSupplier) {
-      this.form.companyId = selectedSupplier.person.companyId;
-      console.log('🏢 Company ID actualizado a:', this.form.companyId);
-    }
   }
 
   onRecurrenceChange(event: Event): void {
@@ -278,10 +254,6 @@ export class AvailabilitiesForm implements OnInit, OnChanges {
     }
   }
 
-  getSupplierName(supplier: PersonIdentityDTO): string {
-    return `${supplier.person.firstName} ${supplier.person.lastName}`;
-  }
-
   toggleDay(dayKey: string): void {
     if (this.showDaysOfWeek) {
       this.form[dayKey] = !this.form[dayKey];
@@ -296,14 +268,7 @@ export class AvailabilitiesForm implements OnInit, OnChanges {
     return this.daysOfWeek.filter(day => this.isDaySelected(day.key)).length;
   }
 
-  // ==================== VALIDACIÓN ====================
-
   private validateForm(): boolean {
-    if (!this.form.supplierId || this.form.supplierId === 0) {
-      alert('Por favor selecciona un proveedor');
-      return false;
-    }
-
     if (!this.form.startDate) {
       alert('Por favor selecciona una fecha de inicio');
       return false;
@@ -407,12 +372,10 @@ export class AvailabilitiesForm implements OnInit, OnChanges {
       if (this.form.capacity) patchData.capacity = Number(this.form.capacity);
       if (this.form.notes !== undefined) patchData.notes = this.form.notes;
       
-      // 🔴 Enviar status si está presente (solo en edición)
       if (this.showStatus && this.form.status) {
         patchData.status = this.form.status;
       }
 
-      console.log('📤 Enviando PATCH:', patchData);
       this.save.emit(patchData);
     } else {
       const createData: AvailabilityCreateDTO = {
@@ -435,7 +398,6 @@ export class AvailabilitiesForm implements OnInit, OnChanges {
         notes: this.form.notes || ''
       };
 
-      console.log('📤 Enviando CREATE:', createData);
       this.save.emit(createData);
     }
   }
@@ -449,9 +411,5 @@ export class AvailabilitiesForm implements OnInit, OnChanges {
       this.cancel.emit();
     }
     this.visibleChange.emit(value);
-  }
-
-  trackBySupplier(index: number, supplier: PersonIdentityDTO): number {
-    return supplier.supplier?.id || index;
   }
 }

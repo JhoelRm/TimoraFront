@@ -7,7 +7,7 @@ import { LucideAngularModule, Plus, Calendar, List } from 'lucide-angular';
 type ViewMode = 'list' | 'calendar';
 
 @Component({
-  selector: 'app-availability-header',
+  selector: 'app-availabilities-header',
   standalone: true,
   imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: './availabilities-header.html',

@@ -1,3 +1,4 @@
+<!-- my-schedule/components/availabilities/components/availabilities-form/availabilities-form.html -->
 <p-dialog
   [(visible)]="visible"
   (visibleChange)="onVisibleChange($event)"
@@ -28,28 +29,6 @@
     <div class="overflow-y-auto flex-1 p-6">
       <div class="grid grid-cols-2 gap-3">
         
-        <!-- Proveedor -->
-        <div class="col-span-2">
-          <label class="block text-xs font-medium text-muted-foreground mb-1.5">
-            Proveedor <span class="text-destructive">*</span>
-          </label>
-          @if (mode === 'edit') {
-            <div class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground">
-              {{ getSupplierName(suppliers.find(s => s.supplier?.id === form.supplierId)!) }}
-            </div>
-          } @else {
-            <select
-              [(ngModel)]="form.supplierId"
-              (change)="onSupplierChange($event)"
-              class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
-              <option value="0">Seleccionar proveedor…</option>
-              <option *ngFor="let supplier of suppliers; trackBy: trackBySupplier" [value]="supplier.supplier?.id">
-                {{ getSupplierName(supplier) }}
-              </option>
-            </select>
-          }
-        </div>
-
         <!-- Fecha Inicio -->
         <div>
           <label class="block text-xs font-medium text-muted-foreground mb-1.5">
@@ -163,7 +142,7 @@
             class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all">
         </div>
 
-        <!-- 🔴 NUEVO: Status (solo visible en edición) -->
+        <!-- Status (solo visible en edición) -->
         <div *ngIf="showStatus" class="col-span-2">
           <label class="block text-xs font-medium text-muted-foreground mb-1.5">
             Estado
