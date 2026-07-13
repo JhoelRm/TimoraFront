@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 
-import { CompanyDTO, CompanyPatchDTO } from '../../models/company';
+import { CompanyDTO, CompanyPatchDTO } from '../../../../models/company';
 
 @Component({
   selector: 'app-company-form',

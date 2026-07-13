@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Building2, Mail, MapPin, Pencil, Phone, Trash2 } from 'lucide-angular';
-import { CompanyDTO } from '../../models/company';
+import { CompanyDTO } from '../../../../models/company';
 
 
 @Component({

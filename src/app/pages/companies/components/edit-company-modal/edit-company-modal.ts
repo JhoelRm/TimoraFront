@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ModalComponent } from '../modal/modal/modal';
+import { ModalComponent } from '../../../../components/modal/modal/modal';
 import { CompaniesFormComponent } from '../companies-form/companies-form';
-import { CompanyPatchDTO } from '../../models/company';
+import { CompanyPatchDTO } from '../../../../models/company';
 
 
 @Component({

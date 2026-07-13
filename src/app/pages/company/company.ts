@@ -5,9 +5,9 @@ import { CompaniesService } from '../../services/companies/companies';
 import { AuthService } from '../../services/auth/auth';
 import { CompanyDTO, CompanyPatchDTO } from '../../models/company';
 import { LucideAngularModule, Building2, Phone, Mail, MapPin, Save, X, AlertCircle } from 'lucide-angular';
-import { CompanyHeader } from '../../components/company-header/company-header';
-import { CompanyForm } from '../../components/company-form/company-form';
-import { CompanyFeedback } from '../../components/company-feedback/company-feedback';
+import { CompanyHeader } from '../companies/components/company-header/company-header';
+import { CompanyForm } from '../companies/components/company-form/company-form';
+import { CompanyFeedback } from '../companies/components/company-feedback/company-feedback';
 
 @Component({
   selector: 'app-company',

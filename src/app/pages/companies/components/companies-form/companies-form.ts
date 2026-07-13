@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import {
   CompanyCreateDTO,
   CompanyPatchDTO
-} from '../../models/company';
+} from '../../../../models/company';
 
 @Component({
   selector: 'app-companies-form',

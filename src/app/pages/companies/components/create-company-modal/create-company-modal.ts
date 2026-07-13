@@ -1,9 +1,9 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 
-import { ModalComponent } from '../modal/modal/modal';
+import { ModalComponent } from '../../../../components/modal/modal/modal';
 import { CompaniesFormComponent } from '../companies-form/companies-form';
 
-import { CompanyCreateDTO } from '../../models/company';
+import { CompanyCreateDTO } from '../../../../models/company';
 
 
 @Component({

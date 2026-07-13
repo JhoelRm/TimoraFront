@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ModalComponent } from '../modal/modal/modal';
-import { CompanyDTO } from '../../models/company';
+import { ModalComponent } from '../../../../components/modal/modal/modal';
+import { CompanyDTO } from '../../../../models/company';
 
 
 @Component({

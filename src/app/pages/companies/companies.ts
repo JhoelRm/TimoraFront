@@ -4,11 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { CompaniesService } from '../../services/companies/companies';
 import { CompanyDTO, CompanyCreateDTO, CompanyPatchDTO } from '../../models/company';
 import { LucideAngularModule, Building2, Search, Plus, Phone, Mail, MapPin, Trash2, Pencil, X } from 'lucide-angular';
-import { CompaniesHeaderComponent } from '../../components/companies-header/companies-header';
-import { CompanyCardComponent } from '../../components/companies-card/company-card';
-import { CreateCompanyModalComponent } from '../../components/create-company-modal/create-company-modal';
-import { EditCompanyModalComponent } from '../../components/edit-company-modal/edit-company-modal';
-import { DeleteCompanyModalComponent } from '../../components/delete-company-modal/delete-company-modal';
+import { CompaniesHeaderComponent } from './components/companies-header/companies-header';
+import { CompanyCardComponent } from './components/companies-card/company-card';
+import { CreateCompanyModalComponent } from './components/create-company-modal/create-company-modal';
+import { EditCompanyModalComponent } from './components/edit-company-modal/edit-company-modal';
+import { DeleteCompanyModalComponent } from './components/delete-company-modal/delete-company-modal';
 
 @Component({
   selector: 'app-companies',
