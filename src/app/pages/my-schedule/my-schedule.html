@@ -51,14 +51,14 @@
             <span *ngIf="hasBookingPermission()" 
                   class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-500/10 text-blue-400"
                   title="Permisos de reservas">
-              📅 B
+              📅 A
             </span>
 
             <!-- Availability -->
             <span *ngIf="hasAvailabilityPermission()" 
                   class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-400"
                   title="Permisos de disponibilidad">
-              ⏰ A
+              ⏰ D
             </span>
 
             <!-- Service -->
@@ -66,13 +66,6 @@
                   class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-purple-500/10 text-purple-400"
                   title="Permisos de servicios">
               🔧 S
-            </span>
-
-            <!-- Customer -->
-            <span *ngIf="hasCustomerPermission()" 
-                  class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-500/10 text-amber-400"
-                  title="Permisos de clientes">
-              👥 C
             </span>
           </div>
           
@@ -116,13 +109,6 @@
           [hasUpdatePermission]="hasServiceUpdate"
           [hasDeletePermission]="hasServiceDelete">
         </app-services>
-      </div>
-
-      <!-- CONTENT AREA - CUSTOMERS -->
-      <div *ngIf="activeTab === 'CUSTOMERS'" class="flex flex-col h-full space-y-4">
-        <div class="text-center py-12 text-muted-foreground">
-          <p>Vista de clientes próximamente...</p>
-        </div>
       </div>
 
     </ng-container>

@@ -62,7 +62,7 @@ interface SupplierPermission {
   styleUrl: './users.scss'
 })
 export class UsersComponent implements OnInit {
-
+  
   isEditMode = false;
   editModalOpen = false;
   editUserId: number | null = null;
@@ -792,4 +792,9 @@ removeSupplierPermissions(supplierId: number) {
       supplier: null
     };
   }
+  get permissionGroupsWithoutCustomer() {
+    // Oculta temporalmente el grupo 'Customer'
+    return this.permissionGroups.filter(group => group.label !== 'Customers');
+  }
+  
 }

@@ -12,11 +12,9 @@ import { Permission } from '../../models/permission';
 import { MyScheduleSupplierSelectorComponent } from './components/my-schedule-supplier-selector/my-schedule-supplier-selector';
 import { BookingsComponent } from './components/bookings/bookings';
 import { AvailabilitiesComponent } from './components/availabilities/availabilities';
-import { ServicesComponent } from './components/services/services';  // ← IMPORTAR SERVICES
-// import { CustomersComponent } from './components/customers/customers.component'; // ← Para cuando esté listo
+import { ServicesComponent } from './components/services/services';
 
-export type ScheduleTab = 'BOOKINGS' | 'AVAILABILITY' | 'SERVICES' | 'CUSTOMERS';
-
+export type ScheduleTab = 'BOOKINGS' | 'AVAILABILITY' | 'SERVICES';
 
 interface TabConfig {
   key: ScheduleTab;
@@ -103,18 +101,6 @@ export class MyScheduleComponent implements OnInit {
         Permission.SERVICE_UPDATE,
         Permission.SERVICE_DELETE
       ]
-    },
-    {
-      key: 'CUSTOMERS',
-      label: 'Clientes',
-      icon: this.icons.User,
-      readPermission: Permission.CUSTOMER_READ,
-      permissions: [
-        Permission.CUSTOMER_CREATE,
-        Permission.CUSTOMER_READ,
-        Permission.CUSTOMER_UPDATE,
-        Permission.CUSTOMER_DELETE
-      ]
     }
   ];
 
@@ -189,7 +175,7 @@ export class MyScheduleComponent implements OnInit {
   }
 
   /**
-   * Cambia la pestaña activa (Bookings, Availability, Services, Customers)
+   * Cambia la pestaña activa (Bookings, Availability, Services)
    */
   setActiveTab(tab: ScheduleTab): void {
     this.activeTab = tab;
@@ -213,7 +199,7 @@ export class MyScheduleComponent implements OnInit {
   /**
    * Obtiene los permisos de una categoría específica
    */
-  getCategoryPermissions(category: 'BOOKING' | 'AVAILABILITY' | 'SERVICE' | 'CUSTOMER'): Permission[] {
+  getCategoryPermissions(category: 'BOOKING' | 'AVAILABILITY' | 'SERVICE'): Permission[] {
     switch(category) {
       case 'BOOKING':
         return [
@@ -235,13 +221,6 @@ export class MyScheduleComponent implements OnInit {
           Permission.SERVICE_READ,
           Permission.SERVICE_UPDATE,
           Permission.SERVICE_DELETE
-        ];
-      case 'CUSTOMER':
-        return [
-          Permission.CUSTOMER_CREATE,
-          Permission.CUSTOMER_READ,
-          Permission.CUSTOMER_UPDATE,
-          Permission.CUSTOMER_DELETE
         ];
       default:
         return [];
@@ -290,15 +269,10 @@ export class MyScheduleComponent implements OnInit {
     return this.hasAnyPermissionInCategory(this.getCategoryPermissions('SERVICE'));
   }
 
-  hasCustomerPermission(): boolean {
-    return this.hasAnyPermissionInCategory(this.getCategoryPermissions('CUSTOMER'));
-  }
-
   hasAnyCategoryPermission(): boolean {
     return this.hasBookingPermission() ||
            this.hasAvailabilityPermission() ||
-           this.hasServicePermission() ||
-           this.hasCustomerPermission();
+           this.hasServicePermission();
   }
 
   // ==================== PERMISOS PARA BOOKINGS ====================
@@ -350,22 +324,5 @@ export class MyScheduleComponent implements OnInit {
 
   get hasServiceDelete(): boolean {
     return this.hasPermission(Permission.SERVICE_DELETE);
-  }
-
-  // ==================== PERMISOS PARA CUSTOMERS ====================
-  get hasCustomerCreate(): boolean {
-    return this.hasPermission(Permission.CUSTOMER_CREATE);
-  }
-
-  get hasCustomerRead(): boolean {
-    return this.hasPermission(Permission.CUSTOMER_READ);
-  }
-
-  get hasCustomerUpdate(): boolean {
-    return this.hasPermission(Permission.CUSTOMER_UPDATE);
-  }
-
-  get hasCustomerDelete(): boolean {
-    return this.hasPermission(Permission.CUSTOMER_DELETE);
   }
 }

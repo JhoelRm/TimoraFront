@@ -590,31 +590,29 @@
                   </button>
                 </div>
 
-                <!-- Permission Groups -->
-                <div *ngFor="let group of permissionGroups" class="mb-3">
-                  <div class="text-xs text-muted-foreground mb-1.5 font-medium">{{ group.label }}</div>
-                  <div class="flex flex-wrap gap-1.5">
-                    <button *ngFor="let perm of group.permissions"
-                            (click)="togglePermission(supplierPerm.supplier.id, perm)"
-                            [disabled]="isSaving"
-                            class="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium transition"
-                            [ngClass]="{
-                              'bg-primary/15 text-primary border border-primary/30': hasPermission(supplierPerm.supplier.id, perm),
-                              'bg-card text-muted-foreground border border-border hover:border-primary/20': !hasPermission(supplierPerm.supplier.id, perm),
-                              'opacity-50 cursor-not-allowed': isSaving
-                            }">
-
-                      <lucide-angular *ngIf="hasPermission(supplierPerm.supplier.id, perm)" 
-                                      [img]="icons.CheckCircle" class="w-3 h-3">
-                      </lucide-angular>
-                      <lucide-angular *ngIf="!hasPermission(supplierPerm.supplier.id, perm)" 
-                                      [img]="icons.Lock" class="w-3 h-3">
-                      </lucide-angular>
-
-                      {{ perm.toLowerCase().replace('_', ' ') }}
-                    </button>
-                  </div>
+              <!-- Permission Groups -->
+              <div *ngFor="let group of permissionGroupsWithoutCustomer" class="mb-3">
+                <div class="text-xs text-muted-foreground mb-1.5 font-medium">{{ group.label }}</div>
+                <div class="flex flex-wrap gap-1.5">
+                  <button *ngFor="let perm of group.permissions"
+                          (click)="togglePermission(supplierPerm.supplier.id, perm)"
+                          [disabled]="isSaving"
+                          class="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium transition"
+                          [ngClass]="{
+                            'bg-primary/15 text-primary border border-primary/30': hasPermission(supplierPerm.supplier.id, perm),
+                            'bg-card text-muted-foreground border border-border hover:border-primary/20': !hasPermission(supplierPerm.supplier.id, perm),
+                            'opacity-50 cursor-not-allowed': isSaving
+                          }">
+                    <lucide-angular *ngIf="hasPermission(supplierPerm.supplier.id, perm)" 
+                                    [img]="icons.CheckCircle" class="w-3 h-3">
+                    </lucide-angular>
+                    <lucide-angular *ngIf="!hasPermission(supplierPerm.supplier.id, perm)" 
+                                    [img]="icons.Lock" class="w-3 h-3">
+                    </lucide-angular>
+                    {{ perm.toLowerCase().replace('_', ' ') }}
+                  </button>
                 </div>
+              </div>
               </div>
 
             </div>
