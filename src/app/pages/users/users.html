@@ -22,7 +22,7 @@
             class="w-full bg-secondary  rounded-xl px-3 py-2 text-sm text-foreground border border-border focus:outline-none focus:ring-2 focus:ring-primary/30 transition"
             [(ngModel)]="selectedCompanyId" (ngModelChange)="applyFilter()">
 
-            <option [ngValue]="null">Todas las Compañias</option>
+            <option [ngValue]="null">Compañias</option>
 
             <option *ngFor="let c of companies" [ngValue]="c.id">
               {{ c.name }}

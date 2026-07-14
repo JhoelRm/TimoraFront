@@ -25,7 +25,7 @@
           (completeMethod)="filterCompany($event)"
           (onSelect)="onCompanySelect($event)"
           optionLabel="name"
-          placeholder="All companies"
+          placeholder="Compañias"
           [minLength]="0"
           [showClear]="false"
           [style]="{ width: '100%' }"
@@ -50,7 +50,7 @@
       <input
         [ngModel]="searchTerm"
         (ngModelChange)="onSearchChange($event)"
-        placeholder="Search clients..."
+        placeholder="Buscar clientes..."
         class="pl-8 pr-3 py-1.5 text-sm bg-input-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 w-48 text-foreground placeholder:text-muted-foreground"
       />
     </div>
