@@ -51,7 +51,7 @@ export class ServiceList {
         map.set(service.supplierId, {
           id: service.supplierId,
           name: service.supplierName,
-          specialty: 'Supplier',
+          specialty: 'Proveedor',
         });
       }
     }
