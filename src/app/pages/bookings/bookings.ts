@@ -255,28 +255,31 @@ private loadCompanies(): void {
     this.cdr.detectChanges();
   }
 
-  // ==================== CARGAR BOOKINGS ====================
-  private loadBookings(supplierId: number): void {
-    this.loading = true;
-    console.log('🔄 Cargando bookings para supplier:', supplierId);
-    
-    this.bookingService.getBySupplier(supplierId).subscribe({
-      next: data => {
-        this.bookings = data;
-        this.filteredBookings = data;
-        this.events = this.convertToEvents(data); 
-        console.log('📋 Bookings cargados:', this.bookings.length);
-        this.loading = false;
-        this.cdr.detectChanges();
-      },
-      error: err => {
-        console.error('❌ Error loading bookings:', err);
-        this.error = 'Failed to load bookings';
-        this.loading = false;
-        this.cdr.detectChanges();
-      }
-    });
-  }
+private loadBookings(supplierId: number): void {
+  this.loading = true;
+  console.log('🔄 Cargando bookings para supplier:', supplierId);
+  
+  this.bookingService.getBySupplier(supplierId).subscribe({
+    next: data => {
+      // Filtrar para excluir los eliminados
+      const activeBookings = data.filter(booking => booking.status !== 'DELETED');
+      
+      this.bookings = activeBookings;
+      this.filteredBookings = activeBookings;
+      this.events = this.convertToEvents(activeBookings);
+      
+      console.log('📋 Bookings cargados (excluyendo eliminados):', activeBookings.length);
+      this.loading = false;
+      this.cdr.detectChanges();
+    },
+    error: err => {
+      console.error('❌ Error loading bookings:', err);
+      this.error = 'Failed to load bookings';
+      this.loading = false;
+      this.cdr.detectChanges();
+    }
+  });
+}
 
   // ==================== CONVERTIR BOOKINGS A EVENTOS ====================
   private convertToEvents(bookings: BookingDTO[]): BookingEvent[] {
