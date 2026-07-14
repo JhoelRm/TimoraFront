@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CompanyDTO, CompanyPatchDTO, CompanyCreateDTO } from '../../models/company';
+import { environment } from '../../../environments/environment.prod';
 
 export type CompanyStatus = 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
 
 @Injectable({ providedIn: 'root' })
 export class CompaniesService {
-  private baseUrl = '/api/companies';
+  private baseUrl = `${environment.apiUrl}/companies`;
 
   constructor(private http: HttpClient) {}
 

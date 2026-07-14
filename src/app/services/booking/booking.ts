@@ -6,12 +6,13 @@ import {
   BookingCreateDTO, 
   BookingPatchDTO 
 } from '../../models/booking';
+import { environment } from '../../../environments/environment.prod';
 
 @Injectable({ 
   providedIn: 'root' 
 })
 export class BookingService {
-  private baseUrl = '/api/bookings';
+  private baseUrl = `${environment.apiUrl}/bookings`;
 
   constructor(private http: HttpClient) {}
 

@@ -4,6 +4,7 @@ import { tap, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { CurrentUser } from '../../models/currentUser';
 import { SessionService } from '../user-session/user-session';
+import { environment } from '../../../environments/environment.prod';
 
 export interface LoginResponse {
   accessToken: string;
@@ -14,7 +15,7 @@ export interface LoginResponse {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  private api = '/auth/login';
+  private api = `${environment.authUrl}/login`;
 
   constructor(
     private http: HttpClient,

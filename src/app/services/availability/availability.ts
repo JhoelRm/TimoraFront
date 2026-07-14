@@ -7,10 +7,11 @@ import {
   AvailabilityCreateDTO, 
   AvailabilityPatchDTO 
 } from '../../models/availability';
+import { environment } from '../../../environments/environment.prod';
 
 @Injectable({ providedIn: 'root' })
 export class AvailabilityService {
-  private baseUrl = '/api/availabilities';
+  private baseUrl = `${environment.apiUrl}/availabilities`;
 
   constructor(private http: HttpClient) {}
 

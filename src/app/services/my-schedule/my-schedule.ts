@@ -1,4 +1,3 @@
-// services/my-schedule/my-schedule.service.ts
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin, map, switchMap, of } from 'rxjs'; 
@@ -7,6 +6,7 @@ import { PermissionService } from '../permissions/perimssions';
 import { AuthService } from '../auth/auth';
 import { MyScheduleSupplier } from '../../models/my-schedule';
 import { Permission } from '../../models/permission';
+import { environment } from '../../../environments/environment.prod';
 
 @Injectable({ providedIn: 'root' })
 export class MyScheduleService {

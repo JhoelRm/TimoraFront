@@ -10,13 +10,14 @@ import {
   UserPermissionMapResponse,
   Permission
 } from '../../models/permission';
+import { environment } from '../../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PermissionService {
   private http = inject(HttpClient);
-  private baseUrl = '/api/user-supplier-permissions';
+  private baseUrl = `${environment.apiUrl}/user-supplier-permissions`;
 
   getByUserId(userId: number): Observable<UserSupplierPermissionDTO[]> {
     console.log(`🔍 [SERVICE] getByUserId: userId=${userId}`);

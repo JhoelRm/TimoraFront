@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { UserSession } from '../../models/userSession';
+import { environment } from '../../../environments/environment.prod';
 
 @Injectable({ providedIn: 'root' })
 export class SessionService {
@@ -50,7 +51,7 @@ export class SessionService {
   // 🧠 backend session (opcional)
   // ==============================
   getMe(): Observable<UserSession> {
-    return this.http.get<UserSession>('/api/me').pipe(
+    return this.http.get<UserSession>(`${environment.apiUrl}/me`).pipe(
       tap(session => this.save(session))
     );
   }

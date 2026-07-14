@@ -2,11 +2,12 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Configuration } from '../../models/configuration';
+import { environment } from '../../../environments/environment.prod';
 
 @Injectable({ providedIn: 'root' })
 export class ConfigurationService {
   private http = inject(HttpClient);
-  private api = '/api/configurations';
+  private api = `${environment.apiUrl}/configurations`;
 
   private configSubject = new BehaviorSubject<Configuration | null>(null);
   readonly config$ = this.configSubject.asObservable();

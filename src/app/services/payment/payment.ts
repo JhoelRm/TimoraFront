@@ -7,12 +7,13 @@ import {
   PaymentPatchDTO,
   PaymentStatus
 } from '../../models/payment';
+import { environment } from '../../../environments/environment.prod';
 
 @Injectable({ 
   providedIn: 'root' 
 })
 export class PaymentService {
-  private baseUrl = '/api/payments';
+  private baseUrl = `${environment.apiUrl}/payments`;
 
   constructor(private http: HttpClient) {}
 

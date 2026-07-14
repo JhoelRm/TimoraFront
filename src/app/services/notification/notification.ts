@@ -2,6 +2,7 @@ import { Injectable, inject, signal, computed, NgZone } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap, switchMap, Subscription, interval } from 'rxjs';
 import { Notification } from '../../models/notification';
+import { environment } from '../../../environments/environment.prod';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
@@ -29,7 +30,7 @@ export class NotificationService {
   startPolling(intervalMs: number = 5000) {
     if (this.pollingSub) return;
     this.pollingSub = interval(intervalMs).pipe(
-      switchMap(() => this.http.get<Notification[]>('/api/notifications/me')),
+      switchMap(() => this.http.get<Notification[]>(`${environment.apiUrl}/notifications/me`)),
       tap(data => this.zone.run(() => { this._notifications.set(data); this._loaded.set(true); }))
     ).subscribe();
   }
@@ -41,20 +42,20 @@ export class NotificationService {
 
   loadNotifications() {
     if (this._loaded()) return;
-    this.http.get<Notification[]>('/api/notifications/me').pipe(
+    this.http.get<Notification[]>(`${environment.apiUrl}/notifications/me`).pipe(
       tap(data => { this._notifications.set(data); this._loaded.set(true); })
     ).subscribe();
   }
 
   refresh() {
-    this.http.get<Notification[]>('/api/notifications/me').pipe(
+    this.http.get<Notification[]>(`${environment.apiUrl}/notifications/me`).pipe(
       tap(data => { this._notifications.set(data); this._loaded.set(true); })
     ).subscribe();
   }
 
   markAsRead(id: number) {
     this._notifications.update(list => list.map(n => n.id === id ? { ...n, isRead: true } : n));
-    return this.http.put(`/api/notifications/${id}/read`, {});
+    return this.http.put(`${environment.apiUrl}/notifications/${id}/read`, {});
   }
 
   markAsSeen() {}

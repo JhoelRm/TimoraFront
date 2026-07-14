@@ -2,12 +2,13 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ServiceDTO, ServiceCreateDTO, ServicePatchDTO } from '../../models/service';
+import { environment } from '../../../environments/environment.prod';
 
 @Injectable({ providedIn: 'root' })
 export class ServicesService {
   private http = inject(HttpClient);
 
-  private baseUrl = '/api/services';
+  private baseUrl = `${environment.apiUrl}/services`;
 
   getAll(): Observable<ServiceDTO[]> {
     console.log('GET request to:', this.baseUrl);

@@ -6,11 +6,12 @@ import {
   PersonIdentityPatchDTO,
   PersonIdentityDTO
 } from '../../models/person-identity';
+import { environment } from '../../../environments/environment.prod';
 
 @Injectable({ providedIn: 'root' })
 export class PersonService {
   private http = inject(HttpClient);
-  private baseUrl = '/api/persons';
+  private baseUrl = `${environment.apiUrl}/persons`;
 
   getAll(): Observable<PersonIdentityDTO[]> {
     return this.http.get<PersonIdentityDTO[]>(this.baseUrl);
