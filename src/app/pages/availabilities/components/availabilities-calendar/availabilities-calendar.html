@@ -5,18 +5,18 @@
     <div class="flex items-center gap-2.5">
       <button 
         (click)="onToday()"
-        class="px-3 py-1.5 text-xs font-medium rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-secondary transition-all">
+        class="px-3 py-1.5 text-xs font-medium rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-secondary transition">
         Hoy
       </button>
       <div class="flex">
         <button 
           (click)="onPrevious()"
-          class="p-1.5 rounded-l-lg border border-border hover:bg-secondary text-muted-foreground hover:text-foreground transition-all">
+          class="p-1.5 rounded-l-lg border border-border hover:bg-secondary text-muted-foreground hover:text-foreground transition">
           <lucide-angular [img]="icons.ChevronLeft" class="w-3.5 h-3.5"></lucide-angular>
         </button>
         <button 
           (click)="onNext()"
-          class="p-1.5 rounded-r-lg border border-l-0 border-border hover:bg-secondary text-muted-foreground hover:text-foreground transition-all">
+          class="p-1.5 rounded-r-lg border border-l-0 border-border hover:bg-secondary text-muted-foreground hover:text-foreground transition">
           <lucide-angular [img]="icons.ChevronRight" class="w-3.5 h-3.5"></lucide-angular>
         </button>
       </div>
@@ -28,7 +28,7 @@
         [class.bg-primary]="calendarViewMode === 'day'"
         [class.text-primary-foreground]="calendarViewMode === 'day'"
         [class.text-muted-foreground]="calendarViewMode !== 'day'"
-        class="px-3 py-1 text-xs font-medium rounded-lg transition-all capitalize hover:text-foreground">
+        class="px-3 py-1 text-xs font-medium rounded-lg transition capitalize hover:text-foreground">
         Día
       </button>
       <button 
@@ -36,7 +36,7 @@
         [class.bg-primary]="calendarViewMode === 'week'"
         [class.text-primary-foreground]="calendarViewMode === 'week'"
         [class.text-muted-foreground]="calendarViewMode !== 'week'"
-        class="px-3 py-1 text-xs font-medium rounded-lg transition-all capitalize hover:text-foreground">
+        class="px-3 py-1 text-xs font-medium rounded-lg transition capitalize hover:text-foreground">
         Semana
       </button>
       <button 
@@ -44,7 +44,7 @@
         [class.bg-primary]="calendarViewMode === 'month'"
         [class.text-primary-foreground]="calendarViewMode === 'month'"
         [class.text-muted-foreground]="calendarViewMode !== 'month'"
-        class="px-3 py-1 text-xs font-medium rounded-lg transition-all capitalize hover:text-foreground">
+        class="px-3 py-1 text-xs font-medium rounded-lg transition capitalize hover:text-foreground">
         Mes
       </button>
     </div>

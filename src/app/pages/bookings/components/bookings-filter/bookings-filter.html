@@ -94,14 +94,14 @@
         [class.bg-primary]="viewMode === 'calendar'"
         [class.text-primary-foreground]="viewMode === 'calendar'"
         [class.text-muted-foreground]="viewMode !== 'calendar'"
-        class="flex items-center justify-center w-7 h-7 rounded-lg transition-all cursor-pointer hover:bg-primary/10">
+        class="flex items-center justify-center w-7 h-7 rounded-lg transition cursor-pointer hover:bg-primary/10">
         <lucide-angular [img]="icons.Calendar" class="w-4 h-4"></lucide-angular>
       </button>
       <button (click)="setView('list')"
         [class.bg-primary]="viewMode === 'list'"
         [class.text-primary-foreground]="viewMode === 'list'"
         [class.text-muted-foreground]="viewMode !== 'list'"
-        class="flex items-center justify-center w-7 h-7 rounded-lg transition-all cursor-pointer hover:bg-primary/10 ml-1">
+        class="flex items-center justify-center w-7 h-7 rounded-lg transition cursor-pointer hover:bg-primary/10 ml-1">
         <lucide-angular [img]="icons.List" class="w-4 h-4"></lucide-angular>
       </button>
     </div>

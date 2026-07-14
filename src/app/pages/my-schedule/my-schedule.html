@@ -32,7 +32,7 @@
           <button
             *ngFor="let tab of availableTabs"
             (click)="setActiveTab(tab.key)"
-            class="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium rounded-lg transition-all capitalize"
+            class="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium rounded-lg transition capitalize"
             [ngClass]="{
               'bg-card text-foreground shadow-sm': activeTab === tab.key,
               'text-muted-foreground hover:text-foreground hover:bg-secondary/50': activeTab !== tab.key

@@ -29,7 +29,7 @@
     <button
       *ngFor="let supplier of suppliers"
       (click)="selectSupplier(supplier.supplierId)"
-      class="supplier-btn flex items-center gap-2.5 px-3.5 py-2 rounded-xl border transition-all"
+      class="supplier-btn flex items-center gap-2.5 px-3.5 py-2 rounded-xl border transition"
       [ngClass]="{
         'border-primary bg-primary/5 text-foreground': selectedSupplierId === supplier.supplierId,
         'border-border bg-secondary/50 text-muted-foreground hover:border-primary/30 hover:text-foreground': selectedSupplierId !== supplier.supplierId

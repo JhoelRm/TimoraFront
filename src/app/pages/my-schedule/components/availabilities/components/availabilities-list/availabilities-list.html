@@ -71,7 +71,7 @@
             <button 
               (click)="onEdit(a)"
               [disabled]="!canEdit"
-              class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1"
+              class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-2.5 py-1 text-xs gap-1"
               [ngClass]="{
                 'text-muted-foreground hover:text-foreground hover:bg-secondary': canEdit,
                 'text-muted-foreground/40 cursor-not-allowed': !canEdit
@@ -84,7 +84,7 @@
             <button 
               (click)="onDelete(a)"
               [disabled]="!canDelete"
-              class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1"
+              class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-2.5 py-1 text-xs gap-1"
               [ngClass]="{
                 'text-muted-foreground hover:text-red-500 hover:bg-red-500/10': canDelete,
                 'text-muted-foreground/40 cursor-not-allowed': !canDelete

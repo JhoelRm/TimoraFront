@@ -38,20 +38,20 @@
           <button
             *ngIf="canEditBooking && !isEditingBooking"
             (click)="toggleEditBooking()"
-            class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1 text-muted-foreground hover:text-foreground hover:bg-secondary">
+            class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-2.5 py-1 text-xs gap-1 text-muted-foreground hover:text-foreground hover:bg-secondary">
             <lucide-angular [img]="icons.Pencil" class="w-3 h-3"></lucide-angular>
             Editar
           </button>
           <div *ngIf="isEditingBooking" class="flex gap-1">
             <button
               (click)="toggleEditBooking()"
-              class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1 text-muted-foreground hover:text-foreground hover:bg-secondary">
+              class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-2.5 py-1 text-xs gap-1 text-muted-foreground hover:text-foreground hover:bg-secondary">
               Cancelar
             </button>
             <button
               (click)="onSaveBookingEdit()"
               [disabled]="loading"
-              class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-2.5 py-1 text-xs gap-1 bg-primary text-primary-foreground hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+              class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-2.5 py-1 text-xs gap-1 bg-primary text-primary-foreground hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
               <lucide-angular [img]="icons.Save" class="w-3 h-3"></lucide-angular>
               Guardar
             </button>
@@ -66,7 +66,7 @@
             <select
               [(ngModel)]="editForm.customerId"
               (change)="onCustomerChange(+$any($event.target).value)"
-              class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+              class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition">
               <option *ngFor="let customer of customers" [value]="customer.customer?.id">
                 {{ getPersonName(customer) }}
               </option>
@@ -83,7 +83,7 @@
             <select
               [(ngModel)]="editForm.serviceId"
               (change)="onServiceChange(+$any($event.target).value)"
-              class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+              class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition">
               <option *ngFor="let service of services" [value]="service.id">
                 {{ getServiceNameForSelect(service) }} ({{ getServiceDurationForSelect(service) }} min)
               </option>
@@ -102,7 +102,7 @@
                 [(ngModel)]="editForm.date"
                 [min]="minDate"
                 (change)="onDateChange()"
-                class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+                class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition">
             </div>
             <div>
               <div class="text-xs text-muted-foreground mb-1">Hora inicio</div>
@@ -112,7 +112,7 @@
                 [min]="minTime"
                 (change)="onStartTimeChange()"
                 step="60"
-                class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+                class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition">
             </div>
           </div>
           <div class="grid grid-cols-2 gap-4 mt-3">
@@ -310,7 +310,7 @@
             *ngIf="canCompleteBooking"
             (click)="onCompleteBooking()"
             [disabled]="loading"
-            class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-3 py-1.5 text-xs gap-1 bg-secondary text-secondary-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed">
+            class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-3 py-1.5 text-xs gap-1 bg-secondary text-secondary-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed">
             Completar
           </button>
 
@@ -319,7 +319,7 @@
             *ngIf="canCancelBooking"
             (click)="onCancelBooking()"
             [disabled]="loading"
-            class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-3 py-1.5 text-xs gap-1 bg-destructive/10 text-destructive hover:bg-destructive/20 disabled:opacity-50 disabled:cursor-not-allowed">
+            class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-3 py-1.5 text-xs gap-1 bg-destructive/10 text-destructive hover:bg-destructive/20 disabled:opacity-50 disabled:cursor-not-allowed">
             Cancelar
           </button>
 
@@ -328,7 +328,7 @@
             *ngIf="canDeleteBooking"
             (click)="onDeleteBooking()"
             [disabled]="loading"
-            class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-3 py-1.5 text-xs gap-1 bg-destructive/10 text-destructive hover:bg-destructive/20 disabled:opacity-50 disabled:cursor-not-allowed">
+            class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-3 py-1.5 text-xs gap-1 bg-destructive/10 text-destructive hover:bg-destructive/20 disabled:opacity-50 disabled:cursor-not-allowed">
             <lucide-angular [img]="icons.Trash2" class="w-3 h-3"></lucide-angular>
             Eliminar
           </button>
