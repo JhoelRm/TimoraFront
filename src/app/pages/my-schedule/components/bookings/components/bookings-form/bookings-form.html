@@ -37,7 +37,7 @@
             type="text"
             [(ngModel)]="form.name"
             placeholder="Se genera automáticamente si está vacío"
-            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all">
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition">
         </div>
 
         <!-- Cliente -->
@@ -48,7 +48,7 @@
           <select
             [(ngModel)]="form.customerId"
             (change)="onCustomerChange(+$any($event.target).value)"
-            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition">
             <option value="0">Seleccionar cliente…</option>
             <option *ngFor="let customer of customers; trackBy: trackByCustomer" [value]="customer.customer?.id">
               {{ getPersonName(customer) }}
@@ -64,7 +64,7 @@
           <select
             [(ngModel)]="form.serviceId"
             (change)="onServiceChange(+$any($event.target).value)"
-            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition">
             <option value="0">Seleccionar servicio…</option>
             <option *ngFor="let service of services; trackBy: trackByService" [value]="service.id">
               {{ service.name }} ({{ service.duration }} min)
@@ -82,7 +82,7 @@
             [(ngModel)]="form.date"
             [min]="minDate"
             (change)="onDateChange()"
-            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all">
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition">
         </div>
 
         <!-- Hora inicio -->
@@ -95,7 +95,7 @@
             [(ngModel)]="form.startTime"
             [min]="minTime"
             (change)="onStartTimeChange()"
-            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all">
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition">
         </div>
 
         <!-- Duración (solo lectura, se calcula del servicio) -->
@@ -129,7 +129,7 @@
           </label>
           <select
             [(ngModel)]="form.type"
-            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition">
             <option *ngFor="let option of typeOptions" [value]="option.value">
               {{ option.label }}
             </option>
@@ -145,7 +145,7 @@
             [(ngModel)]="form.description"
             rows="3"
             placeholder="Notas opcionales…"
-            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all resize-none">
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition resize-none">
           </textarea>
         </div>
       </div>
@@ -155,13 +155,13 @@
     <div class="flex gap-2 justify-end px-6 py-4 border-t border-border shrink-0">
       <button
         (click)="onCancel()"
-        class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-secondary text-secondary-foreground hover:bg-muted">
+        class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-secondary text-secondary-foreground hover:bg-muted">
         Cancelar
       </button>
       <button
         (click)="onSubmit()"
         [disabled]="loading"
-        class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+        class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
         <span *ngIf="loading" class="inline-block animate-spin mr-1">⏳</span>
         <lucide-angular [img]="icons.Plus" class="w-4 h-4"></lucide-angular>
         Crear

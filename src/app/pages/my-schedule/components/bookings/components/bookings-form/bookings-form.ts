@@ -138,7 +138,7 @@ export class BookingsForm implements OnInit, OnChanges {
   // ==================== GETTERS ====================
 
   get modalTitle(): string {
-    return 'Nueva reserva';
+    return 'Agendar';
   }
 
   get minDate(): string {
