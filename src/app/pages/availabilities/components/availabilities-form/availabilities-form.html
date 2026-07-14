@@ -41,7 +41,7 @@
             <select
               [(ngModel)]="form.supplierId"
               (change)="onSupplierChange($event)"
-              class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+              class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition">
               <option value="0">Seleccionar proveedor…</option>
               <option *ngFor="let supplier of suppliers; trackBy: trackBySupplier" [value]="supplier.supplier?.id">
                 {{ getSupplierName(supplier) }}
@@ -60,7 +60,7 @@
             [(ngModel)]="form.startDate"
             [min]="todayDate"
             (change)="onStartDateChange()"
-            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all">
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition">
         </div>
 
         <!-- Fecha Fin (visible solo cuando showEndDate es true) -->
@@ -72,7 +72,7 @@
             type="date"
             [(ngModel)]="form.endDate"
             [min]="form.startDate"
-            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all">
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition">
         </div>
 
         <!-- Hora Inicio -->
@@ -83,7 +83,7 @@
           <input
             type="time"
             [(ngModel)]="form.startTime"
-            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all">
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition">
         </div>
 
         <!-- Hora Fin -->
@@ -94,7 +94,7 @@
           <input
             type="time"
             [(ngModel)]="form.endTime"
-            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all">
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition">
         </div>
 
         <!-- Días de la semana (visible solo cuando showDaysOfWeek es true) -->
@@ -113,7 +113,7 @@
               [class.text-primary-foreground]="isDaySelected(day.key)"
               [class.bg-secondary]="!isDaySelected(day.key)"
               [class.text-foreground]="!isDaySelected(day.key)"
-              class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer hover:opacity-80 border border-border">
+              class="px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer hover:opacity-80 border border-border">
               {{ day.label }}
             </button>
           </div>
@@ -128,7 +128,7 @@
             [(ngModel)]="form.recurrenceType"
             (change)="onRecurrenceChange($event)"
             [disabled]="isRecurrenceDisabled"
-            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition disabled:opacity-50 disabled:cursor-not-allowed">
             <option *ngFor="let type of recurrenceTypes" [value]="type.value">
               {{ type.label }}
             </option>
@@ -148,7 +148,7 @@
             [(ngModel)]="form.slotDurationMinutes"
             min="5"
             step="5"
-            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all">
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition">
         </div>
 
         <!-- Capacidad -->
@@ -160,7 +160,7 @@
             type="number"
             [(ngModel)]="form.capacity"
             min="1"
-            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all">
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition">
         </div>
 
         <!-- 🔴 NUEVO: Status (solo visible en edición) -->
@@ -170,7 +170,7 @@
           </label>
           <select
             [(ngModel)]="form.status"
-            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition">
             <option *ngFor="let option of statusOptions" [value]="option.value">
               {{ option.label }}
             </option>
@@ -189,7 +189,7 @@
             [(ngModel)]="form.notes"
             rows="3"
             placeholder="Notas adicionales sobre esta disponibilidad..."
-            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all resize-none">
+            class="w-full bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition resize-none">
           </textarea>
         </div>
       </div>
@@ -199,13 +199,13 @@
     <div class="flex gap-2 justify-end px-6 py-4 border-t border-border shrink-0">
       <button
         (click)="onCancel()"
-        class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-secondary text-secondary-foreground hover:bg-muted">
+        class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-secondary text-secondary-foreground hover:bg-muted">
         Cancelar
       </button>
       <button
         (click)="onSubmit()"
         [disabled]="loading"
-        class="inline-flex items-center rounded-xl font-medium transition-all cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+        class="inline-flex items-center rounded-xl font-medium transition cursor-pointer px-4 py-1.5 text-sm gap-1.5 bg-primary text-primary-foreground hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
         <span *ngIf="loading" class="inline-block animate-spin mr-1">⏳</span>
         {{ mode === 'edit' ? 'Actualizar horario' : 'Guardar horario' }}
       </button>

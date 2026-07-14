@@ -70,7 +70,7 @@ export class MyScheduleComponent implements OnInit {
   private allTabs: TabConfig[] = [
     {
       key: 'BOOKINGS',
-      label: 'Bookings',
+      label: 'Agenda',
       icon: this.icons.CalendarDays,
       readPermission: Permission.BOOKING_READ,
       permissions: [
@@ -82,7 +82,7 @@ export class MyScheduleComponent implements OnInit {
     },
     {
       key: 'AVAILABILITY',
-      label: 'Availability',
+      label: 'Disponibilidad',
       icon: this.icons.Clock,
       readPermission: Permission.AVAILABILITY_READ,
       permissions: [
@@ -94,7 +94,7 @@ export class MyScheduleComponent implements OnInit {
     },
     {
       key: 'SERVICES',
-      label: 'Services',
+      label: 'Servicios',
       icon: this.icons.List,
       readPermission: Permission.SERVICE_READ,
       permissions: [
@@ -106,7 +106,7 @@ export class MyScheduleComponent implements OnInit {
     },
     {
       key: 'CUSTOMERS',
-      label: 'Customers',
+      label: 'Clientes',
       icon: this.icons.User,
       readPermission: Permission.CUSTOMER_READ,
       permissions: [
