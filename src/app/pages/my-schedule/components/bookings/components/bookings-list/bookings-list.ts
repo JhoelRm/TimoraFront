@@ -2,6 +2,8 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Pencil, Trash2 } from 'lucide-angular';
 import { BookingDTO } from '../../../../../../models/booking';
+import { PersonIdentityDTO } from '../../../../../../models/person-identity';
+
 
 @Component({
   selector: 'app-bookings-list',
@@ -15,6 +17,7 @@ export class BookingsList {
   @Input() loading = false;
   @Input() canEdit = false;   // ← NUEVO INPUT
   @Input() canDelete = false; // ← NUEVO INPUT
+  @Input() customersMap: Map<number, PersonIdentityDTO> = new Map(); // ← NUEVO INPUT
 
   @Output() edit = new EventEmitter<BookingDTO>();
   @Output() delete = new EventEmitter<BookingDTO>();
@@ -93,15 +96,24 @@ export class BookingsList {
     return booking.name || `Reserva #${booking.id}`;
   }
 
+  // 🔥 NUEVO: Obtener nombre del cliente desde el mapa
   getCustomerName(booking: BookingDTO): string {
+    const customer = this.customersMap.get(booking.customerId);
+    if (customer) {
+      return `${customer.person.firstName} ${customer.person.lastName}`.trim();
+    }
     return `Cliente #${booking.customerId}`;
   }
 
+  // 🔥 NUEVO: Obtener nombre del servicio (puedes expandir con otro mapa si lo necesitas)
   getServiceName(booking: BookingDTO): string {
+    // Si tienes un mapa de servicios, puedes usarlo aquí
+    // Por ahora sigue mostrando el ID
     return `Servicio #${booking.serviceId}`;
   }
 
   trackById(index: number, item: BookingDTO): number {
     return item.id;
   }
+  
 }

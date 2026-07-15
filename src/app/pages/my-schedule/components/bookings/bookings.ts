@@ -70,7 +70,7 @@ export class BookingsComponent implements OnInit, OnChanges {
   allServices: ServiceDTO[] = [];
   bookings: BookingDTO[] = [];
   filteredBookings: BookingDTO[] = [];
-
+  customersMap: Map<number, PersonIdentityDTO> = new Map(); // ← NUEVO
   // ==================== CALENDARIO ====================
   events: BookingEvent[] = [];
   currentDate: Date = new Date();
@@ -105,15 +105,26 @@ export class BookingsComponent implements OnInit, OnChanges {
   }
 
   // ==================== CARGA DE DATOS ====================
-  private loadCustomers(): void {
-    this.personService.getAll().subscribe({
-      next: data => {
-        this.allCustomers = (data ?? []).filter(x => x.customer !== null);
-        this.cdr.detectChanges();
-      },
-      error: err => console.error('Error loading customers:', err)
-    });
-  }
+private loadCustomers(): void {
+  this.personService.getAll().subscribe({
+    next: data => {
+      this.allCustomers = (data ?? []).filter(x => x.customer !== null);
+      
+      // 🔥 CORREGIDO: Usar customer.id como clave
+      this.customersMap = new Map();
+      this.allCustomers.forEach(c => {
+        if (c.customer) {
+          this.customersMap.set(c.customer.id, c);
+        }
+      });
+      
+      console.log('👤 Clientes cargados:', this.allCustomers.length);
+      console.log('🗺️ Customers Map (por customer.id):', this.customersMap);
+      this.cdr.detectChanges();
+    },
+    error: err => console.error('Error loading customers:', err)
+  });
+}
 
   private loadServices(): void {
     this.servicesService.getAll().subscribe({

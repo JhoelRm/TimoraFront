@@ -40,6 +40,7 @@
         [loading]="loading"
         [canEdit]="hasUpdatePermission"
         [canDelete]="hasDeletePermission"
+        [customersMap]="customersMap"
         (edit)="openDetailModal($event)"
         (delete)="openDeleteModal($event)">
       </app-bookings-list>

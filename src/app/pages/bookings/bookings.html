@@ -52,6 +52,7 @@
       <app-bookings-list
         [bookings]="filteredBookings"
         [loading]="loading"
+        [customersMap]="customersMap"
         (edit)="openDetailModal($event)"
         (delete)="openDeleteModal($event)">
       </app-bookings-list>
