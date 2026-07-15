@@ -149,24 +149,30 @@ private loadSuppliers() {
     });
   }
 
-  private loadServices() {
-    this.loading = true;
-    this.servicesService.getAll().subscribe({
-      next: (d) => {
-        this.allServices = d ?? [];
-        this.loading = false;
-        this.ready = true;
-        this.applyFilter();
-        this.updateCache();
-        this.cdr.detectChanges();
-      },
-      error: (e) => {
-        console.error(e);
-        this.loading = false;
-        this.cdr.detectChanges();
+private loadServices() {
+  this.loading = true;
+  this.servicesService.getAll().subscribe({
+    next: (d) => {
+      this.allServices = d ?? [];
+      
+      // 🔥 Si es USER, forzar el supplier ID a su propio supplier
+      if (this.isUser && this.currentUserSupplier?.supplier) {
+        this.selectedSupplierId = this.currentUserSupplier.supplier.id;
       }
-    });
-  }
+      
+      this.loading = false;
+      this.ready = true;
+      this.applyFilter();
+      this.updateCache();
+      this.cdr.detectChanges();
+    },
+    error: (e) => {
+      console.error(e);
+      this.loading = false;
+      this.cdr.detectChanges();
+    }
+  });
+}
 
 filterSuppliersByCompany() {
   if (this.isOwner && this.selectedCompanyId !== null) {
@@ -190,25 +196,32 @@ filterSuppliersByCompany() {
   this.cdr.detectChanges();
 }
 
-  applyFilter() {
-    let r = [...this.allServices];
+applyFilter() {
+  let r = [...this.allServices];
+  
+  // 🔥 Si es USER, siempre filtrar por su propio supplier
+  if (this.isUser && this.currentUserSupplier?.supplier) {
+    r = r.filter(x => x.supplierId === this.currentUserSupplier!.supplier!.id);
+  } else {
     if (this.isOwner && this.selectedCompanyId !== null) {
       r = r.filter(x => x.companyId === this.selectedCompanyId);
     }
     if ((this.isOwner || this.isAdmin) && this.selectedSupplierId !== null) {
       r = r.filter(x => x.supplierId === this.selectedSupplierId);
     }
-    const t = this.searchTerm.trim().toLowerCase();
-    if (t) {
-      r = r.filter(x =>
-        x.name.toLowerCase().includes(t) ||
-        x.description.toLowerCase().includes(t) ||
-        x.supplierName.toLowerCase().includes(t)
-      );
-    }
-    this.services = r;
-    this.updateCache();
   }
+  
+  const t = this.searchTerm.trim().toLowerCase();
+  if (t) {
+    r = r.filter(x =>
+      x.name.toLowerCase().includes(t) ||
+      x.description.toLowerCase().includes(t) ||
+      x.supplierName.toLowerCase().includes(t)
+    );
+  }
+  this.services = r;
+  this.updateCache();
+}
 
   onCompanyChange() {
     this.selectedSupplierId = null;
